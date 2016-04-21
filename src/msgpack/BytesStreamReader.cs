@@ -4,13 +4,13 @@ using TarantoolDnx.MsgPack.Converters;
 
 namespace TarantoolDnx.MsgPack
 {
-    internal class MsgPackStreamReader : IMsgPackReader
+    internal class BytesStreamReader : IMsgPackReader
     {
         private readonly Stream _stream;
 
         private readonly bool _disposeStream;
 
-        public MsgPackStreamReader(Stream stream, bool disposeStream = true)
+        public BytesStreamReader(Stream stream, bool disposeStream = true)
         {
             _stream = stream;
             _disposeStream = disposeStream;
@@ -63,7 +63,7 @@ namespace TarantoolDnx.MsgPack
                 return length;
             }
 
-            throw ExceptionUtils.BadTypeException(type, DataTypes.Array16, DataTypes.Array32, DataTypes.FixArray, DataTypes.Null);
+            throw ExceptionUtils.BadTypeException(type, DataTypes.Array16, DataTypes.Array32, DataTypes.FixArray);
         }
 
         public uint? ReadMapLength()
@@ -85,7 +85,7 @@ namespace TarantoolDnx.MsgPack
             if (length.HasValue)
                 return length.Value;
 
-            throw ExceptionUtils.BadTypeException(type, DataTypes.Map16, DataTypes.Map32, DataTypes.FixMap, DataTypes.Null);
+            throw ExceptionUtils.BadTypeException(type, DataTypes.Map16, DataTypes.Map32, DataTypes.FixMap);
         }
 
 
