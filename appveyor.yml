@@ -47,3 +47,6 @@ deploy:
   skip_symbols: true
   artifact: /.*\.nupkg/
 
+after_build: 
+  - appveyor PushArtifact artifacts\bin\msgpack.tests\Release\msgpack.tests.0.0.1.nupkg
+
