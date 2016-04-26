@@ -36,8 +36,8 @@ build:
 
 after_build:
   - ps: .\nuget\pack.ps1
-  on:
-    configuration: Release
+    on:
+      configuration: Release
 
 test_script:
   - ps: dnx -p tests/msgpack.tests test
