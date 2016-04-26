@@ -6,3 +6,6 @@
 *.lock.json
 *.suo
 
+/artifacts/bin
+/artifacts/obj
+/.vs/config/applicationhost.config
