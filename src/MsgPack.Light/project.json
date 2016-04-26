@@ -3,7 +3,7 @@
     "description": "MsgPackLite library for tarantool-dnx project",
     "authors": ["aensidhe", "roman-kozachenko"],
     "tags": [""],
-    "projectUrl": "",
+    "projectUrl": "https://github.com/roman-kozachenko/MsgPack.Light",
     "licenseUrl": "",
     "compilationOptions": {
         "warningsAsErrors": true

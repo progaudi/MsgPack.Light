@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "msgpack", "src\msgpack\msgpack.xproj", "{26884D70-2D12-46AC-884E-158E10E9314A}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "msgpack", "src\MsgPack.Light\msgpack.xproj", "{26884D70-2D12-46AC-884E-158E10E9314A}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "msgpack.tests", "tests\msgpack.tests\msgpack.tests.xproj", "{DBE7481B-65ED-4729-B611-8BDDE87766C3}"
 EndProject
