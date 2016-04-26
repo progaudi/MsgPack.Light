@@ -45,5 +45,5 @@ deploy:
   api_key:
     secure: GTa4jzXX3HvIl2acx6G8zZKJ5Tc8q4AM4SX+6mLtYMpnwkI3YmtrxOuGNteLuxsO
   skip_symbols: true
-  artifact: artifacts\bin\msgpack\Release\msgpack.0.0.1.nupkg
+  artifact: /.*\.nupkg/
 
