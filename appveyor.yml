@@ -1,47 +1,47 @@
 version: 0.0.{build}
 skip_tags: true
 assembly_info:
-	patch: true
-	file: '**\AssemblyInfo.*'
-	assembly_version: '{version}'
-	assembly_file_version: '{version}'
-	assembly_informational_version: '{version}'
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
 
 configuration:
-	- Debug
-	- Release
+  - Debug
+  - Release
 
 matrix:
-	fast_finish: false
+  fast_finish: false
 
 init:
-	- git config --global core.autocrlf true
+  - git config --global core.autocrlf true
 
 install:
-	- ps: nuget sources add -Name api.nuget.org -Source https://api.nuget.org/v3/index.json
-	- ps: "&{$Branch='dev';iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}"
-	- ps: dnvm update-self
-	- ps: dnvm upgrade
-	- ps: dnvm install 1.0.0-rc1-update1
-	- ps: dnvm list
-	- ps: dnvm use 1.0.0-rc1-update1
+  - ps: nuget sources add -Name api.nuget.org -Source https://api.nuget.org/v3/index.json
+  - ps: "&{$Branch='dev';iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}"
+  - ps: dnvm update-self
+  - ps: dnvm upgrade
+  - ps: dnvm install 1.0.0-rc1-update1
+  - ps: dnvm list
+  - ps: dnvm use 1.0.0-rc1-update1
 
 before_build:
-	- ps: dnu restore
+  - ps: dnu restore
 
 build:
-	parallel: true
-	project: msgpack.sln
-	verbosity: minimal
+  parallel: true
+  project: msgpack.sln
+  verbosity: minimal
 
 after_build:
-	- ps: .\nuget\pack.ps1
-	on:
-		configuration: Release
+  - ps: .\nuget\pack.ps1
+  on:
+    configuration: Release
 
 test_script:
-	- ps: dnx -p tests/msgpack.tests test
+  - ps: dnx -p tests/msgpack.tests test
 
 artifacts:
-	- path: NuGet/*.nupkg
-	- name: MsgPack Nuget package
+  - path: NuGet/*.nupkg
+  - name: MsgPack Nuget package
