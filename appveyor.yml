@@ -7,9 +7,6 @@ assembly_info:
   assembly_file_version: '{version}'
   assembly_informational_version: '{version}'
 
-nuget:
-  disable_publish_on_pr: true
-
 configuration:
   - Debug
   - Release
@@ -36,18 +33,15 @@ build:
   parallel: true
   project: msgpack.sln
   verbosity: minimal
-  publish_nuget: true
+
+after_build:
+  - ps: .\nuget\pack.ps1
+	on:
+		configuration: Release
 
 test_script:
   - ps: dnx -p tests/msgpack.tests test
 
-deploy:
-  provider: NuGet
-  api_key:
-    secure: GTa4jzXX3HvIl2acx6G8zZKJ5Tc8q4AM4SX+6mLtYMpnwkI3YmtrxOuGNteLuxsO
-  skip_symbols: true
-
 artifacts:
-  - path: 'artifacts\bin\MsgPack.Light\**\*.nupkg'
-
-
+  - path: NuGet/*.nupkg
+  - name: MsgPack Nuget package

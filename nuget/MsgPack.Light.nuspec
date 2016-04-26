@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>MsgPack.Light</id>
+    <version>0.0.2</version>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <authors>aensidhe,roman-kozachenko</authors>
+    <owners>aensidhe,roman-kozachenko</owners>
+    <projectUrl>https://github.com/roman-kozachenko/MsgPack.Light</projectUrl>
+    <description>MsgPackLite library for tarantool-dnx project</description>
+    <dependencies>
+      <group targetFramework="DNX4.5.1">
+        <dependency id="JetBrains.Annotations" version="10.1.4" />
+      </group>
+      <group targetFramework="DNXCore5.0">
+        <dependency id="JetBrains.Annotations" version="10.1.4" />
+        <dependency id="System.Collections" version="4.0.11-beta-23516" />
+        <dependency id="System.Collections.Concurrent" version="4.0.11-beta-23516" />
+        <dependency id="System.IO" version="4.0.11-beta-23516" />
+        <dependency id="System.Linq" version="4.0.1-beta-23516" />
+        <dependency id="System.Reflection.TypeExtensions" version="4.1.0-beta-23516" />
+        <dependency id="System.Runtime" version="4.0.21-beta-23516" />
+        <dependency id="System.Runtime.Extensions" version="4.0.11-beta-23516" />
+        <dependency id="System.Runtime.InteropServices" version="4.0.21-beta-23516" />
+        <dependency id="System.Runtime.Serialization.Primitives" version="4.0.11-beta-23409" />
+        <dependency id="System.Linq.Expressions" version="4.0.11-beta-23516" />
+        <dependency id="System.Reflection" version="4.1.0-beta-23516" />
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="mscorlib" targetFramework="DNX4.5.1" />
+      <frameworkAssembly assemblyName="System" targetFramework="DNX4.5.1" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework="DNX4.5.1" />
+      <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="DNX4.5.1" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+     <file src="..\artifacts\bin\msgpack\Release\dnx451\MsgPack.Light.dll" target="lib\dnx451" />
+     <file src="..\artifacts\bin\msgpack\Release\dnx451\MsgPack.Light.xml" target="lib\dnx451" />
+     <file src="..\artifacts\bin\msgpack\Release\dnxcore50\MsgPack.Light.dll" target="lib\dnxcore50" />
+     <file src="..\artifacts\bin\msgpack\Release\dnxcore50\MsgPack.Light.xml" target="lib\dnxcore50" />
+  </files>
+</package>
