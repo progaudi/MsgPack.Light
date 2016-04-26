@@ -44,4 +44,4 @@ test_script:
 
 artifacts:
   - path: NuGet/*.nupkg
-  - name: MsgPack Nuget package
+    name: MsgPack Nuget package
