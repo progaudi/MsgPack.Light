@@ -39,7 +39,4 @@ test_script:
   - ps: dnx -p tests/msgpack.tests test
 
 artifacts:
-  - path: /.*MsgPack\.Light\.\d\.\d\.\d*\.nupkg/
-    on:
-      configuration: Release
-      branch: master
+  - path: /.*Release.\MsgPack\.Light\.\d\.\d\.\d*\.nupkg/    
