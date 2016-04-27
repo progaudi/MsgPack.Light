@@ -28,20 +28,15 @@ install:
 
 before_build:
   - ps: dnu restore
+  - ps: scripts\change-version.ps1 {version}
 
 build:
   parallel: true
   project: msgpack.sln
   verbosity: minimal
 
-after_build:
-  - ps: .\nuget\pack.ps1
-    on:
-      configuration: Release
-
 test_script:
   - ps: dnx -p tests/msgpack.tests test
 
-artifacts:
-  - path: NuGet/*.nupkg
-    name: MsgPack Nuget package
+after_build: 
+  - appveyor PushArtifact artifacts\bin\msgpack.tests\Release\*.nupkg
