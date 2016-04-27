@@ -38,5 +38,5 @@ build:
 test_script:
   - ps: dnx -p tests/msgpack.tests test
 
-after_build: 
-  - appveyor PushArtifact artifacts\bin\msgpack.tests\Release\*.nupkg
+artifacts:
+    -path: artifacts\bin\msgpack\**\*.nupkg
