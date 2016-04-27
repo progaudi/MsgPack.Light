@@ -39,4 +39,4 @@ test_script:
   - ps: dnx -p tests/msgpack.tests test
 
 artifacts:
-    -path: artifacts\bin\msgpack\**\*.nupkg
+  - path: artifacts\bin\msgpack\**\*.nupkg
