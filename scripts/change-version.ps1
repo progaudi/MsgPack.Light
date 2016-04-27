@@ -1,6 +1,6 @@
 $initialVersion = '"version": "0.0.1"'
-$version = '"version": "{0}"' -f $args[0]
-$project_json = '..\src\MsgPack.Light\project.json'
+$version = '"version": "{0}"' -f $args[1]
+$project_json = $args[0]
 
 Write-Host "Setting $project_json version to $version..."
 
