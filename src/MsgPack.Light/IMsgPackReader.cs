@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace TarantoolDnx.MsgPack
+namespace MsgPack
 {
     public interface IMsgPackReader : IDisposable
     {

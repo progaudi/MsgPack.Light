@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace TarantoolDnx.MsgPack.Converters
+namespace MsgPack.Converters
 {
     public class NullableConverter<T> : IMsgPackConverter<T?> where T : struct
     {

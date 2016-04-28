@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace TarantoolDnx.MsgPack.Tests.Writer
+namespace MsgPack.Tests.Writer
 {
     public class Helpers
     {

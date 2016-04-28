@@ -1,8 +1,8 @@
 ﻿using System.IO;
 
-using TarantoolDnx.MsgPack.Converters;
+using MsgPack.Converters;
 
-namespace TarantoolDnx.MsgPack
+namespace MsgPack
 {
     internal class MsgPackStreamReader : IMsgPackReader
     {

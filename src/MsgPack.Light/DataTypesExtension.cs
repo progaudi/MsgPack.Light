@@ -1,4 +1,4 @@
-﻿namespace TarantoolDnx.MsgPack
+﻿namespace MsgPack
 {
     public static class DataTypesExtension
     {

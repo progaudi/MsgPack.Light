@@ -2,11 +2,11 @@
 
 using Shouldly;
 
-using TarantoolDnx.MsgPack.Converters;
+using MsgPack.Converters;
 
 using Xunit;
 
-namespace TarantoolDnx.MsgPack.Tests.Writer
+namespace MsgPack.Tests.Writer
 {
     public class FloatingPoint
     {

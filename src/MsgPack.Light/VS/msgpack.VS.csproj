@@ -7,8 +7,8 @@
     <ProjectGuid>{2F96BC33-6B63-464D-82B8-A99C90CCF33F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TarantoolDnx.MsgPack</RootNamespace>
-    <AssemblyName>TarantoolDnx.MsgPack.VS</AssemblyName>
+    <RootNamespace>MsgPack</RootNamespace>
+    <AssemblyName>MsgPack.VS</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <OutputPath>..\..\..\artifacts\bin\$(MSBuildProjectName)\</OutputPath>

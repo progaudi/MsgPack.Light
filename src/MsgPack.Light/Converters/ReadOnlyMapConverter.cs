@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace TarantoolDnx.MsgPack.Converters
+namespace MsgPack.Converters
 {
     internal class ReadOnlyMapConverter<TMap, TKey, TValue> : MapConverterBase<TMap, TKey, TValue>
         where TMap : IReadOnlyDictionary<TKey, TValue>

@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
 using System;
 
-namespace TarantoolDnx.MsgPack
+namespace MsgPack
 {
     public interface IMsgPackConverter
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TarantoolDnx.MsgPack
+namespace MsgPack
 {
     public static class DateTimeUtils
     {

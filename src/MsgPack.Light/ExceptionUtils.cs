@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace TarantoolDnx.MsgPack
+namespace MsgPack
 {
     public static class ExceptionUtils
     {

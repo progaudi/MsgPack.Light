@@ -5,9 +5,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
-using TarantoolDnx.MsgPack.Converters;
+using MsgPack.Converters;
 
-namespace TarantoolDnx.MsgPack
+namespace MsgPack
 {
     
     public class MsgPackContext

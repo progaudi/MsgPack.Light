@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace TarantoolDnx.MsgPack.Converters
+namespace MsgPack.Converters
 {
     internal class FloatConverter : IMsgPackConverter<float>, IMsgPackConverter<double>
     {
