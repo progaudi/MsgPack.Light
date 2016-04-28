@@ -2,11 +2,11 @@
 
 using Shouldly;
 
-using TarantoolDnx.MsgPack.Converters;
+using MsgPack.Converters;
 
 using Xunit;
 
-namespace TarantoolDnx.MsgPack.Tests.Reader
+namespace MsgPack.Tests.Reader
 {
     public class Nullable
     {

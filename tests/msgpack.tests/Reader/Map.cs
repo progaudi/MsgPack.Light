@@ -1,11 +1,11 @@
 ﻿using Shouldly;
 using System.Collections.Generic;
 
-using TarantoolDnx.MsgPack.Converters;
+using MsgPack.Converters;
 
 using Xunit;
 
-namespace TarantoolDnx.MsgPack.Tests.Reader
+namespace MsgPack.Tests.Reader
 {
     public class Map
     {

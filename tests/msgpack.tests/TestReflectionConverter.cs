@@ -7,7 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
 
-namespace TarantoolDnx.MsgPack.Tests
+namespace MsgPack.Tests
 {
     public class TestReflectionConverter : IMsgPackConverter<object>
     {

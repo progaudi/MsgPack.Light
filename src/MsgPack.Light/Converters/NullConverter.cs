@@ -1,6 +1,6 @@
 using System;
 
-namespace TarantoolDnx.MsgPack.Converters
+namespace MsgPack.Converters
 {
     internal class NullConverter : IMsgPackConverter<object>
     {
