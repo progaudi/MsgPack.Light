@@ -1,8 +1,8 @@
 using System.IO;
 
-using MsgPack.Converters;
+using MsgPack.Light.Converters;
 
-namespace MsgPack
+namespace MsgPack.Light
 {
     internal class MsgPackStreamReader : IMsgPackReader
     {

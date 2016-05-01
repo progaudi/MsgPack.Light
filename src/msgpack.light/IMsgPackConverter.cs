@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
 using System;
 
-namespace MsgPack
+namespace MsgPack.Light
 {
     public interface IMsgPackConverter
     {

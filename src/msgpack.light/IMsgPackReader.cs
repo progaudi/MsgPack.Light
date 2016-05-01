@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace MsgPack
+namespace MsgPack.Light
 {
     public interface IMsgPackReader : IDisposable
     {

@@ -5,7 +5,7 @@ using Shouldly;
 
 using Xunit;
 
-namespace MsgPack.Tests.Reader
+namespace MsgPack.Light.Tests.Reader
 {
     public class DateTime1
     {

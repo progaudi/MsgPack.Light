@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace MsgPack.Tests.Reader
+namespace MsgPack.Light.Tests.Reader
 {
     public class Helpers
     {

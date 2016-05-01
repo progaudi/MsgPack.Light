@@ -1,4 +1,4 @@
-namespace MsgPack
+namespace MsgPack.Light
 {
     public static class DataTypesExtension
     {

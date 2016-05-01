@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MsgPack.Converters
+namespace MsgPack.Light.Converters
 {
     internal class ReadOnlyListConverter<TArray, TElement> : ArrayConverterBase<TArray, TElement>
         where TArray : IReadOnlyList<TElement>

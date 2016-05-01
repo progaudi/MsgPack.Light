@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace MsgPack.Converters
+namespace MsgPack.Light.Converters
 {
     public class NullableConverter<T> : IMsgPackConverter<T?> where T : struct
     {

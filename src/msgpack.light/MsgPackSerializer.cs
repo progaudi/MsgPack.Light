@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 
 using JetBrains.Annotations;
 
-namespace MsgPack
+namespace MsgPack.Light
 {
     [DebuggerStepThrough]
     public static class MsgPackSerializer

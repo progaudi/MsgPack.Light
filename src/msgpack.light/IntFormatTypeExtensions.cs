@@ -4,7 +4,7 @@ using UInt8 = System.Byte;
 
 // ReSharper disable BuiltInTypeReferenceStyle
 
-namespace MsgPack
+namespace MsgPack.Light
 {
     internal static class DataTypesExtensions
     {

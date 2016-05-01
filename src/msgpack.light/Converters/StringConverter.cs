@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace MsgPack.Converters
+namespace MsgPack.Light.Converters
 {
     internal class StringConverter : IMsgPackConverter<string>
     {

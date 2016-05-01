@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace MsgPack
+namespace MsgPack.Light
 {
     public static class ExceptionUtils
     {

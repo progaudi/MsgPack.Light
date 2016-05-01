@@ -1,6 +1,6 @@
 using System;
 
-namespace MsgPack.Converters
+namespace MsgPack.Light.Converters
 {
     internal abstract class ArrayConverterBase<TArray, TElement> : IMsgPackConverter<TArray>
     {

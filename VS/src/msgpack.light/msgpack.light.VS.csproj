@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DBCC133C-83D3-42B8-92DB-B9ACDE475BE7}</ProjectGuid>
+    <ProjectGuid>{2F96BC33-6B63-464D-82B8-A99C90CCF33F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MsgPack.Tests</RootNamespace>
-    <AssemblyName>MsgPack.Tests.VS</AssemblyName>
+    <RootNamespace>MsgPack.Light</RootNamespace>
+    <AssemblyName>MsgPack.Light</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <OutputPath>..\..\..\artifacts\bin\$(MSBuildProjectName)\</OutputPath>
@@ -37,15 +37,9 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\**\*.cs">
+    <Compile Include="..\..\..\src\msgpack.light\**\*.cs">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\src\msgpack.light\VS\msgpack.VS.csproj">
-      <Project>{2f96bc33-6b63-464d-82b8-a99c90ccf33f}</Project>
-      <Name>msgpack.light.VS</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

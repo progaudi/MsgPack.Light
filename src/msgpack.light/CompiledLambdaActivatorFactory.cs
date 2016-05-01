@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 // ReSharper disable once RedundantUsingDirective
 using System.Reflection;
 
-namespace MsgPack
+namespace MsgPack.Light
 {
     public class CompiledLambdaActivatorFactory
     {

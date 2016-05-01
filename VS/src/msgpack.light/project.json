@@ -1,6 +1,6 @@
 {
     "version": "0.0.1",
-    "description": "MsgPackLite.Tests Class Library",
+    "description": "MsgPack.Light Library. Stub for easy-using Resharper test runner",
     "authors": ["aensidhe", "roman-kozachenko"],
     "tags": [""],
     "projectUrl": "",

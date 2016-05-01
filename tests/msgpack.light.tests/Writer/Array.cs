@@ -4,7 +4,7 @@ using Shouldly;
 
 using Xunit;
 
-namespace MsgPack.Tests.Writer
+namespace MsgPack.Light.Tests.Writer
 {
     public class Array
     {

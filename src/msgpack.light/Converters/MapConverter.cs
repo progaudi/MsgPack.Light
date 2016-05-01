@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MsgPack.Converters
+namespace MsgPack.Light.Converters
 {
     internal class MapConverter<TMap, TKey, TValue> : MapConverterBase<TMap, TKey, TValue>
         where TMap : IDictionary<TKey, TValue>

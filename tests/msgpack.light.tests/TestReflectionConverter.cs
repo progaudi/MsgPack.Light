@@ -7,7 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
 
-namespace MsgPack.Tests
+namespace MsgPack.Light.Tests
 {
     public class TestReflectionConverter : IMsgPackConverter<object>
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace MsgPack
+namespace MsgPack.Light
 {
     public interface IMsgPackWriter : IDisposable
     {

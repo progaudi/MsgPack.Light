@@ -1,6 +1,6 @@
 using System;
 
-namespace MsgPack.Converters
+namespace MsgPack.Light.Converters
 {
     public class DateTimeConverter : IMsgPackConverter<DateTime>, IMsgPackConverter<DateTimeOffset>
     {

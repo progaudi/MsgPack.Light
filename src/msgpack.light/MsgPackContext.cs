@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-using MsgPack.Converters;
+using MsgPack.Light.Converters;
 
-namespace MsgPack
+namespace MsgPack.Light
 {
 
     public class MsgPackContext
