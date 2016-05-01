@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msgpack.light.VS", "src\msgpack.light\msgpack.light.VS.csproj", "{2F96BC33-6B63-464D-82B8-A99C90CCF33F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msgpack.light.VS", "src\msgpack.light.vs\msgpack.light.VS.csproj", "{2F96BC33-6B63-464D-82B8-A99C90CCF33F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msgpack.light.tests.VS", "tests\msgpack.light.tests\msgpack.light.tests.VS.csproj", "{DBCC133C-83D3-42B8-92DB-B9ACDE475BE7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msgpack.light.tests.VS", "tests\msgpack.light.tests.vs\msgpack.light.tests.VS.csproj", "{DBCC133C-83D3-42B8-92DB-B9ACDE475BE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

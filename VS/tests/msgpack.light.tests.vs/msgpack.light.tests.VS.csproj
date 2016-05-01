@@ -42,7 +42,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\msgpack.light\msgpack.light.VS.csproj">
+    <ProjectReference Include="..\..\src\msgpack.light.vs\msgpack.light.VS.csproj">
       <Project>{2f96bc33-6b63-464d-82b8-a99c90ccf33f}</Project>
       <Name>msgpack.light.VS</Name>
     </ProjectReference>
