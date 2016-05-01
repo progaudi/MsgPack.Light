@@ -1,10 +1,10 @@
 ﻿{
-    "version": "0.0.1",
-    "description": "MsgPackLite.Tests Class Library",
+    "version": "1.0.0",
+    "description": "Tests for MsgPack.Light library",
     "authors": [ "aensidhe", "roman-kozachenko" ],
-    "tags": [ "" ],
-    "projectUrl": "",
-    "licenseUrl": "",
+    "tags": [ "tests", "xunit", "msgpack", "serialization" ],
+    "projectUrl": "https://github.com/roman-kozachenko/MsgPack.Light",
+    "licenseUrl": "https://raw.githubusercontent.com/roman-kozachenko/MsgPack.Light/master/LICENSE",
 
     "commands": {
         "test": "xunit.runner.dnx"
