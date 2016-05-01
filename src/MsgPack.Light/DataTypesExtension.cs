@@ -1,4 +1,4 @@
-﻿namespace MsgPack
+namespace MsgPack
 {
     public static class DataTypesExtension
     {

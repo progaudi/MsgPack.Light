@@ -1,4 +1,4 @@
-﻿using Shouldly;
+using Shouldly;
 
 using MsgPack.Converters;
 
