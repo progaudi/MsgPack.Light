@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 
 using JetBrains.Annotations;
 
-namespace MsgPack.Converters
+namespace MsgPack
 {
     [DebuggerStepThrough]
     public static class MsgPackSerializer
@@ -29,7 +29,7 @@ namespace MsgPack.Converters
 
         public static T Deserialize<T>(byte[] data)
         {
-            return Deserialize<T>(data, new MsgPackContext());
+            return Deser8ialize<T>(data, new MsgPackContext());
         }
 
         public static T Deserialize<T>(byte[] data, [NotNull]MsgPackContext context)
@@ -40,7 +40,7 @@ namespace MsgPack.Converters
         private static T Deserialize<T>(byte[] data, [NotNull]MsgPackContext context, Func<T> creator)
         {
             var memoryStream = new MemoryStream(data);
-            using (var reader = new BytesStreamReader(memoryStream))
+            using (var reader = new MsgPackStreamReader(memoryStream))
             {
                 var converter = GetConverter<T>(context);
 

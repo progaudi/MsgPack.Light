@@ -1,8 +1,6 @@
 using Shouldly;
 using System.Collections.Generic;
 
-using MsgPack.Converters;
-
 using Xunit;
 
 namespace MsgPack.Tests.Reader

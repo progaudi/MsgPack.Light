@@ -2,90 +2,88 @@ using System;
 
 using Shouldly;
 
-using MsgPack.Converters;
-
 using Xunit;
 
-namespace MsgPack.Tests.Reader
+namespace MsgPack.Tests.Writer
 {
     public class Nullable
     {
         [Fact]
-        public void ReadNullAsNullableBool()
+        public void WriteNullAsNullableBool()
         {
-            MsgPackSerializer.Deserialize<bool?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Serialize(default(bool?)).ShouldBe(new[] { (byte)DataTypes.Null });
         }
 
         [Fact]
-        public void ReadNullAsNullableFloat()
+        public void WriteNullAsNullableFloat()
         {
-            MsgPackSerializer.Deserialize<float?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Serialize(default(float?)).ShouldBe(new[] { (byte)DataTypes.Null });
         }
 
         [Fact]
-        public void ReadNullAsNullableDouble()
+        public void WriteNullAsNullableDouble()
         {
-            MsgPackSerializer.Deserialize<double?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Serialize(default(double?)).ShouldBe(new[] { (byte)DataTypes.Null });
         }
 
         [Fact]
-        public void ReadNullAsNullableByte()
+        public void WriteNullAsNullableByte()
         {
-            MsgPackSerializer.Deserialize<byte?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Serialize(default(byte?)).ShouldBe(new[] { (byte)DataTypes.Null });
         }
 
         [Fact]
-        public void ReadNullAsNullableSbyte()
+        public void WriteNullAsNullableSbyte()
         {
-            MsgPackSerializer.Deserialize<sbyte?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Serialize(default(sbyte?)).ShouldBe(new[] { (byte)DataTypes.Null });
         }
 
         [Fact]
-        public void ReadNullAsNullableShort()
+        public void WriteNullAsNullableShort()
         {
-            MsgPackSerializer.Deserialize<short?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Serialize(default(short?)).ShouldBe(new[] { (byte)DataTypes.Null });
         }
 
         [Fact]
-        public void ReadNullAsNullableUshort()
+        public void WriteNullAsNullableUshort()
         {
-            MsgPackSerializer.Deserialize<ushort?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Serialize(default(ushort?)).ShouldBe(new[] { (byte)DataTypes.Null });
         }
 
         [Fact]
-        public void ReadNullAsNullableInt()
+        public void WriteNullAsNullableInt()
         {
-            MsgPackSerializer.Deserialize<int?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Serialize(default(int?)).ShouldBe(new[] { (byte)DataTypes.Null });
         }
 
         [Fact]
-        public void ReadNullAsNullableUint()
+        public void WriteNullAsNullableUint()
         {
-            MsgPackSerializer.Deserialize<uint?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Serialize(default(uint?)).ShouldBe(new[] { (byte)DataTypes.Null });
         }
 
         [Fact]
-        public void ReadNullAsNullableLong()
+        public void WriteNullAsNullableLong()
         {
-            MsgPackSerializer.Deserialize<long?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Serialize(default(long?)).ShouldBe(new[] { (byte)DataTypes.Null });
         }
 
         [Fact]
-        public void ReadNullAsNullableUlong()
+        public void WriteNullAsNullableUlong()
         {
-            MsgPackSerializer.Deserialize<ulong?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Serialize(default(ulong?)).ShouldBe(new[] { (byte)DataTypes.Null });
         }
-        
+
         [Fact]
         public void False()
         {
-            MsgPackSerializer.Deserialize<bool?>(new[] { (byte)DataTypes.False }).ShouldBe(false);
+            MsgPackSerializer.Serialize((bool?)false).ShouldBe(new[] { (byte)DataTypes.False });
         }
 
         [Fact]
         public void True()
         {
-            MsgPackSerializer.Deserialize<bool?>(new[] { (byte)DataTypes.True }).ShouldBe(true);
+            MsgPackSerializer.Serialize((bool?)true).ShouldBe(new[] { (byte)DataTypes.True });
         }
 
         [Theory]
@@ -105,7 +103,7 @@ namespace MsgPack.Tests.Reader
         [InlineData(double.NegativeInfinity, new byte[] { 203, 255, 240, 0, 0, 0, 0, 0, 0 })]
         public void TestDouble(double value, byte[] bytes)
         {
-            MsgPackSerializer.Deserialize<double?>(bytes).ShouldBe(value);
+            MsgPackSerializer.Serialize((double?)value).ShouldBe(bytes);
         }
 
         [Theory]
@@ -125,7 +123,7 @@ namespace MsgPack.Tests.Reader
         [InlineData(float.NegativeInfinity, new byte[] { 202, 255, 128, 0, 0 })]
         public void TestFloat(float value, byte[] bytes)
         {
-            MsgPackSerializer.Deserialize<float?>(bytes).ShouldBe(value);
+            MsgPackSerializer.Serialize((float?)value).ShouldBe(bytes);
         }
 
         [Theory]
@@ -142,7 +140,7 @@ namespace MsgPack.Tests.Reader
         [InlineData(long.MinValue, new byte[] { 211, 128, 0, 0, 0, 0, 0, 0, 0 })]
         public void TestSignedLong(long number, byte[] data)
         {
-            MsgPackSerializer.Deserialize<long?>(data).ShouldBe(number);
+            MsgPackSerializer.Serialize((long?)number).ShouldBe(data);
         }
 
         [Theory]
@@ -158,7 +156,7 @@ namespace MsgPack.Tests.Reader
         [InlineData(50505, new byte[] { 205, 197, 73 })]
         public void TestSignedInt(int number, byte[] data)
         {
-            MsgPackSerializer.Deserialize<int?>(data).ShouldBe(number);
+            MsgPackSerializer.Serialize((int?)number).ShouldBe(data);
         }
 
         [Theory]
@@ -171,7 +169,7 @@ namespace MsgPack.Tests.Reader
         [InlineData(short.MaxValue, new byte[] { 209, 127, 0xff })]
         public void TestSignedShort(short number, byte[] data)
         {
-            MsgPackSerializer.Deserialize<short?>(data).ShouldBe(number);
+            MsgPackSerializer.Serialize((short?)number).ShouldBe(data);
         }
 
         [Theory]
@@ -182,7 +180,7 @@ namespace MsgPack.Tests.Reader
         [InlineData(sbyte.MaxValue, new byte[] { 127 })]
         public void TestSignedByte(sbyte number, byte[] data)
         {
-            MsgPackSerializer.Deserialize<sbyte?>(data).ShouldBe(number);
+            MsgPackSerializer.Serialize((sbyte?)number).ShouldBe(data);
         }
 
         [Theory]
@@ -194,7 +192,7 @@ namespace MsgPack.Tests.Reader
         [InlineData(ulong.MaxValue, new byte[] { 0xcf, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff })]
         public void TetsUnsignedLong(ulong number, byte[] data)
         {
-            MsgPackSerializer.Deserialize<ulong?>(data).ShouldBe(number);
+            MsgPackSerializer.Serialize((ulong?)number).ShouldBe(data);
         }
 
         [Theory]
@@ -205,7 +203,7 @@ namespace MsgPack.Tests.Reader
         [InlineData(uint.MaxValue, new byte[] { 0xce, 0xff, 0xff, 0xff, 0xff })]
         public void TetsUnsignedInt(uint number, byte[] data)
         {
-            MsgPackSerializer.Deserialize<uint?>(data).ShouldBe(number);
+            MsgPackSerializer.Serialize((uint?)number).ShouldBe(data);
         }
 
         [Theory]
@@ -215,7 +213,7 @@ namespace MsgPack.Tests.Reader
         [InlineData(ushort.MaxValue, new byte[] { 0xcd, 0xff, 0xff })]
         public void TetsUnsignedShort(ushort number, byte[] data)
         {
-            MsgPackSerializer.Deserialize<ushort?>(data).ShouldBe(number);
+            MsgPackSerializer.Serialize((ushort?)number).ShouldBe(data);
         }
 
         [Theory]
@@ -224,7 +222,8 @@ namespace MsgPack.Tests.Reader
         [InlineData(byte.MaxValue, new byte[] { 0xcc, 0xff })]
         public void TetsUnsignedByte(byte number, byte[] data)
         {
-            MsgPackSerializer.Deserialize<byte?>(data).ShouldBe(number);
+            MsgPackSerializer.Serialize((byte?)number).ShouldBe(data);
         }
+
     }
 }

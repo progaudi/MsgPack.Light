@@ -2,11 +2,9 @@ using System;
 
 using Shouldly;
 
-using MsgPack.Converters;
-
 using Xunit;
 
-namespace MsgPack.Tests.Reader
+namespace MsgPack.Tests.Writer
 {
     public class FloatingPoint
     {
@@ -27,7 +25,7 @@ namespace MsgPack.Tests.Reader
         [InlineData(double.NegativeInfinity, new byte[] {203, 255, 240, 0, 0, 0, 0, 0, 0})]
         public void TestDouble(double value, byte[] bytes)
         {
-            MsgPackSerializer.Deserialize<double>(bytes).ShouldBe(value);
+            MsgPackSerializer.Serialize(value).ShouldBe(bytes);
         }
 
         [Theory]
@@ -47,7 +45,7 @@ namespace MsgPack.Tests.Reader
         [InlineData(float.NegativeInfinity, new byte[] {202, 255, 128, 0, 0})]
         public void TestFloat(float value, byte[] bytes)
         {
-            MsgPackSerializer.Deserialize<float>(bytes).ShouldBe(value);
+            MsgPackSerializer.Serialize(value).ShouldBe(bytes);
         }
     }
 }
