@@ -29,7 +29,7 @@ namespace MsgPack
 
         public static T Deserialize<T>(byte[] data)
         {
-            return Deser8ialize<T>(data, new MsgPackContext());
+            return Deserialize<T>(data, new MsgPackContext());
         }
 
         public static T Deserialize<T>(byte[] data, [NotNull]MsgPackContext context)
