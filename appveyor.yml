@@ -36,7 +36,7 @@ build:
   verbosity: minimal
 
 test_script:
-  - ps: dnx -p tests/msgpack.tests test
+  - ps: dnx -p tests/msgpack.light.tests test
 
 artifacts:
-  - path: artifacts\bin\msgpack\Release\*.nupkg
+  - path: artifacts\bin\msgpack.light\Release\*.nupkg
