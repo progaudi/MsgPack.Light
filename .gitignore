@@ -1,4 +1,4 @@
-﻿################################################################################
+################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
@@ -9,3 +9,4 @@
 /artifacts/bin
 /artifacts/obj
 /.vs/config/applicationhost.config
+VS/.vs/config/applicationhost.config

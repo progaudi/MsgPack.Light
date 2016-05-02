@@ -1,0 +1,30 @@
+{
+    "version": "1.0.0",
+    "description": "Tests for MsgPack.Light library",
+    "authors": [ "aensidhe", "roman-kozachenko" ],
+    "tags": [ "tests", "xunit", "msgpack", "serialization" ],
+    "projectUrl": "https://github.com/roman-kozachenko/MsgPack.Light",
+    "licenseUrl": "https://raw.githubusercontent.com/roman-kozachenko/MsgPack.Light/master/LICENSE",
+
+    "commands": {
+        "test": "xunit.runner.dnx"
+    },
+
+    "compilationOptions": {
+        "warningsAsErrors": true
+    },
+    "frameworks": {
+        "dnx451": { },
+        "dnxcore50": {
+            "dependencies": {
+                "System.Reflection.TypeExtensions": "4.1.0-beta-23516"
+            }
+        }
+    },
+    "dependencies": {
+        "msgpack.light": { "target": "project" },
+        "xUnit": "2.1.0",
+        "xunit.runner.dnx": "2.1.0-rc1-build204",
+        "Shouldly": "2.7.0"
+    }
+}

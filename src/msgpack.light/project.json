@@ -1,0 +1,40 @@
+{
+    "version": "0.1.0",
+    "description": "Lightweight MsgPack library",
+    "authors": ["aensidhe", "roman-kozachenko"],
+    "tags": ["msgpack", "serialization"],
+    "projectUrl": "https://github.com/roman-kozachenko/MsgPack.Light",
+    "licenseUrl": "https://raw.githubusercontent.com/roman-kozachenko/MsgPack.Light/master/LICENSE",
+    "compilationOptions": {
+        "warningsAsErrors": true
+    },
+    "frameworks": {
+        "net451": {
+
+        },
+        "dnx451": {
+
+        },
+        "dnxcore50": {
+            "dependencies": {
+                "System.Collections": "4.0.11-beta-23516",
+                "System.Collections.Concurrent": "4.0.11-beta-23516",
+                "System.IO": "4.0.11-beta-23516",
+                "System.Linq": "4.0.1-beta-23516",
+                "System.Reflection": "4.1.0-beta-23516",
+                "System.Reflection.TypeExtensions": "4.1.0-beta-23516",
+                "System.Runtime": "4.0.21-beta-23516",
+                "System.Runtime.Extensions": "4.0.11-beta-23516",
+                "System.Runtime.InteropServices": "4.0.21-beta-23516",
+                "System.Runtime.Serialization.Primitives": "4.1.0-beta-23516",
+                "System.Linq.Expressions": "4.0.11-beta-23516"
+            }
+        }
+    },
+    "dependencies": {
+        "JetBrains.Annotations": {
+            "version": "10.1.4",
+            "options": "dev"
+        }
+    }
+}

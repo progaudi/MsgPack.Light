@@ -28,7 +28,7 @@ install:
 
 before_build:
   - ps: dnu restore
-  - ps: scripts\change-version.ps1 src\MsgPack.Light\project.json
+  - ps: scripts\change-version.ps1 src\msgPack.light\project.json
 
 build:
   parallel: true
@@ -36,7 +36,7 @@ build:
   verbosity: minimal
 
 test_script:
-  - ps: dnx -p tests/msgpack.tests test
+  - ps: dnx -p tests/msgpack.light.tests test
 
 artifacts:
-  - path: artifacts\bin\msgpack\Release\*.nupkg
+  - path: artifacts\bin\msgpack.light\Release\*.nupkg

@@ -1,11 +1,11 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "msgpack", "src\MsgPack.Light\msgpack.xproj", "{26884D70-2D12-46AC-884E-158E10E9314A}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "msgpack.light", "src\msgpack.light\msgpack.light.xproj", "{26884D70-2D12-46AC-884E-158E10E9314A}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "msgpack.tests", "tests\msgpack.tests\msgpack.tests.xproj", "{DBE7481B-65ED-4729-B611-8BDDE87766C3}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "msgpack.light.tests", "tests\msgpack.light.tests\msgpack.light.tests.xproj", "{DBE7481B-65ED-4729-B611-8BDDE87766C3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{024302AB-8703-44C5-A563-05F893163AF0}"
 	ProjectSection(SolutionItems) = preProject
