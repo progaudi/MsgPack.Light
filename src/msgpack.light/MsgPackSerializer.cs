@@ -26,6 +26,20 @@ namespace MsgPack.Light
             }
         }
 
+        public static void Serialize<T>(T data, Stream stream)
+        {
+            Serialize(data, stream, new MsgPackContext());
+        }
+
+        public static void Serialize<T>(T data, Stream stream, [NotNull]MsgPackContext context)
+        {
+            using (var writer = new MsgPackStreamWriter(stream, false))
+            {
+                var converter = GetConverter<T>(context);
+                converter.Write(data, writer);
+            }
+        }
+
         public static T Deserialize<T>(byte[] data)
         {
             return Deserialize<T>(data, new MsgPackContext());
@@ -36,6 +50,20 @@ namespace MsgPack.Light
             var reader = new MsgPackByteArrayReader(data);
             var converter = GetConverter<T>(context);
             return converter.Read(reader);
+        }
+
+        public static T Deserialize<T>(Stream stream)
+        {
+            return Deserialize<T>(stream, new MsgPackContext());
+        }
+
+        public static T Deserialize<T>(Stream stream, [NotNull]MsgPackContext context)
+        {
+            using (var reader = new MsgPackStreamReader(stream, false))
+            {
+                var converter = GetConverter<T>(context);
+                return converter.Read(reader);
+            }
         }
 
         [NotNull]
