@@ -1,8 +1,6 @@
-using System;
-
 namespace MsgPack.Light
 {
-    public interface IMsgPackWriter : IDisposable
+    public interface IMsgPackWriter
     {
         void Write(DataTypes dataType);
 

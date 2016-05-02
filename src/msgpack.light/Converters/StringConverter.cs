@@ -52,7 +52,7 @@ namespace MsgPack.Light.Converters
         {
             var buffer = BinaryConverter.ReadByteArray(reader, length);
 
-            return Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+            return Encoding.UTF8.GetString(buffer.Array, buffer.Offset, buffer.Count);
         }
 
         private bool TryGetFixstrLength(DataTypes type, out uint length)

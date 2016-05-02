@@ -44,16 +44,15 @@ namespace MsgPack.Light.Converters
                     throw ExceptionUtils.BadTypeException(type, DataTypes.Bin8, DataTypes.Bin16, DataTypes.Bin32, DataTypes.Null);
             }
 
-            return ReadByteArray(reader, length);
+            var segment = ReadByteArray(reader, length);
+            var array = new byte[segment.Count];
+            Array.Copy(segment.Array, segment.Offset, array, 0, segment.Count);
+            return array;
         }
 
-        internal static byte[] ReadByteArray(IMsgPackReader reader, uint length)
+        internal static ArraySegment<byte> ReadByteArray(IMsgPackReader reader, uint length)
         {
-            var buffer = new byte[length];
-
-            reader.ReadBytes(buffer);
-
-            return buffer;
+            return reader.ReadBytes(length);
         }
 
         private void WriteBinaryHeaderAndLength(int length, IMsgPackWriter writer)

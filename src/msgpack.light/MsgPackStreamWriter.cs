@@ -1,10 +1,11 @@
+using System;
 using System.IO;
 
 using MsgPack.Light.Converters;
 
 namespace MsgPack.Light
 {
-    internal class MsgPackStreamWriter : IMsgPackWriter
+    internal class MsgPackStreamWriter : IMsgPackWriter, IDisposable
     {
         private readonly Stream _stream;
 
@@ -28,7 +29,7 @@ namespace MsgPack.Light
 
         public void Write(byte[] array)
         {
-            _stream.WriteAsync(array, 0, array.Length);
+            _stream.Write(array, 0, array.Length);
         }
 
         public void Dispose()

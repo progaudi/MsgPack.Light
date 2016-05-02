@@ -3,13 +3,13 @@ using System.IO;
 
 namespace MsgPack.Light
 {
-    public interface IMsgPackReader : IDisposable
+    public interface IMsgPackReader
     {
         DataTypes ReadDataType();
 
         byte ReadByte();
 
-        void ReadBytes(byte[] buffer);
+        ArraySegment<byte> ReadBytes(uint length);
 
         void Seek(int offset, SeekOrigin origin);
 
