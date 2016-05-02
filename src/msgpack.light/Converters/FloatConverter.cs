@@ -47,7 +47,7 @@ namespace MsgPack.Light.Converters
             writer.Write(bytes);
         }
 
-        public double Read(IMsgPackReader reader, Func<double> creator)
+        double IMsgPackConverter<double>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -94,7 +94,7 @@ namespace MsgPack.Light.Converters
             writer.Write(bytes);
         }
 
-        public float Read(IMsgPackReader reader, Func<float> creator)
+        float IMsgPackConverter<float>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 

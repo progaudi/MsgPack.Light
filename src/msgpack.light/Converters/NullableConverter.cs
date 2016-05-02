@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 
 namespace MsgPack.Light.Converters
@@ -8,7 +7,7 @@ namespace MsgPack.Light.Converters
     {
         private MsgPackContext _context;
 
-        public T? Read(IMsgPackReader reader, Func<T?> creator)
+        public T? Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -17,23 +16,9 @@ namespace MsgPack.Light.Converters
 
             var structConverter = _context.GetConverter<T>();
 
-            Func<T> nullableCreator;
-            if (creator == null)
-            {
-                nullableCreator = null;
-            }
-            else
-            {
-                nullableCreator = () =>
-                {
-                    var result = creator();
-                    return result ?? default(T);
-                };
-            }
-
             reader.Seek(-1, SeekOrigin.Current);
 
-            return structConverter.Read(reader, nullableCreator);
+            return structConverter.Read(reader);
         }
 
         public void Write(T? value, IMsgPackWriter writer)

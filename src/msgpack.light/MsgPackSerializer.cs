@@ -33,14 +33,9 @@ namespace MsgPack.Light
 
         public static T Deserialize<T>(byte[] data, [NotNull]MsgPackContext context)
         {
-            return Deserialize<T>(data, context, null);
-        }
-
-        private static T Deserialize<T>(byte[] data, [NotNull]MsgPackContext context, Func<T> creator)
-        {
             var reader = new MsgPackByteArrayReader(data);
             var converter = GetConverter<T>(context);
-            return converter.Read(reader, creator);
+            return converter.Read(reader);
         }
 
         [NotNull]

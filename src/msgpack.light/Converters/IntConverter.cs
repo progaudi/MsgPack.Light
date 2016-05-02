@@ -33,7 +33,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public byte Read(IMsgPackReader reader, Func<byte> creator)
+        byte IMsgPackConverter<byte>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -103,7 +103,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public int Read(IMsgPackReader reader, Func<int> creator)
+        int IMsgPackConverter<int>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -190,7 +190,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public long Read(IMsgPackReader reader, Func<long> creator)
+        long IMsgPackConverter<long>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -263,7 +263,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public sbyte Read(IMsgPackReader reader, Func<sbyte> creator)
+        sbyte IMsgPackConverter<sbyte>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -320,7 +320,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public short Read(IMsgPackReader reader, Func<short> creator)
+        short IMsgPackConverter<short>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -393,7 +393,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public uint Read(IMsgPackReader reader, Func<uint> creator)
+        uint IMsgPackConverter<uint>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -483,7 +483,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public ulong Read(IMsgPackReader reader, Func<ulong> creator)
+        ulong IMsgPackConverter<ulong>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -563,7 +563,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public ushort Read(IMsgPackReader reader, Func<ushort> creator)
+        public ushort Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 

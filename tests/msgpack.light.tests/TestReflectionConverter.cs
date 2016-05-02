@@ -35,7 +35,7 @@ namespace MsgPack.Light.Tests
             methodDefinition.Invoke(converter, new[] { value, writer });
         }
 
-        public object Read(IMsgPackReader reader, Func<object> creator)
+        public object Read(IMsgPackReader reader)
         {
             var msgPackType = reader.ReadDataType();
 
@@ -140,9 +140,9 @@ namespace MsgPack.Light.Tests
             var converter = GetConverter(_context, type);
             var methodDefinition = typeof(IMsgPackConverter<>).MakeGenericType(type).GetMethod(
                 "Read",
-                new[] { typeof(IMsgPackReader), typeof(Func<>).MakeGenericType(type) });
+                new[] { typeof(IMsgPackReader) });
 
-            return methodDefinition.Invoke(converter, new object[] { reader, null });
+            return methodDefinition.Invoke(converter, new object[] { reader });
         }
 
         private Type TryInferFromFixedLength(DataTypes msgPackType)

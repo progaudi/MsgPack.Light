@@ -1,5 +1,3 @@
-using System;
-
 namespace MsgPack.Light.Converters
 {
     internal class NullConverter : IMsgPackConverter<object>
@@ -13,7 +11,7 @@ namespace MsgPack.Light.Converters
             writer.Write(DataTypes.Null);
         }
 
-        public object Read(IMsgPackReader reader, Func<object> creator)
+        public object Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
             if (type == DataTypes.Null)

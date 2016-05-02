@@ -25,7 +25,7 @@ namespace MsgPack.Light.Converters
         }
 
         // We will have problem with binary blobs greater than int.MaxValue bytes.
-        public byte[] Read(IMsgPackReader reader, Func<byte[]> creator)
+        public byte[] Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 

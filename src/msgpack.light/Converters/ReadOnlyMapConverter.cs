@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace MsgPack.Light.Converters
@@ -23,7 +22,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public override TMap Read(IMsgPackReader reader, Func<TMap> creator)
+        public override TMap Read(IMsgPackReader reader)
         {
             throw ExceptionUtils.CantReadReadOnlyCollection(typeof(TMap));
         }

@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 
 namespace MsgPack.Light.Converters
@@ -28,7 +27,7 @@ namespace MsgPack.Light.Converters
             writer.Write(data);
         }
 
-        public string Read(IMsgPackReader reader, Func<string> creator)
+        public string Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 

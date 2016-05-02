@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace MsgPack.Light.Converters
@@ -30,40 +29,35 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public override TArray Read(IMsgPackReader reader, Func<TArray> creator)
+        public override TArray Read(IMsgPackReader reader)
         {
             var length = reader.ReadArrayLength();
-            return length.HasValue ? ReadArray(reader, creator, length.Value) : default(TArray);
-        }
-
-        private TArray ReadArray(IMsgPackReader reader, Func<TArray> creator, uint length)
-        {
-            if (IsSingleDimensionArray && creator == null)
-                return ReadArray(reader, length);
-
-            return ReadList(reader, creator, length);
+            return length.HasValue ? ReadArray(reader, length.Value) : default(TArray);
         }
 
         private TArray ReadArray(IMsgPackReader reader, uint length)
         {
+            if (!IsSingleDimensionArray)
+                return ReadList(reader, length);
+
             // ReSharper disable once RedundantCast
             var result = (TArray)(object)new TElement[length];
 
             for (var i = 0; i < length; i++)
             {
-                result[i] = ElementConverter.Read(reader, null);
+                result[i] = ElementConverter.Read(reader);
             }
 
             return result;
         }
 
-        private TArray ReadList(IMsgPackReader reader, Func<TArray> creator, uint length)
+        private TArray ReadList(IMsgPackReader reader, uint length)
         {
-            var array = creator == null ? (TArray)Context.GetObjectActivator(typeof (TArray))() : creator();
+            var array = (TArray)Context.GetObjectActivator(typeof (TArray))();
 
             for (var i = 0u; i < length; i++)
             {
-                array.Add(ElementConverter.Read(reader, null));
+                array.Add(ElementConverter.Read(reader));
             }
 
             return array;

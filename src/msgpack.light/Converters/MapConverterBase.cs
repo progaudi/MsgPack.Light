@@ -1,5 +1,3 @@
-using System;
-
 namespace MsgPack.Light.Converters
 {
     internal abstract class MapConverterBase<TMap, TKey, TValue> : IMsgPackConverter<TMap>
@@ -25,7 +23,7 @@ namespace MsgPack.Light.Converters
 
         public abstract void Write(TMap value, IMsgPackWriter writer);
 
-        public abstract TMap Read(IMsgPackReader reader, Func<TMap> creator);
+        public abstract TMap Read(IMsgPackReader reader);
 
         protected MsgPackContext Context { get; private set; }
 

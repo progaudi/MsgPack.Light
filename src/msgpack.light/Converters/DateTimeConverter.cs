@@ -19,10 +19,10 @@ namespace MsgPack.Light.Converters
             longConverter.Write(longValue, writer);
         }
 
-        public DateTime Read(IMsgPackReader reader, Func<DateTime> creator)
+        DateTime IMsgPackConverter<DateTime>.Read(IMsgPackReader reader)
         {
             var longConverter = _context.GetConverter<long>();
-            var longValue = longConverter.Read(reader, null);
+            var longValue = longConverter.Read(reader);
             return DateTimeUtils.ToDateTime(longValue);
         }
 
@@ -34,10 +34,10 @@ namespace MsgPack.Light.Converters
             longConverter.Write(longValue, writer);
         }
 
-        public DateTimeOffset Read(IMsgPackReader reader, Func<DateTimeOffset> creator)
+        DateTimeOffset IMsgPackConverter<DateTimeOffset>.Read(IMsgPackReader reader)
         {
             var longConverter = _context.GetConverter<long>();
-            var longValue = longConverter.Read(reader, null);
+            var longValue = longConverter.Read(reader);
             return DateTimeUtils.ToDateTimeOffset(longValue);
         }
     }

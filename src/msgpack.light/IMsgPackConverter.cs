@@ -12,6 +12,6 @@ namespace MsgPack.Light
     {
         void Write([CanBeNull] T value, [NotNull] IMsgPackWriter writer);
 
-        T Read([NotNull] IMsgPackReader reader, Func<T> creator);
+        T Read([NotNull] IMsgPackReader reader);
     }
 }

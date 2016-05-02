@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace MsgPack.Light.Converters
@@ -23,20 +22,20 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public override TMap Read(IMsgPackReader reader, Func<TMap> creator)
+        public override TMap Read(IMsgPackReader reader)
         {
             var length = reader.ReadMapLength();
-            return length.HasValue ? ReadMap(reader, creator, length.Value) : default(TMap);
+            return length.HasValue ? ReadMap(reader, length.Value) : default(TMap);
         }
 
-        private TMap ReadMap(IMsgPackReader reader, Func<TMap> creator, uint length)
+        private TMap ReadMap(IMsgPackReader reader, uint length)
         {
-            var map = creator == null ? (TMap) Context.GetObjectActivator(typeof(TMap))() : creator();
+            var map = (TMap) Context.GetObjectActivator(typeof(TMap))();
 
             for (var i = 0u; i < length; i++)
             {
-                var key = KeyConverter.Read(reader, null);
-                var value = ValueConverter.Read(reader, null);
+                var key = KeyConverter.Read(reader);
+                var value = ValueConverter.Read(reader);
 
                 map[key] = value;
             }

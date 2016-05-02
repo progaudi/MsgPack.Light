@@ -1,12 +1,10 @@
-using System;
-
 namespace MsgPack.Light.Converters
 {
     internal abstract class ArrayConverterBase<TArray, TElement> : IMsgPackConverter<TArray>
     {
         public abstract void Write(TArray value, IMsgPackWriter writer);
 
-        public abstract TArray Read(IMsgPackReader reader, Func<TArray> creator);
+        public abstract TArray Read(IMsgPackReader reader);
 
         public void Initialize(MsgPackContext context)
         {

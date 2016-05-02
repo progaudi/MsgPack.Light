@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace MsgPack.Light.Converters
@@ -22,7 +21,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public override TArray Read(IMsgPackReader reader, Func<TArray> creator)
+        public override TArray Read(IMsgPackReader reader)
         {
             throw ExceptionUtils.CantReadReadOnlyCollection(typeof(TArray));
         }
