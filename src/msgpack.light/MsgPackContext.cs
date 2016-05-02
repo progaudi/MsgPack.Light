@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -8,10 +7,11 @@ using MsgPack.Light.Converters;
 
 namespace MsgPack.Light
 {
-
     public class MsgPackContext
     {
-        private static readonly IReadOnlyDictionary<Type, IMsgPackConverter> DefaultConverters = new Dictionary<Type, IMsgPackConverter>
+        private static readonly IMsgPackConverter<object> SharedNullConverter = new NullConverter();
+
+        private readonly Dictionary<Type, IMsgPackConverter> _converters = new Dictionary<Type, IMsgPackConverter>
         {
             {typeof (bool), new BoolConverter()},
             {typeof (string), new StringConverter()},
@@ -44,15 +44,9 @@ namespace MsgPack.Light
             {typeof (DateTimeOffset?), new NullableConverter<DateTimeOffset>()}
         };
 
-        private static readonly IMsgPackConverter<object> SharedNullConverter = new NullConverter();
-
-        private readonly Dictionary<Type, IMsgPackConverter> _converters = new Dictionary<Type, IMsgPackConverter>();
-
         private readonly Dictionary<Type, Type> _genericConverters = new Dictionary<Type, Type>();
 
-        private readonly ConcurrentDictionary<Type, IMsgPackConverter> _generatedConverters = new ConcurrentDictionary<Type, IMsgPackConverter>();
-
-        private readonly ConcurrentDictionary<Type, Func<object>> _objectActivators = new ConcurrentDictionary<Type, Func<object>>();
+        private readonly Dictionary<Type, Func<object>> _objectActivators = new Dictionary<Type, Func<object>>();
 
         public IMsgPackConverter<object> NullConverter => SharedNullConverter;
 
@@ -77,7 +71,7 @@ namespace MsgPack.Light
         {
             var type = typeof(T);
             return (IMsgPackConverter<T>)
-                (GetConverterFromCache(type)
+                (GetConverterFromCache<T>()
                 ?? TryGenerateConverterFromGenericConverter(type)
                 ?? TryGenerateArrayConverter(type)
                 ?? TryGenerateMapConverter(type)
@@ -86,7 +80,7 @@ namespace MsgPack.Light
 
         public Func<object> GetObjectActivator(Type type)
         {
-            return _objectActivators.GetOrAdd(type, t => CompiledLambdaActivatorFactory.GetActivator(type));
+            return _objectActivators.GetOrAdd(type, CompiledLambdaActivatorFactory.GetActivator);
         }
 
         private IMsgPackConverter TryGenerateConverterFromGenericConverter(Type type)
@@ -103,7 +97,7 @@ namespace MsgPack.Light
                 return null;
             }
 
-            return _generatedConverters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(x.MakeGenericType(type.GenericTypeArguments))());
+            return _converters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(x.MakeGenericType(type.GenericTypeArguments))());
         }
 
         private IMsgPackConverter TryGenerateMapConverter(Type type)
@@ -111,7 +105,7 @@ namespace MsgPack.Light
             var mapInterface = GetGenericInterface(type, typeof(IDictionary<,>));
             if (mapInterface != null)
             {
-                return _generatedConverters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(typeof(MapConverter<,,>).MakeGenericType(
+                return _converters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(typeof(MapConverter<,,>).MakeGenericType(
                     x,
                     mapInterface.GenericTypeArguments[0],
                     mapInterface.GenericTypeArguments[1]))());
@@ -120,7 +114,7 @@ namespace MsgPack.Light
             mapInterface = GetGenericInterface(type, typeof(IReadOnlyDictionary<,>));
             if (mapInterface != null)
             {
-                return _generatedConverters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(typeof(ReadOnlyMapConverter<,,>).MakeGenericType(
+                return _converters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(typeof(ReadOnlyMapConverter<,,>).MakeGenericType(
                     x,
                     mapInterface.GenericTypeArguments[0],
                     mapInterface.GenericTypeArguments[1]))());
@@ -137,7 +131,7 @@ namespace MsgPack.Light
                 return null;
             }
 
-            return _generatedConverters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(typeof(NullableConverter<>).MakeGenericType(x.GetTypeInfo().GenericTypeArguments[0]))());
+            return _converters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(typeof(NullableConverter<>).MakeGenericType(x.GetTypeInfo().GenericTypeArguments[0]))());
         }
 
         private IMsgPackConverter TryGenerateArrayConverter(Type type)
@@ -145,27 +139,23 @@ namespace MsgPack.Light
             var arrayInterface = GetGenericInterface(type, typeof(IList<>));
             if (arrayInterface != null)
             {
-                return _generatedConverters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(typeof(ArrayConverter<,>).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))());
+                return _converters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(typeof(ArrayConverter<,>).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))());
             }
 
             arrayInterface = GetGenericInterface(type, typeof(IReadOnlyList<>));
             return arrayInterface != null
-                ? _generatedConverters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(typeof(ReadOnlyListConverter<,>).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))())
+                ? _converters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(typeof(ReadOnlyListConverter<,>).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))())
                 : null;
         }
 
-        private IMsgPackConverter GetConverterFromCache(Type type)
+        private IMsgPackConverter GetConverterFromCache<T>()
         {
             IMsgPackConverter temp;
 
-            if (_converters.TryGetValue(type, out temp))
+            if (_converters.TryGetValue(typeof(T), out temp))
+            {
                 return temp;
-
-            if (_generatedConverters.TryGetValue(type, out temp))
-                return temp;
-
-            if (DefaultConverters.TryGetValue(type, out temp))
-                return temp;
+            }
 
             return null;
         }
