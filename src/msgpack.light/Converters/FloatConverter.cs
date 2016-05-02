@@ -12,29 +12,39 @@ namespace MsgPack.Light.Converters
         public void Write(double value, IMsgPackWriter writer)
         {
             var binary = new DoubleBinary(value);
-            writer.Write(DataTypes.Double);
+            byte[] bytes;
             if (BitConverter.IsLittleEndian)
             {
-                writer.Write(binary.byte7);
-                writer.Write(binary.byte6);
-                writer.Write(binary.byte5);
-                writer.Write(binary.byte4);
-                writer.Write(binary.byte3);
-                writer.Write(binary.byte2);
-                writer.Write(binary.byte1);
-                writer.Write(binary.byte0);
+                bytes = new[]
+                {
+                    (byte) DataTypes.Double,
+                    binary.byte7,
+                    binary.byte6,
+                    binary.byte5,
+                    binary.byte4,
+                    binary.byte3,
+                    binary.byte2,
+                    binary.byte1,
+                    binary.byte0
+                };
             }
             else
             {
-                writer.Write(binary.byte0);
-                writer.Write(binary.byte1);
-                writer.Write(binary.byte2);
-                writer.Write(binary.byte3);
-                writer.Write(binary.byte4);
-                writer.Write(binary.byte5);
-                writer.Write(binary.byte6);
-                writer.Write(binary.byte7);
+                bytes = new[]
+                {
+                    (byte) DataTypes.Double,
+                    binary.byte0,
+                    binary.byte1,
+                    binary.byte2,
+                    binary.byte3,
+                    binary.byte4,
+                    binary.byte5,
+                    binary.byte6,
+                    binary.byte7
+                };
             }
+
+            writer.Write(bytes);
         }
 
         public double Read(IMsgPackReader reader, Func<double> creator)
@@ -57,21 +67,31 @@ namespace MsgPack.Light.Converters
         public void Write(float value, IMsgPackWriter writer)
         {
             var binary = new FloatBinary(value);
-            writer.Write(DataTypes.Single);
+            byte[] bytes;
             if (BitConverter.IsLittleEndian)
             {
-                writer.Write(binary.byte3);
-                writer.Write(binary.byte2);
-                writer.Write(binary.byte1);
-                writer.Write(binary.byte0);
+                bytes = new[]
+                {
+                    (byte) DataTypes.Single,
+                    binary.byte3,
+                    binary.byte2,
+                    binary.byte1,
+                    binary.byte0
+                };
             }
             else
             {
-                writer.Write(binary.byte0);
-                writer.Write(binary.byte1);
-                writer.Write(binary.byte2);
-                writer.Write(binary.byte3);
+                bytes = new[]
+                {
+                    (byte) DataTypes.Single,
+                    binary.byte0,
+                    binary.byte1,
+                    binary.byte2,
+                    binary.byte3
+                };
             }
+
+            writer.Write(bytes);
         }
 
         public float Read(IMsgPackReader reader, Func<float> creator)
