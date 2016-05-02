@@ -6,46 +6,37 @@ namespace MsgPack.Light.Converters
     internal class MapConverter<TMap, TKey, TValue> : MapConverterBase<TMap, TKey, TValue>
         where TMap : IDictionary<TKey, TValue>
     {
-        public override void Write(TMap value, IMsgPackWriter writer, MsgPackContext context)
+        public override void Write(TMap value, IMsgPackWriter writer)
         {
             if (value == null)
             {
-                context.NullConverter.Write(value, writer, context);
+                Context.NullConverter.Write(value, writer);
                 return;
             }
 
             writer.WriteMapHeaderAndLength((uint) value.Count);
-            var keyConverter = context.GetConverter<TKey>();
-            var valueConverter = context.GetConverter<TValue>();
-
-            ValidateConverters(keyConverter, valueConverter);
 
             foreach (var element in value)
             {
-                keyConverter.Write(element.Key, writer, context);
-                valueConverter.Write(element.Value, writer, context);
+                KeyConverter.Write(element.Key, writer);
+                ValueConverter.Write(element.Value, writer);
             }
         }
 
-        public override TMap Read(IMsgPackReader reader, MsgPackContext context, Func<TMap> creator)
+        public override TMap Read(IMsgPackReader reader, Func<TMap> creator)
         {
             var length = reader.ReadMapLength();
-            return length.HasValue ? ReadMap(reader, context, creator, length.Value) : default(TMap);
+            return length.HasValue ? ReadMap(reader, creator, length.Value) : default(TMap);
         }
 
-        private TMap ReadMap(IMsgPackReader reader, MsgPackContext context, Func<TMap> creator, uint length)
+        private TMap ReadMap(IMsgPackReader reader, Func<TMap> creator, uint length)
         {
-            var keyConverter = context.GetConverter<TKey>();
-            var valueConverter = context.GetConverter<TValue>();
-
-            ValidateConverters(keyConverter, valueConverter);
-
-            var map = creator == null ? (TMap) context.GetObjectActivator(typeof(TMap))() : creator();
+            var map = creator == null ? (TMap) Context.GetObjectActivator(typeof(TMap))() : creator();
 
             for (var i = 0u; i < length; i++)
             {
-                var key = keyConverter.Read(reader, context, null);
-                var value = valueConverter.Read(reader, context, null);
+                var key = KeyConverter.Read(reader, null);
+                var value = ValueConverter.Read(reader, null);
 
                 map[key] = value;
             }

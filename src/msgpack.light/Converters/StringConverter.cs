@@ -5,11 +5,18 @@ namespace MsgPack.Light.Converters
 {
     internal class StringConverter : IMsgPackConverter<string>
     {
-        public void Write(string value, IMsgPackWriter writer, MsgPackContext context)
+        private MsgPackContext _context;
+
+        public void Initialize(MsgPackContext context)
+        {
+            _context = context;
+        }
+
+        public void Write(string value, IMsgPackWriter writer)
         {
             if (value == null)
             {
-                context.NullConverter.Write(value, writer, context);
+                _context.NullConverter.Write(value, writer);
                 return;
             }
 
@@ -20,7 +27,7 @@ namespace MsgPack.Light.Converters
             writer.Write(data);
         }
 
-        public string Read(IMsgPackReader reader, MsgPackContext context, Func<string> creator)
+        public string Read(IMsgPackReader reader, Func<string> creator)
         {
             var type = reader.ReadDataType();
 

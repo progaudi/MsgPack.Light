@@ -5,12 +5,13 @@ namespace MsgPack.Light
 {
     public interface IMsgPackConverter
     {
+        void Initialize([NotNull] MsgPackContext context);
     }
 
     public interface IMsgPackConverter<T> : IMsgPackConverter
     {
-        void Write([CanBeNull] T value, [NotNull] IMsgPackWriter writer, [NotNull] MsgPackContext context);
+        void Write([CanBeNull] T value, [NotNull] IMsgPackWriter writer);
 
-        T Read([NotNull] IMsgPackReader reader, [NotNull] MsgPackContext context, Func<T> creator);
+        T Read([NotNull] IMsgPackReader reader, Func<T> creator);
     }
 }

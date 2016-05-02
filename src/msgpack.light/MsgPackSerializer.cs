@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace MsgPack.Light
 {
-    [DebuggerStepThrough]
+    //[DebuggerStepThrough]
     public static class MsgPackSerializer
     {
         public static byte[] Serialize<T>(T data)
@@ -21,8 +21,7 @@ namespace MsgPack.Light
             using (var writer = new MsgPackStreamWriter(memoryStream))
             {
                 var converter = GetConverter<T>(context);
-
-                converter.Write(data, writer, context);
+                converter.Write(data, writer);
                 return memoryStream.ToArray();
             }
         }
@@ -41,7 +40,7 @@ namespace MsgPack.Light
         {
             var reader = new MsgPackByteArrayReader(data);
             var converter = GetConverter<T>(context);
-            return converter.Read(reader, context, creator);
+            return converter.Read(reader, creator);
         }
 
         [NotNull]
@@ -53,6 +52,7 @@ namespace MsgPack.Light
             {
                 throw new SerializationException($"Provide converter for {typeof(T).Name}");
             }
+
             return converter;
         }
     }

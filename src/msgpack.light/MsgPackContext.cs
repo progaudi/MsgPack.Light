@@ -48,10 +48,19 @@ namespace MsgPack.Light
 
         private readonly Dictionary<Type, Func<object>> _objectActivators = new Dictionary<Type, Func<object>>();
 
+        public MsgPackContext()
+        {
+            foreach (var converter in _converters)
+            {
+                converter.Value.Initialize(this);
+            }
+        }
+
         public IMsgPackConverter<object> NullConverter => SharedNullConverter;
 
         public void RegisterConverter<T>(IMsgPackConverter<T> converter)
         {
+            converter.Initialize(this);
             _converters[typeof(T)] = converter;
         }
 
@@ -70,12 +79,18 @@ namespace MsgPack.Light
         public IMsgPackConverter<T> GetConverter<T>()
         {
             var type = typeof(T);
-            return (IMsgPackConverter<T>)
-                (GetConverterFromCache<T>()
-                ?? TryGenerateConverterFromGenericConverter(type)
+            var result = (IMsgPackConverter<T>)GetConverterFromCache<T>();
+            if (result != null)
+                return result;
+
+            result = (IMsgPackConverter<T>) (TryGenerateConverterFromGenericConverter(type)
                 ?? TryGenerateArrayConverter(type)
                 ?? TryGenerateMapConverter(type)
                 ?? TryGenerateNullableConverter(type));
+
+            result.Initialize(this);
+
+            return result;
         }
 
         public Func<object> GetObjectActivator(Type type)

@@ -24,20 +24,11 @@ namespace MsgPack.Light
 
         public byte ReadByte()
         {
-            CheckLength(1);
-
             return _data[_offset++];
-        }
-
-        private void CheckLength(uint length)
-        {
-            if (_offset + length > _data.Length)
-                throw ExceptionUtils.NotEnoughBytes(_data.Length - _offset, length);
         }
 
         public ArraySegment<byte> ReadBytes(uint length)
         {
-            CheckLength(length);
             _offset += length;
             return new ArraySegment<byte>(_data, (int) (_offset - length), (int) length);
         }

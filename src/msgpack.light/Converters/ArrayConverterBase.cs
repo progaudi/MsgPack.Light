@@ -4,16 +4,23 @@ namespace MsgPack.Light.Converters
 {
     internal abstract class ArrayConverterBase<TArray, TElement> : IMsgPackConverter<TArray>
     {
-        public abstract void Write(TArray value, IMsgPackWriter writer, MsgPackContext context);
+        public abstract void Write(TArray value, IMsgPackWriter writer);
 
-        public abstract TArray Read(IMsgPackReader reader, MsgPackContext context, Func<TArray> creator);
+        public abstract TArray Read(IMsgPackReader reader, Func<TArray> creator);
 
-        protected static void ValidateConverter(IMsgPackConverter<TElement> elementConverter)
+        public void Initialize(MsgPackContext context)
         {
+            var elementConverter = context.GetConverter<TElement>();
             if (elementConverter == null)
             {
                 throw ExceptionUtils.NoConverterForCollectionElement(typeof(TElement), "element");
             }
+            ElementConverter = elementConverter;
+            Context = context;
         }
+
+        protected IMsgPackConverter<TElement> ElementConverter { get; private set; }
+
+        protected MsgPackContext Context { get; private set; }
     }
 }

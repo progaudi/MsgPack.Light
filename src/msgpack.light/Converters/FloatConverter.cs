@@ -5,7 +5,11 @@ namespace MsgPack.Light.Converters
 {
     internal class FloatConverter : IMsgPackConverter<float>, IMsgPackConverter<double>
     {
-        public void Write(double value, IMsgPackWriter writer, MsgPackContext context)
+        public void Initialize(MsgPackContext context)
+        {
+        }
+
+        public void Write(double value, IMsgPackWriter writer)
         {
             var binary = new DoubleBinary(value);
             writer.Write(DataTypes.Double);
@@ -33,7 +37,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public double Read(IMsgPackReader reader, MsgPackContext context, Func<double> creator)
+        public double Read(IMsgPackReader reader, Func<double> creator)
         {
             var type = reader.ReadDataType();
 
@@ -49,8 +53,8 @@ namespace MsgPack.Light.Converters
 
             return new DoubleBinary(bytes).value;
         }
-        
-        public void Write(float value, IMsgPackWriter writer, MsgPackContext context)
+
+        public void Write(float value, IMsgPackWriter writer)
         {
             var binary = new FloatBinary(value);
             writer.Write(DataTypes.Single);
@@ -70,7 +74,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        float IMsgPackConverter<float>.Read(IMsgPackReader reader, MsgPackContext context, Func<float> creator)
+        public float Read(IMsgPackReader reader, Func<float> creator)
         {
             var type = reader.ReadDataType();
 

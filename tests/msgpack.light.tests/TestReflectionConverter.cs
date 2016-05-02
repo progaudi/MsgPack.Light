@@ -11,24 +11,31 @@ namespace MsgPack.Light.Tests
 {
     public class TestReflectionConverter : IMsgPackConverter<object>
     {
-        public void Write(object value, IMsgPackWriter writer, MsgPackContext context)
+        private MsgPackContext _context;
+
+        public void Initialize(MsgPackContext context)
+        {
+            _context = context;
+        }
+
+        public void Write(object value, IMsgPackWriter writer)
         {
             if (value == null)
             {
-                context.NullConverter.Write(value, writer, context);
+                _context.NullConverter.Write(null, writer);
                 return;
             }
 
-            var converter = GetConverter(context, value.GetType());
+            var converter = GetConverter(_context, value.GetType());
 
             var methodDefinition = typeof(IMsgPackConverter<>).MakeGenericType(value.GetType()).GetMethod(
                 "Write",
-                new[] { value.GetType(), typeof(IMsgPackWriter), typeof(MsgPackContext) });
+                new[] { value.GetType(), typeof(IMsgPackWriter) });
 
-            methodDefinition.Invoke(converter, new[] { value, writer, context });
+            methodDefinition.Invoke(converter, new[] { value, writer });
         }
 
-        public object Read(IMsgPackReader reader, MsgPackContext context, Func<object> creator)
+        public object Read(IMsgPackReader reader, Func<object> creator)
         {
             var msgPackType = reader.ReadDataType();
 
@@ -130,12 +137,12 @@ namespace MsgPack.Light.Tests
             }
 
             reader.Seek(-1, SeekOrigin.Current);
-            var converter = GetConverter(context, type);
+            var converter = GetConverter(_context, type);
             var methodDefinition = typeof(IMsgPackConverter<>).MakeGenericType(type).GetMethod(
                 "Read",
-                new[] { typeof(IMsgPackReader), typeof(MsgPackContext), typeof(Func<>).MakeGenericType(type) });
+                new[] { typeof(IMsgPackReader), typeof(Func<>).MakeGenericType(type) });
 
-            return methodDefinition.Invoke(converter, new object[] { reader, context, null });
+            return methodDefinition.Invoke(converter, new object[] { reader, null });
         }
 
         private Type TryInferFromFixedLength(DataTypes msgPackType)
