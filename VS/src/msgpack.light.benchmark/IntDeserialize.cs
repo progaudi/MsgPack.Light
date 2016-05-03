@@ -15,11 +15,14 @@ namespace msgpack.light.benchmark
 
         private readonly MemoryStream _stream;
 
+        private readonly MsgPackContext _mplightContext;
+
         public IntDeserialize()
         {
             _messagePackSerializer = SerializationContext.Default.GetSerializer<int[]>();
             _bytes = _messagePackSerializer.PackSingleObject(Integers.Data);
             _stream = new MemoryStream(_bytes);
+            _mplightContext = new MsgPackContext();
         }
 
         [Benchmark]
@@ -38,14 +41,14 @@ namespace msgpack.light.benchmark
         [Benchmark]
         public void MPLight_Array()
         {
-            var data = MsgPackSerializer.Deserialize<int[]>(_bytes);
+            var data = MsgPackSerializer.Deserialize<int[]>(_bytes, _mplightContext);
         }
 
         [Benchmark]
         public void MPLight_Stream()
         {
             _stream.Seek(0, SeekOrigin.Begin);
-            var data = MsgPackSerializer.Deserialize<int[]>(_stream);
+            var data = MsgPackSerializer.Deserialize<int[]>(_stream, _mplightContext);
         }
     }
 }
