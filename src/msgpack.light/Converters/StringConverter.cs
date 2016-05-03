@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 
 namespace MsgPack.Light.Converters
@@ -57,7 +58,7 @@ namespace MsgPack.Light.Converters
 
         private string ReadString(IMsgPackReader reader, uint length)
         {
-            var buffer = BinaryConverter.ReadByteArray(reader, length);
+            var buffer = reader.ReadBytes(length);
 
             return Utf8.GetString(buffer.Array, buffer.Offset, buffer.Count);
         }

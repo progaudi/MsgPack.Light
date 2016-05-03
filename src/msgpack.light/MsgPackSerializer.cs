@@ -1,5 +1,3 @@
-using System;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 
@@ -7,7 +5,6 @@ using JetBrains.Annotations;
 
 namespace MsgPack.Light
 {
-    //[DebuggerStepThrough]
     public static class MsgPackSerializer
     {
         public static byte[] Serialize<T>(T data)
@@ -18,7 +15,7 @@ namespace MsgPack.Light
         public static byte[] Serialize<T>(T data, [NotNull]MsgPackContext context)
         {
             var memoryStream = new MemoryStream();
-            using (var writer = new MsgPackStreamWriter(memoryStream))
+            using (var writer = new MsgPackMemoryStreamWriter(memoryStream))
             {
                 var converter = GetConverter<T>(context);
                 converter.Write(data, writer);
@@ -26,14 +23,14 @@ namespace MsgPack.Light
             }
         }
 
-        public static void Serialize<T>(T data, Stream stream)
+        public static void Serialize<T>(T data, MemoryStream stream)
         {
             Serialize(data, stream, new MsgPackContext());
         }
 
-        public static void Serialize<T>(T data, Stream stream, [NotNull]MsgPackContext context)
+        public static void Serialize<T>(T data, MemoryStream stream, [NotNull]MsgPackContext context)
         {
-            using (var writer = new MsgPackStreamWriter(stream, false))
+            using (var writer = new MsgPackMemoryStreamWriter(stream, false))
             {
                 var converter = GetConverter<T>(context);
                 converter.Write(data, writer);
@@ -52,14 +49,14 @@ namespace MsgPack.Light
             return converter.Read(reader);
         }
 
-        public static T Deserialize<T>(Stream stream)
+        public static T Deserialize<T>(MemoryStream stream)
         {
             return Deserialize<T>(stream, new MsgPackContext());
         }
 
-        public static T Deserialize<T>(Stream stream, [NotNull]MsgPackContext context)
+        public static T Deserialize<T>(MemoryStream stream, [NotNull]MsgPackContext context)
         {
-            using (var reader = new MsgPackStreamReader(stream, false))
+            using (var reader = new MsgPackMemoryStreamReader(stream, false))
             {
                 var converter = GetConverter<T>(context);
                 return converter.Read(reader);

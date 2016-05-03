@@ -7,6 +7,8 @@ namespace MsgPack.Light.Converters
     {
         private MsgPackContext _context;
 
+        private IMsgPackConverter<T> _converter;
+
         public T? Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
@@ -14,19 +16,16 @@ namespace MsgPack.Light.Converters
             if (type == DataTypes.Null)
                 return null;
 
-            var structConverter = _context.GetConverter<T>();
-
             reader.Seek(-1, SeekOrigin.Current);
 
-            return structConverter.Read(reader);
+            return _converter.Read(reader);
         }
 
         public void Write(T? value, IMsgPackWriter writer)
         {
             if (value.HasValue)
             {
-                var valueConverter = _context.GetConverter<T>();
-                valueConverter.Write(value.Value, writer);
+                _converter.Write(value.Value, writer);
             }
             else
             {
@@ -37,6 +36,7 @@ namespace MsgPack.Light.Converters
         public void Initialize(MsgPackContext context)
         {
             _context = context;
+            _converter = context.GetConverter<T>();
         }
     }
 }
