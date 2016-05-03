@@ -14,7 +14,7 @@
         "BenchmarkDotNet": "0.9.5",
         "MsgPack.Cli": "0.6.8",
         "Newtonsoft.Json": "8.0.3",
-        "JsonStack.Text": "4.0.56"
+        "ServiceStack.Text": "4.0.56"
     },
 
     "frameworks": {
@@ -26,6 +26,6 @@
     },
 
     "runtimes": {
-        "win":  {} 
+        "win":  {}
     }
 }
