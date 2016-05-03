@@ -60,13 +60,13 @@ namespace msgpack.light.benchmark
 
         internal void MsgPackSerialize(MemoryStream memoryStream)
         {
-            Serializers<Beer>.MsgPack.Pack(memoryStream, _testBeer);
+            Serializers<Beer>.MsgPack.GetSerializer<Beer>().Pack(memoryStream, _testBeer);
         }
 
         [Benchmark]
         public void MPCli_Array()
         {
-            var memoryStream = new MemoryStream(Serializers<Beer>.MsgPack.PackSingleObject(_testBeer));
+            var memoryStream = new MemoryStream(Serializers<Beer>.MsgPack.GetSerializer<Beer>().PackSingleObject(_testBeer));
         }
 
         [Benchmark]

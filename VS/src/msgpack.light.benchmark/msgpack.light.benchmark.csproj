@@ -42,6 +42,7 @@
     <Compile Include="BeerBenchmark.cs" />
     <Compile Include="BeerConverter.cs" />
     <Compile Include="BeerDeserializeBenchmark.cs" />
+    <Compile Include="BeerSerializer.cs" />
     <Compile Include="BenchmarkConfig.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Serializers.cs" />

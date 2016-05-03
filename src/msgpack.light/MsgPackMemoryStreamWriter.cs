@@ -58,7 +58,7 @@ namespace MsgPack.Light
             }
         }
 
-        public void WriteMapHeaderAndLength(uint length)
+        public void WriteMapHeader(uint length)
         {
             if (length <= 15)
             {

@@ -11,12 +11,13 @@ namespace msgpack.light.benchmark
     {
         public static readonly JsonSerializer Newtonsoft = new JsonSerializer();
         public static readonly TypeSerializer<T> ServiceStack = new TypeSerializer<T>();
-        public static readonly MessagePackSerializer<T> MsgPack = MessagePackSerializer.Get<T>();
+        public static readonly SerializationContext MsgPack = new SerializationContext();
         public static readonly MsgPackContext MsgPackLight = new MsgPackContext();
 
         static Serializers()
         {
             MsgPackLight.RegisterConverter(new BeerConverter());
+            MsgPack.Serializers.Register(new BeerSerializer(MsgPack));
         }
     }
 }

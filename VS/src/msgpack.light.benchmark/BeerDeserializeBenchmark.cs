@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -13,37 +12,22 @@ namespace msgpack.light.benchmark
     {
         private readonly MemoryStream _json;
 
-        private readonly MemoryStream _msgPackCli;
+        private readonly MemoryStream _msgPack;
 
-        private readonly byte[] _msgPackCliArray;
-
-        private readonly MemoryStream _msgPackLight;
-
-        private readonly byte[] _msgPackLightArray;
+        private readonly byte[] _msgPackArray;
 
         public BeerDeserializeBenchmark()
         {
             var serializer = new BeerSerializeBenchmark();
             _json = PrepareJson(serializer);
-            _msgPackCli = PrepareMsgPack(serializer);
-            _msgPackCliArray = _msgPackCli.ToArray();
-
-            // as I found, we have a different order of fields, so we'll have not compatible but equal on size representations
-            _msgPackLight = PrepareMsgPackLight(serializer);
-            _msgPackLightArray = _msgPackLight.ToArray();
+            _msgPack = PrepareMsgPack(serializer);
+            _msgPackArray = _msgPack.ToArray();
         }
 
         private MemoryStream PrepareMsgPack(BeerSerializeBenchmark serializer)
         {
             var memoryStream = new MemoryStream();
             serializer.MsgPackSerialize(memoryStream);
-            return memoryStream;
-        }
-
-        private MemoryStream PrepareMsgPackLight(BeerSerializeBenchmark serializer)
-        {
-            var memoryStream = new MemoryStream();
-            serializer.MsgPackLightSerialize(memoryStream);
             return memoryStream;
         }
 
@@ -77,27 +61,27 @@ namespace msgpack.light.benchmark
         [Benchmark(Baseline = true)]
         public void MPCli_Stream()
         {
-            _msgPackCli.Seek(0, SeekOrigin.Begin);
-            var beer = Serializers<Beer>.MsgPack.Unpack(_msgPackCli);
+            _msgPack.Seek(0, SeekOrigin.Begin);
+            var beer = Serializers<Beer>.MsgPack.GetSerializer<Beer>().Unpack(_msgPack);
         }
 
         [Benchmark]
         public void MPCli_Array()
         {
-            var beer = Serializers<Beer>.MsgPack.UnpackSingleObject(_msgPackCliArray);
+            var beer = Serializers<Beer>.MsgPack.GetSerializer<Beer>().UnpackSingleObject(_msgPackArray);
         }
 
         [Benchmark]
         public void MPLight_Stream()
         {
-            _msgPackLight.Seek(0, SeekOrigin.Begin);
-            var beer = MsgPackSerializer.Deserialize<Beer>(_msgPackLight, Serializers<Beer>.MsgPackLight);
+            _msgPack.Seek(0, SeekOrigin.Begin);
+            var beer = MsgPackSerializer.Deserialize<Beer>(_msgPack, Serializers<Beer>.MsgPackLight);
         }
 
         [Benchmark]
         public void MPLight_Array()
         {
-            var beer = MsgPackSerializer.Deserialize<Beer>(_msgPackLightArray, Serializers<Beer>.MsgPackLight);
+            var beer = MsgPackSerializer.Deserialize<Beer>(_msgPackArray, Serializers<Beer>.MsgPackLight);
         }
     }
 }

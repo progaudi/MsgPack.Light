@@ -13,7 +13,7 @@ namespace MsgPack.Light.Converters
                 return;
             }
 
-            writer.WriteMapHeaderAndLength((uint) value.Count);
+            writer.WriteMapHeader((uint) value.Count);
 
             foreach (var element in value)
             {
