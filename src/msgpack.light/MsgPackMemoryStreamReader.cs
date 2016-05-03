@@ -5,13 +5,13 @@ using MsgPack.Light.Converters;
 
 namespace MsgPack.Light
 {
-    internal class MsgPackStreamReader : IMsgPackReader, IDisposable
+    internal class MsgPackMemoryStreamReader : IMsgPackReader, IDisposable
     {
-        private readonly Stream _stream;
+        private readonly MemoryStream _stream;
 
         private readonly bool _disposeStream;
 
-        public MsgPackStreamReader(Stream stream, bool disposeStream = true)
+        public MsgPackMemoryStreamReader(MemoryStream stream, bool disposeStream = true)
         {
             _stream = stream;
             _disposeStream = disposeStream;
