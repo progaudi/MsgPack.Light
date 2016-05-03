@@ -2,7 +2,7 @@
     "version": "1.0.0-*",
     "description": "msgpack.light.benchmark Console Application",
     "authors": [ "aensidhe" ],
-    "tags": [ "" ],
+    "tags": [ "benchmark", "BenchmarkDotNet", "MsgPack.Cli", "MsgPack.Light", "MsgPack" ],
     "projectUrl": "",
     "licenseUrl": "",
 
@@ -23,11 +23,6 @@
                 "System.Xml": "4.0.0"
             }
         }
-        //"net46": {
-        //    "frameworkAssemblies": {
-        //        "System.Xml": "4.0.0"
-        //    }
-        //}
     },
 
     "runtimes": {
