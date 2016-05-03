@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msgpack.light.VS", "src\msg
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msgpack.light.tests.VS", "tests\msgpack.light.tests.vs\msgpack.light.tests.VS.csproj", "{DBCC133C-83D3-42B8-92DB-B9ACDE475BE7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msgpack.light.benchmark", "..\src\msgpack.light.benchmark\msgpack.light.benchmark.csproj", "{87DAE4A0-E1EF-40A3-A051-25A76D92BF8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{DBCC133C-83D3-42B8-92DB-B9ACDE475BE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DBCC133C-83D3-42B8-92DB-B9ACDE475BE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DBCC133C-83D3-42B8-92DB-B9ACDE475BE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87DAE4A0-E1EF-40A3-A051-25A76D92BF8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87DAE4A0-E1EF-40A3-A051-25A76D92BF8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87DAE4A0-E1EF-40A3-A051-25A76D92BF8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87DAE4A0-E1EF-40A3-A051-25A76D92BF8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

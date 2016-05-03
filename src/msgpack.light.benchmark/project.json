@@ -1,0 +1,31 @@
+﻿{
+    "version": "1.0.0-*",
+    "description": "msgpack.light.benchmark Console Application",
+    "authors": [ "aensidhe" ],
+    "tags": [ "" ],
+    "projectUrl": "",
+    "licenseUrl": "",
+
+    "compilationOptions": {
+        "emitEntryPoint": true
+    },
+
+    "dependencies": {
+        "BenchmarkDotNet": "0.9.5",
+        "MsgPack.Cli": "0.6.8",
+        "Newtonsoft.Json": "8.0.3",
+        "JsonStack.Text": "4.0.56"
+    },
+
+    "frameworks": {
+        "net451": {
+            "frameworkAssemblies": {
+                "System.Xml": "4.0.0"
+            }
+        }
+    },
+
+    "runtimes": {
+        "win":  {} 
+    }
+}
