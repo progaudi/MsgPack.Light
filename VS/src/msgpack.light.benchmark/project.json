@@ -23,9 +23,14 @@
                 "System.Xml": "4.0.0"
             }
         }
+        //"net46": {
+        //    "frameworkAssemblies": {
+        //        "System.Xml": "4.0.0"
+        //    }
+        //}
     },
 
     "runtimes": {
-        "win":  {}
+        "win": { }
     }
 }
