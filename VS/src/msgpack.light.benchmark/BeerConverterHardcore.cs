@@ -5,7 +5,7 @@ using MsgPack.Light;
 
 namespace msgpack.light.benchmark
 {
-    internal class BeerConverter : IMsgPackConverter<Beer>
+    internal class BeerConverterHardCore : IMsgPackConverter<Beer>
     {
         private IMsgPackConverter<string> _stringConverter;
 
@@ -32,16 +32,16 @@ namespace msgpack.light.benchmark
             }
 
             writer.WriteMapHeader(4);
-            _stringConverter.Write(nameof(value.Brand), writer);
+            writer.Write(_brand);
             _stringConverter.Write(value.Brand, writer);
 
-            _stringConverter.Write(nameof(value.Sort), writer);
+            writer.Write(_sort);
             _listStringConverter.Write(value.Sort, writer);
 
-            _stringConverter.Write(nameof(value.Alcohol), writer);
+            writer.Write(_alcohol);
             _floatConverter.Write(value.Alcohol, writer);
 
-            _stringConverter.Write(nameof(value.Brewery), writer);
+            writer.Write(_brewery);
             _stringConverter.Write(value.Brewery, writer);
         }
 

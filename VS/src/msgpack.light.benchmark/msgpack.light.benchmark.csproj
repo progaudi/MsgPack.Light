@@ -9,11 +9,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>msgpack.light.benchmark</RootNamespace>
     <AssemblyName>msgpack.light.benchmark</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">..\..\..\artifacts\obj\$(MSBuildProjectName)\$(Configuration)</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)'=='' ">..\..\..\artifacts\bin\$(MSBuildProjectName)\$(Configuration)\</OutputPath>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,23 +32,30 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>msgpack.light.benchmark.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Beer.cs" />
+    <Compile Include="BeerConverterHardcore.cs" />
     <Compile Include="BeerListDeserializeBenchmark.cs" />
     <Compile Include="BeerListBenchmark.cs" />
     <Compile Include="BeerBenchmark.cs" />
     <Compile Include="BeerConverter.cs" />
     <Compile Include="BeerDeserializeBenchmark.cs" />
+    <Compile Include="BeerSerializerHardcore.cs" />
     <Compile Include="BeerSerializer.cs" />
     <Compile Include="BenchmarkConfig.cs" />
+    <Compile Include="Integers.cs" />
+    <Compile Include="IntDeserialize.cs" />
+    <Compile Include="IntSerialize.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Serializers.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +63,9 @@
       <Project>{2f96bc33-6b63-464d-82b8-a99c90ccf33f}</Project>
       <Name>msgpack.light.VS</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

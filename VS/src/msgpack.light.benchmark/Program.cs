@@ -1,6 +1,4 @@
-﻿using System;
-
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Running;
 
 namespace msgpack.light.benchmark
 {
@@ -15,6 +13,8 @@ namespace msgpack.light.benchmark
                     typeof(BeerDeserializeBenchmark),
                     typeof(BeerListSerializeBenchmark),
                     typeof(BeerListDeserializeBenchmark),
+                    typeof(IntSerialize),
+                    typeof(IntDeserialize)
                 });
             switcher.Run(args);
         }

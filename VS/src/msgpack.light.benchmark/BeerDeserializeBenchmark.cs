@@ -83,5 +83,31 @@ namespace msgpack.light.benchmark
         {
             var beer = MsgPackSerializer.Deserialize<Beer>(_msgPackArray, Serializers<Beer>.MsgPackLight);
         }
+
+        [Benchmark]
+        public void MPCliH_Stream()
+        {
+            _msgPack.Seek(0, SeekOrigin.Begin);
+            var beer = Serializers<Beer>.MsgPackHardcore.GetSerializer<Beer>().Unpack(_msgPack);
+        }
+
+        [Benchmark]
+        public void MPCliH_Array()
+        {
+            var beer = Serializers<Beer>.MsgPackHardcore.GetSerializer<Beer>().UnpackSingleObject(_msgPackArray);
+        }
+
+        [Benchmark]
+        public void MPLightH_Stream()
+        {
+            _msgPack.Seek(0, SeekOrigin.Begin);
+            var beer = MsgPackSerializer.Deserialize<Beer>(_msgPack, Serializers<Beer>.MsgPackLightHardcore);
+        }
+
+        [Benchmark]
+        public void MPLightH_Array()
+        {
+            var beer = MsgPackSerializer.Deserialize<Beer>(_msgPackArray, Serializers<Beer>.MsgPackLightHardcore);
+        }
     }
 }

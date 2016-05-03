@@ -66,7 +66,7 @@ namespace msgpack.light.benchmark
         [Benchmark]
         public void MPCli_Array()
         {
-            var memoryStream = new MemoryStream(Serializers<Beer>.MsgPack.GetSerializer<Beer>().PackSingleObject(_testBeer));
+            var bytes = Serializers<Beer>.MsgPack.GetSerializer<Beer>().PackSingleObject(_testBeer);
         }
 
         [Benchmark]
@@ -84,7 +84,33 @@ namespace msgpack.light.benchmark
         [Benchmark]
         public void MPLight_Array()
         {
-            var memoryStream = new MemoryStream(MsgPackSerializer.Serialize(_testBeer, Serializers<Beer>.MsgPackLight));
+            var bytes = MsgPackSerializer.Serialize(_testBeer, Serializers<Beer>.MsgPackLight);
+        }
+
+        [Benchmark]
+        public void MPCliH_Stream()
+        {
+            var memoryStream = new MemoryStream();
+            Serializers<Beer>.MsgPackHardcore.GetSerializer<Beer>().Pack(memoryStream, _testBeer);
+        }
+
+        [Benchmark]
+        public void MPCliH_Array()
+        {
+            var bytes = Serializers<Beer>.MsgPackHardcore.GetSerializer<Beer>().PackSingleObject(_testBeer);
+        }
+
+        [Benchmark]
+        public void MPLightH_Stream()
+        {
+            var memoryStream = new MemoryStream();
+            MsgPackSerializer.Serialize(_testBeer, memoryStream, Serializers<Beer>.MsgPackLightHardcore);
+        }
+
+        [Benchmark]
+        public void MPLightH_Array()
+        {
+            var bytes = MsgPackSerializer.Serialize(_testBeer, Serializers<Beer>.MsgPackLightHardcore);
         }
     }
 }

@@ -52,7 +52,7 @@ namespace msgpack.light.benchmark
         [Benchmark]
         public void MPCli_Array()
         {
-            var memoryStream = new MemoryStream(Serializers<Beer[]>.MsgPack.GetSerializer<Beer[]>().PackSingleObject(Beer.Belgium));
+            var bytes = Serializers<Beer[]>.MsgPack.GetSerializer<Beer[]>().PackSingleObject(Beer.Belgium);
         }
 
         [Benchmark]
@@ -70,7 +70,33 @@ namespace msgpack.light.benchmark
         [Benchmark]
         public void MPLight_Array()
         {
-            var memoryStream = new MemoryStream(MsgPackSerializer.Serialize(Beer.Belgium, Serializers<Beer[]>.MsgPackLight));
+            var bytes = MsgPackSerializer.Serialize(Beer.Belgium, Serializers<Beer[]>.MsgPackLight);
+        }
+
+        [Benchmark]
+        public void MPCliH_Stream()
+        {
+            var memoryStream = new MemoryStream();
+            Serializers<Beer[]>.MsgPackHardcore.GetSerializer<Beer[]>().Pack(memoryStream, Beer.Belgium);
+        }
+
+        [Benchmark]
+        public void MPCliH_Array()
+        {
+            var bytes = Serializers<Beer[]>.MsgPackHardcore.GetSerializer<Beer[]>().PackSingleObject(Beer.Belgium);
+        }
+
+        [Benchmark]
+        public void MPLightH_Stream()
+        {
+            var memoryStream = new MemoryStream();
+            MsgPackSerializer.Serialize(Beer.Belgium, memoryStream, Serializers<Beer[]>.MsgPackLightHardcore);
+        }
+
+        [Benchmark]
+        public void MPLightH_Array()
+        {
+            var bytes = MsgPackSerializer.Serialize(Beer.Belgium, Serializers<Beer[]>.MsgPackLightHardcore);
         }
     }
 }
