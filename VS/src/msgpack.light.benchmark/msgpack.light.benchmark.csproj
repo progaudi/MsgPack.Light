@@ -48,7 +48,6 @@
     <Compile Include="BeerSerializerHardcore.cs" />
     <Compile Include="BeerSerializer.cs" />
     <Compile Include="BenchmarkConfig.cs" />
-    <Compile Include="FloatSerialize.cs" />
     <Compile Include="Integers.cs" />
     <Compile Include="NumberDeserialize.cs" />
     <Compile Include="NumberSerialize.cs" />
