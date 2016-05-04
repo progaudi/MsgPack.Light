@@ -3,6 +3,7 @@ MsgPack.Light is a lightweight [MsgPack](http://msgpack.org/) format implementat
 
 ## Key features
 * Performance
+* .Net core compatability
 * Extensibility
 * Simple usage
 
@@ -34,6 +35,11 @@ var value = MsgPackSerializer.Deserialize<MyType>(bytes);
 ## Credits
 * Benchmark data authors: https://github.com/aensidhe/SerializationPerformanceTest_CSharp and https://github.com/maximn/SerializationPerformanceTest_CSharp 
 * Thanks to [MessagePack for CLI](https://github.com/msgpack/msgpack-cli) authors for inspiration.
+
+## Roadmap
+* Code-generator for field-based converters, we will support array and map modes.
+* Possible optimizations with IO handling and asyncing our API.
+
 
 ## Build statuses for master branch
 
