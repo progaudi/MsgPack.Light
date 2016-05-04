@@ -27,7 +27,6 @@ install:
 
 before_build:
   - ps: dnu restore
-  - ps: scripts\change-version.ps1 src\msgPack.light\project.json
 
 build:
   parallel: true
