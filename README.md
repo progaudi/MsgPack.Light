@@ -22,103 +22,8 @@ var value = MsgPackSerializer.Deserialize<string>(bytes);
 ```
 
 ### Your type serialization/deserialization:
-For example you would like to serialize your own type:
-```C#
-public class Beer
-  {
-      public string Brand { get; set; }
-
-      public List<string> Sort { get; set; }
-
-      public float Alcohol { get; set; }
-
-      public string Brewery { get; set; }
-  }
-```
-
-Firstly, implement IMsgPackConverter<> interface:
-```C#
- public class BeerConverter : IMsgPackConverter<Beer>
-    {
-        private IMsgPackConverter<string> _stringConverter;
-
-        private IMsgPackConverter<List<string>> _listStringConverter;
-
-        private IMsgPackConverter<float> _floatConverter;
-
-        private MsgPackContext _context;
-
-        public void Write(Beer value, IMsgPackWriter writer)
-        {
-            if (value == null)
-            {
-                _context.NullConverter.Write(null, writer);
-                return;
-            }
-
-            writer.WriteMapHeader(4);
-            _stringConverter.Write(nameof(value.Brand), writer);
-            _stringConverter.Write(value.Brand, writer);
-
-            _stringConverter.Write(nameof(value.Sort), writer);
-            _listStringConverter.Write(value.Sort, writer);
-
-            _stringConverter.Write(nameof(value.Alcohol), writer);
-            _floatConverter.Write(value.Alcohol, writer);
-
-            _stringConverter.Write(nameof(value.Brewery), writer);
-            _stringConverter.Write(value.Brewery, writer);
-        }
-
-        public Beer Read(IMsgPackReader reader)
-        {
-            var length = reader.ReadMapLength();
-            if (length == null)
-            {
-                return null;
-            }
-
-            if (length != 4)
-            {
-                throw new SerializationException("Bad format");
-            }
-
-            var result = new Beer();
-            for (var i = 0; i < length.Value; i++)
-            {
-                var propertyName = _stringConverter.Read(reader);
-                switch (propertyName)
-                {
-                    case nameof(result.Brand):
-                        result.Brand = _stringConverter.Read(reader);
-                        break;
-                    case nameof(result.Sort):
-                        result.Sort = _listStringConverter.Read(reader);
-                        break;
-                    case nameof(result.Alcohol):
-                        result.Alcohol = _floatConverter.Read(reader);
-                        break;
-                    case nameof(result.Brewery):
-                        result.Brewery = _stringConverter.Read(reader);
-                        break;
-                    default:
-                        throw new SerializationException("Bad format");
-                }
-            }
-
-            return result;
-        }
-
-        public void Initialize(MsgPackContext context)
-        {
-            _stringConverter = context.GetConverter<string>();
-            _listStringConverter = context.GetConverter<List<string>>();
-            _floatConverter = context.GetConverter<float>();
-            _context = context;
-        }
-    }
-```
-
+If you want to work with your own types, first thing you need - type converter.
+Example of Beer type converter you can find [here](https://github.com/roman-kozachenko/MsgPack.Light/blob/master/VS/src/msgpack.light.benchmark/Beer.cs).
 Then you should create create MsgPackContext and register your converter:
 ```C#
 var context= new MsgPackContext();
@@ -144,6 +49,7 @@ var beer = MsgPackSerializer.Deserialize<Beer>(bytes, context);
 
 ## Credits
 * Benchmark data copied from [thekvs cpp-serializers project](https://github.com/thekvs/cpp-serializers/blob/c6b305fe3659d2df3b492698bb5d7cb284ab2f9f/data.hpp).
+* Other benchmarks got from [maximn SerializationPerformanceTest_CSharp project](https://github.com/maximn/SerializationPerformanceTest_CSharp).
 * Thanks to [MessagePack for CLI](https://github.com/msgpack/msgpack-cli) authors for inspiration.
 
 ## Roadmap
