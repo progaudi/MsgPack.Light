@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 
 using BenchmarkDotNet.Attributes;
 
@@ -7,9 +8,9 @@ using MsgPack.Serialization;
 
 namespace msgpack.light.benchmark
 {
-    public class IntDeserialize
+    public abstract class NumberDeserialize<T>
     {
-        private readonly MessagePackSerializer<int[]> _messagePackSerializer;
+        private readonly MessagePackSerializer<T[]> _messagePackSerializer;
 
         private readonly byte[] _bytes;
 
@@ -17,10 +18,12 @@ namespace msgpack.light.benchmark
 
         private readonly MsgPackContext _mplightContext;
 
-        public IntDeserialize()
+        protected abstract  T[] Numbers { get; }
+
+        protected NumberDeserialize()
         {
-            _messagePackSerializer = SerializationContext.Default.GetSerializer<int[]>();
-            _bytes = _messagePackSerializer.PackSingleObject(Integers.Data);
+            _messagePackSerializer = SerializationContext.Default.GetSerializer<T[]>();
+            _bytes = _messagePackSerializer.PackSingleObject(Numbers);
             _stream = new MemoryStream(_bytes);
             _mplightContext = new MsgPackContext();
         }
@@ -41,14 +44,24 @@ namespace msgpack.light.benchmark
         [Benchmark]
         public void MPLight_Array()
         {
-            var data = MsgPackSerializer.Deserialize<int[]>(_bytes, _mplightContext);
+            var data = MsgPackSerializer.Deserialize<T[]>(_bytes, _mplightContext);
         }
 
         [Benchmark]
         public void MPLight_Stream()
         {
             _stream.Seek(0, SeekOrigin.Begin);
-            var data = MsgPackSerializer.Deserialize<int[]>(_stream, _mplightContext);
+            var data = MsgPackSerializer.Deserialize<T[]>(_stream, _mplightContext);
         }
+    }
+
+    public class IntDeserialize : NumberDeserialize<int>
+    {
+        protected override int[] Numbers => Integers.Data;
+    }
+
+    public class DoubleDeserialize : NumberDeserialize<double>
+    {
+        protected override double[] Numbers => Integers.Data.Select(i => (double) i).ToArray();
     }
 }

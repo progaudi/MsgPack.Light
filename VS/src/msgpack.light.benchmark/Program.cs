@@ -9,12 +9,14 @@ namespace msgpack.light.benchmark
             var switcher = new BenchmarkSwitcher(
                 new[]
                 {
-                    typeof(BeerSerializeBenchmark),
-                    typeof(BeerDeserializeBenchmark),
-                    typeof(BeerListSerializeBenchmark),
-                    typeof(BeerListDeserializeBenchmark),
-                    typeof(IntSerialize),
-                    typeof(IntDeserialize)
+                    typeof (BeerSerializeBenchmark),
+                    typeof (BeerDeserializeBenchmark),
+                    typeof (BeerListSerializeBenchmark),
+                    typeof (BeerListDeserializeBenchmark),
+                    typeof (IntDeserialize),
+                    typeof (DoubleDeserialize),
+                    typeof (IntSerialize),
+                    typeof (DoubleSerialize)
                 });
             switcher.Run(args);
         }
