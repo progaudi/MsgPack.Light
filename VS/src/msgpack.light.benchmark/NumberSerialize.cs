@@ -51,11 +51,11 @@ namespace msgpack.light.benchmark
 
     public class IntSerialize : NumberSerialize<int>
     {
-        protected override int[] Numbers => Integers.Data;
+        protected override int[] Numbers => Data.Integers;
     }
 
     public class DoubleSerialize: NumberSerialize<double>
     {
-        protected override double[] Numbers => Integers.Data.Select(i => (double) i).ToArray();
+        protected override double[] Numbers => Data.Doubles;
     }
 }
