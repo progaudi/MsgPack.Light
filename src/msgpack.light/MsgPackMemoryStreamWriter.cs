@@ -1,16 +1,17 @@
+using System;
 using System.IO;
 
 using MsgPack.Light.Converters;
 
 namespace MsgPack.Light
 {
-    internal class MsgPackStreamWriter : IMsgPackWriter
+    internal class MsgPackMemoryStreamWriter : IMsgPackWriter, IDisposable
     {
-        private readonly Stream _stream;
+        private readonly MemoryStream _stream;
 
         private readonly bool _disposeStream;
 
-        public MsgPackStreamWriter(Stream stream, bool disposeStream = true)
+        public MsgPackMemoryStreamWriter(MemoryStream stream, bool disposeStream = true)
         {
             _stream = stream;
             _disposeStream = disposeStream;
@@ -28,7 +29,7 @@ namespace MsgPack.Light
 
         public void Write(byte[] array)
         {
-            _stream.WriteAsync(array, 0, array.Length);
+            _stream.Write(array, 0, array.Length);
         }
 
         public void Dispose()
@@ -57,7 +58,7 @@ namespace MsgPack.Light
             }
         }
 
-        public void WriteMapHeaderAndLength(uint length)
+        public void WriteMapHeader(uint length)
         {
             if (length <= 15)
             {

@@ -5,22 +5,30 @@ namespace MsgPack.Light.Converters
 {
     internal class StringConverter : IMsgPackConverter<string>
     {
-        public void Write(string value, IMsgPackWriter writer, MsgPackContext context)
+        private static readonly Encoding Utf8 = new UTF8Encoding(false);
+        private MsgPackContext _context;
+
+        public void Initialize(MsgPackContext context)
+        {
+            _context = context;
+        }
+
+        public void Write(string value, IMsgPackWriter writer)
         {
             if (value == null)
             {
-                context.NullConverter.Write(value, writer, context);
+                _context.NullConverter.Write(value, writer);
                 return;
             }
 
-            var data = Encoding.UTF8.GetBytes(value);
+            var data = Utf8.GetBytes(value);
 
             WriteStringHeaderAndLength(writer, data.Length);
 
             writer.Write(data);
         }
 
-        public string Read(IMsgPackReader reader, MsgPackContext context, Func<string> creator)
+        public string Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -50,9 +58,9 @@ namespace MsgPack.Light.Converters
 
         private string ReadString(IMsgPackReader reader, uint length)
         {
-            var buffer = BinaryConverter.ReadByteArray(reader, length);
+            var buffer = reader.ReadBytes(length);
 
-            return Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+            return Utf8.GetString(buffer.Array, buffer.Offset, buffer.Count);
         }
 
         private bool TryGetFixstrLength(DataTypes type, out uint length)

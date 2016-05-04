@@ -1,15 +1,17 @@
-using System;
-
 namespace MsgPack.Light.Converters
 {
     internal class BoolConverter : IMsgPackConverter<bool>
     {
-        public void Write(bool value, IMsgPackWriter writer, MsgPackContext context)
+        public void Initialize(MsgPackContext context)
+        {
+        }
+
+        public void Write(bool value, IMsgPackWriter writer)
         {
             writer.Write(value ? DataTypes.True : DataTypes.False);
         }
 
-        public bool Read(IMsgPackReader reader, MsgPackContext context, Func<bool> creator)
+        public bool Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 

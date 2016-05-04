@@ -1,8 +1,6 @@
-using System;
-
 namespace MsgPack.Light
 {
-    public interface IMsgPackWriter : IDisposable
+    public interface IMsgPackWriter
     {
         void Write(DataTypes dataType);
 
@@ -12,6 +10,6 @@ namespace MsgPack.Light
 
         void WriteArrayHeader(uint length);
 
-        void WriteMapHeaderAndLength(uint length);
+        void WriteMapHeader(uint length);
     }
 }

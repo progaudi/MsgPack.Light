@@ -4,33 +4,40 @@ namespace MsgPack.Light.Converters
 {
     public class DateTimeConverter : IMsgPackConverter<DateTime>, IMsgPackConverter<DateTimeOffset>
     {
-        public void Write(DateTime value, IMsgPackWriter writer, MsgPackContext context)
-        {
-            var longValue = DateTimeUtils.FromDateTime(value);
-            var longConverter = context.GetConverter<long>();
+        private MsgPackContext _context;
 
-            longConverter.Write(longValue, writer, context);
+        public void Initialize(MsgPackContext context)
+        {
+            _context = context;
         }
 
-        public DateTime Read(IMsgPackReader reader, MsgPackContext context, Func<DateTime> creator)
+        public void Write(DateTime value, IMsgPackWriter writer)
         {
-            var longConverter = context.GetConverter<long>();
-            var longValue = longConverter.Read(reader, context, null);
+            var longValue = DateTimeUtils.FromDateTime(value);
+            var longConverter = _context.GetConverter<long>();
+
+            longConverter.Write(longValue, writer);
+        }
+
+        DateTime IMsgPackConverter<DateTime>.Read(IMsgPackReader reader)
+        {
+            var longConverter = _context.GetConverter<long>();
+            var longValue = longConverter.Read(reader);
             return DateTimeUtils.ToDateTime(longValue);
         }
 
-        public void Write(DateTimeOffset value, IMsgPackWriter writer, MsgPackContext context)
+        public void Write(DateTimeOffset value, IMsgPackWriter writer)
         {
             var longValue = DateTimeUtils.FromDateTimeOffset(value);
-            var longConverter = context.GetConverter<long>();
+            var longConverter = _context.GetConverter<long>();
 
-            longConverter.Write(longValue, writer, context);
+            longConverter.Write(longValue, writer);
         }
 
-        public DateTimeOffset Read(IMsgPackReader reader, MsgPackContext context, Func<DateTimeOffset> creator)
+        DateTimeOffset IMsgPackConverter<DateTimeOffset>.Read(IMsgPackReader reader)
         {
-            var longConverter = context.GetConverter<long>();
-            var longValue = longConverter.Read(reader, context, null);
+            var longConverter = _context.GetConverter<long>();
+            var longValue = longConverter.Read(reader);
             return DateTimeUtils.ToDateTimeOffset(longValue);
         }
     }

@@ -1,49 +1,42 @@
-using System;
 using System.IO;
 
 namespace MsgPack.Light.Converters
 {
-    public class NullableConverter<T> : IMsgPackConverter<T?> where T : struct
+    public class NullableConverter<T> : IMsgPackConverter<T?>
+        where T : struct
     {
-        public T? Read(IMsgPackReader reader, MsgPackContext context, Func<T?> creator)
+        private MsgPackContext _context;
+
+        private IMsgPackConverter<T> _converter;
+
+        public T? Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
             if (type == DataTypes.Null)
                 return null;
 
-            var structConverter = context.GetConverter<T>();
-
-            Func<T> nullableCreator;
-            if (creator == null)
-            {
-                nullableCreator = null;
-            }
-            else
-            {
-                nullableCreator = () =>
-                {
-                    var result = creator();
-                    return result ?? default(T);
-                };
-            }
-
             reader.Seek(-1, SeekOrigin.Current);
 
-            return structConverter.Read(reader, context, nullableCreator);
+            return _converter.Read(reader);
         }
 
-        public void Write(T? value, IMsgPackWriter writer, MsgPackContext context)
+        public void Write(T? value, IMsgPackWriter writer)
         {
             if (value.HasValue)
             {
-                var valueConverter = context.GetConverter<T>();
-                valueConverter.Write(value.Value, writer, context);
+                _converter.Write(value.Value, writer);
             }
             else
             {
-                context.NullConverter.Write(null, writer, context);
+                _context.NullConverter.Write(null, writer);
             }
+        }
+
+        public void Initialize(MsgPackContext context)
+        {
+            _context = context;
+            _converter = context.GetConverter<T>();
         }
     }
 }

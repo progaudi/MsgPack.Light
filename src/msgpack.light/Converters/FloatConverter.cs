@@ -5,35 +5,49 @@ namespace MsgPack.Light.Converters
 {
     internal class FloatConverter : IMsgPackConverter<float>, IMsgPackConverter<double>
     {
-        public void Write(double value, IMsgPackWriter writer, MsgPackContext context)
+        public void Initialize(MsgPackContext context)
+        {
+        }
+
+        public void Write(double value, IMsgPackWriter writer)
         {
             var binary = new DoubleBinary(value);
-            writer.Write(DataTypes.Double);
+            byte[] bytes;
             if (BitConverter.IsLittleEndian)
             {
-                writer.Write(binary.byte7);
-                writer.Write(binary.byte6);
-                writer.Write(binary.byte5);
-                writer.Write(binary.byte4);
-                writer.Write(binary.byte3);
-                writer.Write(binary.byte2);
-                writer.Write(binary.byte1);
-                writer.Write(binary.byte0);
+                bytes = new[]
+                {
+                    (byte) DataTypes.Double,
+                    binary.byte7,
+                    binary.byte6,
+                    binary.byte5,
+                    binary.byte4,
+                    binary.byte3,
+                    binary.byte2,
+                    binary.byte1,
+                    binary.byte0
+                };
             }
             else
             {
-                writer.Write(binary.byte0);
-                writer.Write(binary.byte1);
-                writer.Write(binary.byte2);
-                writer.Write(binary.byte3);
-                writer.Write(binary.byte4);
-                writer.Write(binary.byte5);
-                writer.Write(binary.byte6);
-                writer.Write(binary.byte7);
+                bytes = new[]
+                {
+                    (byte) DataTypes.Double,
+                    binary.byte0,
+                    binary.byte1,
+                    binary.byte2,
+                    binary.byte3,
+                    binary.byte4,
+                    binary.byte5,
+                    binary.byte6,
+                    binary.byte7
+                };
             }
+
+            writer.Write(bytes);
         }
 
-        public double Read(IMsgPackReader reader, MsgPackContext context, Func<double> creator)
+        double IMsgPackConverter<double>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -49,28 +63,38 @@ namespace MsgPack.Light.Converters
 
             return new DoubleBinary(bytes).value;
         }
-        
-        public void Write(float value, IMsgPackWriter writer, MsgPackContext context)
+
+        public void Write(float value, IMsgPackWriter writer)
         {
             var binary = new FloatBinary(value);
-            writer.Write(DataTypes.Single);
+            byte[] bytes;
             if (BitConverter.IsLittleEndian)
             {
-                writer.Write(binary.byte3);
-                writer.Write(binary.byte2);
-                writer.Write(binary.byte1);
-                writer.Write(binary.byte0);
+                bytes = new[]
+                {
+                    (byte) DataTypes.Single,
+                    binary.byte3,
+                    binary.byte2,
+                    binary.byte1,
+                    binary.byte0
+                };
             }
             else
             {
-                writer.Write(binary.byte0);
-                writer.Write(binary.byte1);
-                writer.Write(binary.byte2);
-                writer.Write(binary.byte3);
+                bytes = new[]
+                {
+                    (byte) DataTypes.Single,
+                    binary.byte0,
+                    binary.byte1,
+                    binary.byte2,
+                    binary.byte3
+                };
             }
+
+            writer.Write(bytes);
         }
 
-        float IMsgPackConverter<float>.Read(IMsgPackReader reader, MsgPackContext context, Func<float> creator)
+        float IMsgPackConverter<float>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -87,11 +111,9 @@ namespace MsgPack.Light.Converters
             return new FloatBinary(bytes).value;
         }
 
-        private static byte[] ReadBytes(IMsgPackReader reader, int length)
+        private static ArraySegment<byte> ReadBytes(IMsgPackReader reader, uint length)
         {
-            var bytes = new byte[length];
-            reader.ReadBytes(bytes);
-            return bytes;
+            return reader.ReadBytes(length);
         }
 
         [StructLayout(LayoutKind.Explicit)]
@@ -118,22 +140,22 @@ namespace MsgPack.Light.Converters
                 value = f;
             }
 
-            public FloatBinary(byte[] bytes)
+            public FloatBinary(ArraySegment<byte> bytes)
             {
                 value = 0;
                 if (BitConverter.IsLittleEndian)
                 {
-                    byte0 = bytes[3];
-                    byte1 = bytes[2];
-                    byte2 = bytes[1];
-                    byte3 = bytes[0];
+                    byte0 = bytes.Array[bytes.Offset + 3];
+                    byte1 = bytes.Array[bytes.Offset + 2];
+                    byte2 = bytes.Array[bytes.Offset + 1];
+                    byte3 = bytes.Array[bytes.Offset + 0];
                 }
                 else
                 {
-                    byte0 = bytes[0];
-                    byte1 = bytes[1];
-                    byte2 = bytes[2];
-                    byte3 = bytes[3];
+                    byte0 = bytes.Array[bytes.Offset + 0];
+                    byte1 = bytes.Array[bytes.Offset + 1];
+                    byte2 = bytes.Array[bytes.Offset + 2];
+                    byte3 = bytes.Array[bytes.Offset + 3];
                 }
             }
         }
@@ -174,30 +196,30 @@ namespace MsgPack.Light.Converters
                 value = f;
             }
 
-            public DoubleBinary(byte[] bytes)
+            public DoubleBinary(ArraySegment<byte> bytes)
             {
                 value = 0;
                 if (BitConverter.IsLittleEndian)
                 {
-                    byte0 = bytes[7];
-                    byte1 = bytes[6];
-                    byte2 = bytes[5];
-                    byte3 = bytes[4];
-                    byte4 = bytes[3];
-                    byte5 = bytes[2];
-                    byte6 = bytes[1];
-                    byte7 = bytes[0];
+                    byte0 = bytes.Array[bytes.Offset + 7];
+                    byte1 = bytes.Array[bytes.Offset + 6];
+                    byte2 = bytes.Array[bytes.Offset + 5];
+                    byte3 = bytes.Array[bytes.Offset + 4];
+                    byte4 = bytes.Array[bytes.Offset + 3];
+                    byte5 = bytes.Array[bytes.Offset + 2];
+                    byte6 = bytes.Array[bytes.Offset + 1];
+                    byte7 = bytes.Array[bytes.Offset + 0];
                 }
                 else
                 {
-                    byte0 = bytes[0];
-                    byte1 = bytes[1];
-                    byte2 = bytes[2];
-                    byte3 = bytes[3];
-                    byte4 = bytes[4];
-                    byte5 = bytes[5];
-                    byte6 = bytes[6];
-                    byte7 = bytes[7];
+                    byte0 = bytes.Array[bytes.Offset + 0];
+                    byte1 = bytes.Array[bytes.Offset + 1];
+                    byte2 = bytes.Array[bytes.Offset + 2];
+                    byte3 = bytes.Array[bytes.Offset + 3];
+                    byte4 = bytes.Array[bytes.Offset + 4];
+                    byte5 = bytes.Array[bytes.Offset + 5];
+                    byte6 = bytes.Array[bytes.Offset + 6];
+                    byte7 = bytes.Array[bytes.Offset + 7];
                 }
             }
         }

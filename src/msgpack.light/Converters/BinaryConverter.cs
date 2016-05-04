@@ -4,11 +4,18 @@ namespace MsgPack.Light.Converters
 {
     internal class BinaryConverter : IMsgPackConverter<byte[]>
     {
-        public void Write(byte[] value, IMsgPackWriter writer, MsgPackContext context)
+        private MsgPackContext _context;
+
+        public void Initialize(MsgPackContext context)
+        {
+            _context = context;
+        }
+
+        public void Write(byte[] value, IMsgPackWriter writer)
         {
             if (value == null)
             {
-                context.NullConverter.Write(value, writer, context);
+                _context.NullConverter.Write(value, writer);
                 return;
             }
 
@@ -18,7 +25,7 @@ namespace MsgPack.Light.Converters
         }
 
         // We will have problem with binary blobs greater than int.MaxValue bytes.
-        public byte[] Read(IMsgPackReader reader, MsgPackContext context, Func<byte[]> creator)
+        public byte[] Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -44,16 +51,10 @@ namespace MsgPack.Light.Converters
                     throw ExceptionUtils.BadTypeException(type, DataTypes.Bin8, DataTypes.Bin16, DataTypes.Bin32, DataTypes.Null);
             }
 
-            return ReadByteArray(reader, length);
-        }
-
-        internal static byte[] ReadByteArray(IMsgPackReader reader, uint length)
-        {
-            var buffer = new byte[length];
-
-            reader.ReadBytes(buffer);
-
-            return buffer;
+            var segment = reader.ReadBytes(length);
+            var array = new byte[segment.Count];
+            Array.Copy(segment.Array, segment.Offset, array, 0, segment.Count);
+            return array;
         }
 
         private void WriteBinaryHeaderAndLength(int length, IMsgPackWriter writer)

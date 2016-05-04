@@ -10,7 +10,22 @@ namespace MsgPack.Light
             return new SerializationException($"Got {actual:G} (0x{actual:X}), while expecting one of these: {string.Join(", ", expectedCodes)}");
         }
 
+        public static Exception NotEnoughBytes(uint actual, uint expected)
+        {
+            return new SerializationException($"Expected {expected} bytes, got {actual} bytes.");
+        }
+
         public static Exception NotEnoughBytes(int actual, int expected)
+        {
+            return new SerializationException($"Expected {expected} bytes, got {actual} bytes.");
+        }
+
+        public static Exception NotEnoughBytes(long actual, uint expected)
+        {
+            return new SerializationException($"Expected {expected} bytes, got {actual} bytes.");
+        }
+
+        public static Exception NotEnoughBytes(uint actual, long expected)
         {
             return new SerializationException($"Expected {expected} bytes, got {actual} bytes.");
         }

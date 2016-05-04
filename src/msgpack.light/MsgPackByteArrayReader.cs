@@ -1,19 +1,20 @@
+using System;
 using System.IO;
 
 using MsgPack.Light.Converters;
 
 namespace MsgPack.Light
 {
-    internal class MsgPackStreamReader : IMsgPackReader
+    internal class MsgPackByteArrayReader : IMsgPackReader
     {
-        private readonly Stream _stream;
+        private readonly byte[] _data;
 
-        private readonly bool _disposeStream;
+        private uint _offset;
 
-        public MsgPackStreamReader(Stream stream, bool disposeStream = true)
+        public MsgPackByteArrayReader(byte[] data)
         {
-            _stream = stream;
-            _disposeStream = disposeStream;
+            _data = data;
+            _offset = 0;
         }
 
         public DataTypes ReadDataType()
@@ -23,23 +24,31 @@ namespace MsgPack.Light
 
         public byte ReadByte()
         {
-            var temp = _stream.ReadByte();
-            if (temp == -1)
-                throw ExceptionUtils.NotEnoughBytes(0, 1);
-
-            return (byte) temp;
+            return _data[_offset++];
         }
 
-        public void ReadBytes(byte[] buffer)
+        public ArraySegment<byte> ReadBytes(uint length)
         {
-            var read = _stream.Read(buffer, 0, buffer.Length);
-            if (read < buffer.Length)
-                throw ExceptionUtils.NotEnoughBytes(read, buffer.Length);
+            _offset += length;
+            return new ArraySegment<byte>(_data, (int) (_offset - length), (int) length);
         }
 
         public void Seek(int offset, SeekOrigin origin)
         {
-            _stream.Seek(offset, origin);
+            switch (origin)
+            {
+                case SeekOrigin.Begin:
+                    _offset = (uint) offset;
+                    break;
+                case SeekOrigin.Current:
+                    _offset = (uint) (_offset + offset);
+                    break;
+                case SeekOrigin.End:
+                    _offset = (uint) (_data.Length + offset);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(origin), origin, null);
+            }
         }
 
         public uint? ReadArrayLength()
@@ -86,13 +95,6 @@ namespace MsgPack.Light
                 return length.Value;
 
             throw ExceptionUtils.BadTypeException(type, DataTypes.Map16, DataTypes.Map32, DataTypes.FixMap, DataTypes.Null);
-        }
-
-
-        public void Dispose()
-        {
-            if (_disposeStream)
-                _stream.Dispose();
         }
 
         private static uint? TryGetLengthFromFixArray(DataTypes type)

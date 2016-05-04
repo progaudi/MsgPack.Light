@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace MsgPack.Light.Converters
@@ -6,25 +5,23 @@ namespace MsgPack.Light.Converters
     internal class ReadOnlyListConverter<TArray, TElement> : ArrayConverterBase<TArray, TElement>
         where TArray : IReadOnlyList<TElement>
     {
-        public override void Write(TArray value, IMsgPackWriter writer, MsgPackContext context)
+        public override void Write(TArray value, IMsgPackWriter writer)
         {
             if (value == null)
             {
-                context.NullConverter.Write(value, writer, context);
+                Context.NullConverter.Write(value, writer);
                 return;
             }
 
             writer.WriteArrayHeader((uint) value.Count);
-            var elementConverter = context.GetConverter<TElement>();
-            ValidateConverter(elementConverter);
 
             foreach (var element in value)
             {
-                elementConverter.Write(element, writer, context);
+                ElementConverter.Write(element, writer);
             }
         }
 
-        public override TArray Read(IMsgPackReader reader, MsgPackContext context, Func<TArray> creator)
+        public override TArray Read(IMsgPackReader reader)
         {
             throw ExceptionUtils.CantReadReadOnlyCollection(typeof(TArray));
         }

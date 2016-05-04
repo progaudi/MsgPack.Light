@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace MsgPack.Light.Converters
@@ -14,67 +13,51 @@ namespace MsgPack.Light.Converters
             IsSingleDimensionArray = type.IsArray && type.GetArrayRank() == 1 && type.GetElementType() == typeof(TElement);
         }
 
-        public override void Write(TArray value, IMsgPackWriter writer, MsgPackContext context)
+        public override void Write(TArray value, IMsgPackWriter writer)
         {
             if (value == null)
             {
-                context.NullConverter.Write(value, writer, context);
+                Context.NullConverter.Write(value, writer);
                 return;
             }
 
             writer.WriteArrayHeader((uint) value.Count);
-            var elementConverter = context.GetConverter<TElement>();
-            ValidateConverter(elementConverter);
 
             foreach (var element in value)
             {
-                elementConverter.Write(element, writer, context);
+                ElementConverter.Write(element, writer);
             }
         }
 
-        public override TArray Read(IMsgPackReader reader, MsgPackContext context, Func<TArray> creator)
+        public override TArray Read(IMsgPackReader reader)
         {
             var length = reader.ReadArrayLength();
-            return length.HasValue ? ReadArray(reader, context, creator, length.Value) : default(TArray);
+            return length.HasValue ? ReadArray(reader, length.Value) : default(TArray);
         }
 
-        private TArray ReadArray(IMsgPackReader reader, MsgPackContext context, Func<TArray> creator, uint length)
+        private TArray ReadArray(IMsgPackReader reader, uint length)
         {
-            var converter = context.GetConverter<TElement>();
+            if (!IsSingleDimensionArray)
+                return ReadList(reader, length);
 
-            ValidateConverter(converter);
-
-            if (IsSingleDimensionArray && creator == null)
-                return ReadArray(reader, context, length, converter);
-
-            return ReadList(reader, context, creator, length, converter);
-        }
-
-        private TArray ReadArray(IMsgPackReader reader, MsgPackContext context, uint length, IMsgPackConverter<TElement> converter)
-        {
             // ReSharper disable once RedundantCast
             var result = (TArray)(object)new TElement[length];
 
             for (var i = 0; i < length; i++)
             {
-                result[i] = converter.Read(reader, context, null);
+                result[i] = ElementConverter.Read(reader);
             }
 
             return result;
         }
 
-        private static TArray ReadList(
-            IMsgPackReader reader,
-            MsgPackContext context,
-            Func<TArray> creator,
-            uint length,
-            IMsgPackConverter<TElement> converter)
+        private TArray ReadList(IMsgPackReader reader, uint length)
         {
-            var array = creator == null ? (TArray)context.GetObjectActivator(typeof (TArray))() : creator();
+            var array = (TArray)Context.GetObjectActivator(typeof (TArray))();
 
             for (var i = 0u; i < length; i++)
             {
-                array.Add(converter.Read(reader, context, null));
+                array.Add(ElementConverter.Read(reader));
             }
 
             return array;

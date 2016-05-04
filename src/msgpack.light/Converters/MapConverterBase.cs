@@ -1,15 +1,11 @@
-using System;
-
 namespace MsgPack.Light.Converters
 {
     internal abstract class MapConverterBase<TMap, TKey, TValue> : IMsgPackConverter<TMap>
     {
-        public abstract void Write(TMap value, IMsgPackWriter writer, MsgPackContext context);
-
-        public abstract TMap Read(IMsgPackReader reader, MsgPackContext context, Func<TMap> creator);
-
-        protected void ValidateConverters(IMsgPackConverter<TKey> keyConverter, IMsgPackConverter<TValue> valueConverter)
+        public void Initialize(MsgPackContext context)
         {
+            var keyConverter = context.GetConverter<TKey>();
+            var valueConverter = context.GetConverter<TValue>();
             if (keyConverter == null)
             {
                 throw ExceptionUtils.NoConverterForCollectionElement(typeof(TKey), "key");
@@ -19,6 +15,20 @@ namespace MsgPack.Light.Converters
             {
                 throw ExceptionUtils.NoConverterForCollectionElement(typeof(TValue), "value");
             }
+
+            KeyConverter = keyConverter;
+            ValueConverter = valueConverter;
+            Context = context;
         }
+
+        public abstract void Write(TMap value, IMsgPackWriter writer);
+
+        public abstract TMap Read(IMsgPackReader reader);
+
+        protected MsgPackContext Context { get; private set; }
+
+        protected IMsgPackConverter<TValue> ValueConverter { get; private set; }
+
+        protected IMsgPackConverter<TKey> KeyConverter { get; private set; }
     }
 }

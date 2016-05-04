@@ -12,7 +12,7 @@ namespace MsgPack.Light.Converters
         IMsgPackConverter<long>,
         IMsgPackConverter<ulong>
     {
-        public void Write(byte value, IMsgPackWriter writer, MsgPackContext context)
+        public void Write(byte value, IMsgPackWriter writer)
         {
             switch (value.GetFormatType())
             {
@@ -33,7 +33,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public byte Read(IMsgPackReader reader, MsgPackContext context, Func<byte> creator)
+        byte IMsgPackConverter<byte>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -62,7 +62,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public void Write(int value, IMsgPackWriter writer, MsgPackContext context)
+        public void Write(int value, IMsgPackWriter writer)
         {
             switch (value.GetFormatType())
             {
@@ -103,7 +103,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public int Read(IMsgPackReader reader, MsgPackContext context, Func<int> creator)
+        int IMsgPackConverter<int>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -141,7 +141,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public void Write(long value, IMsgPackWriter writer, MsgPackContext context)
+        public void Write(long value, IMsgPackWriter writer)
         {
             switch (value.GetFormatType())
             {
@@ -190,7 +190,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public long Read(IMsgPackReader reader, MsgPackContext context, Func<long> creator)
+        long IMsgPackConverter<long>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -234,7 +234,11 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public void Write(sbyte value, IMsgPackWriter writer, MsgPackContext context)
+        public void Initialize(MsgPackContext context)
+        {
+        }
+
+        public void Write(sbyte value, IMsgPackWriter writer)
         {
             switch (value.GetFormatType())
             {
@@ -259,7 +263,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public sbyte Read(IMsgPackReader reader, MsgPackContext context, Func<sbyte> creator)
+        sbyte IMsgPackConverter<sbyte>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -283,7 +287,7 @@ namespace MsgPack.Light.Converters
             throw ExceptionUtils.IntDeserializationFailure(type);
         }
         
-        public void Write(short value, IMsgPackWriter writer, MsgPackContext context)
+        public void Write(short value, IMsgPackWriter writer)
         {
             switch (value.GetFormatType())
             {
@@ -316,7 +320,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public short Read(IMsgPackReader reader, MsgPackContext context, Func<short> creator)
+        short IMsgPackConverter<short>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -348,7 +352,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public void Write(uint value, IMsgPackWriter writer, MsgPackContext context)
+        public void Write(uint value, IMsgPackWriter writer)
         {
             switch (value.GetFormatType())
             {
@@ -389,7 +393,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public uint Read(IMsgPackReader reader, MsgPackContext context, Func<uint> creator)
+        uint IMsgPackConverter<uint>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -430,7 +434,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public void Write(ulong value, IMsgPackWriter writer, MsgPackContext context)
+        public void Write(ulong value, IMsgPackWriter writer)
         {
             switch (value.GetFormatType())
             {
@@ -479,7 +483,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public ulong Read(IMsgPackReader reader, MsgPackContext context, Func<ulong> creator)
+        ulong IMsgPackConverter<ulong>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
@@ -526,7 +530,7 @@ namespace MsgPack.Light.Converters
             }
         }
         
-        public void Write(ushort value, IMsgPackWriter writer, MsgPackContext context)
+        public void Write(ushort value, IMsgPackWriter writer)
         {
             switch (value.GetFormatType())
             {
@@ -559,7 +563,7 @@ namespace MsgPack.Light.Converters
             }
         }
 
-        public ushort Read(IMsgPackReader reader, MsgPackContext context, Func<ushort> creator)
+        public ushort Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
