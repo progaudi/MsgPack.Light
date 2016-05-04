@@ -1,5 +1,5 @@
 # MsgPack.Light
-MsgPack.Light is a lightweight http://msgpack.org/ format implementation.
+MsgPack.Light is a lightweight [MsgPack](http://msgpack.org/) format implementation.
 
 ## Key features
 * Performance
@@ -7,7 +7,7 @@ MsgPack.Light is a lightweight http://msgpack.org/ format implementation.
 * Simple usage
 
 ## Install
-Simpliest way to start using MsgPack.Light is to install [https://www.nuget.org/packages/MsgPack.Light/](Nuget package). To do that, run the following command in the  Package Manager Console:
+Simpliest way to start using MsgPack.Light is to install [NuGet package](https://www.nuget.org/packages/MsgPack.Light/). To do that, run the following command in the  Package Manager Console:
 
 ```
  PM> Install-Package MsgPack.Light 
@@ -29,11 +29,11 @@ var value = MsgPackSerializer.Deserialize<MyType>(bytes);
 * Deserialization performance 2-3 times faster
 * MsgPack.Light works best if a data reside a memory (*_Array benchmarks).
 * Perfoming some IO operations, performance is suboptimal, but comparable with MsgPack.Cli (*_Stream benchmarks).
-* More details can be found [https://github.com/roman-kozachenko/MsgPack.Light/blob/master/benchmarks.md](here).
+* More details can be found [here](https://github.com/roman-kozachenko/MsgPack.Light/blob/master/benchmarks.md).
 
 ## Credits
 * Benchmark data authors: https://github.com/aensidhe/SerializationPerformanceTest_CSharp and https://github.com/maximn/SerializationPerformanceTest_CSharp 
-* Thanks to [https://github.com/msgpack/msgpack-cli](msgpack.cli) authors for inspiration.
+* Thanks to [MessagePack for CLI](https://github.com/msgpack/msgpack-cli) authors for inspiration.
 
 ## Build statuses for master branch
 
