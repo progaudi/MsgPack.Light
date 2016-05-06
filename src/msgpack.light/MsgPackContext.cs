@@ -112,7 +112,8 @@ namespace MsgPack.Light
                 return null;
             }
 
-            return _converters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(x.MakeGenericType(type.GenericTypeArguments))());
+            var converterType = genericConverterType.MakeGenericType(type.GenericTypeArguments);
+            return _converters.GetOrAdd(converterType, x => (IMsgPackConverter)GetObjectActivator(x)());
         }
 
         private IMsgPackConverter TryGenerateMapConverter(Type type)
