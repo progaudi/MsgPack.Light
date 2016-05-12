@@ -1,4 +1,6 @@
 # MsgPack.Light
+
+[![Join the chat at https://gitter.im/roman-kozachenko/MsgPack.Light](https://badges.gitter.im/roman-kozachenko/MsgPack.Light.svg)](https://gitter.im/roman-kozachenko/MsgPack.Light?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 MsgPack.Light is a lightweight [MsgPack](http://msgpack.org/) serialization library.
 
 ## Key features
