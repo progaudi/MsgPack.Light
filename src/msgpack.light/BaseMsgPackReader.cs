@@ -5,7 +5,7 @@ using MsgPack.Light.Converters;
 
 namespace MsgPack.Light
 {
-    public abstract class BaseMsgPackReader : IMsgPackReader
+    internal abstract class BaseMsgPackReader : IMsgPackReader
     {
         public abstract byte ReadByte();
 
