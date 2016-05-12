@@ -11,10 +11,12 @@ namespace MsgPack.Light
 
         ArraySegment<byte> ReadBytes(uint length);
 
-        void Seek(int offset, SeekOrigin origin);
+        void Seek(long offset, SeekOrigin origin);
 
         uint? ReadArrayLength();
 
         uint? ReadMapLength();
+
+        void SkipToken();
     }
 }
