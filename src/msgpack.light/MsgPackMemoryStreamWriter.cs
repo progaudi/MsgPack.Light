@@ -19,7 +19,7 @@ namespace MsgPack.Light
 
         public void Write(DataTypes dataType)
         {
-            Write((byte) dataType);
+            _stream.WriteByte((byte) dataType);
         }
 
         public void Write(byte value)
@@ -42,19 +42,19 @@ namespace MsgPack.Light
         {
             if (length <= 15)
             {
-                IntConverter.WriteValue((byte) ((byte) DataTypes.FixArray + length), this);
+                IntConverter.TryWriteUInt8((byte) ((byte) DataTypes.FixArray + length), this);
                 return;
             }
 
             if (length <= ushort.MaxValue)
             {
                 Write(DataTypes.Array16);
-                IntConverter.WriteValue((ushort) length, this);
+                IntConverter.TryWriteUInt16((ushort) length, this);
             }
             else
             {
                 Write(DataTypes.Array32);
-                IntConverter.WriteValue((uint) length, this);
+                IntConverter.TryWriteUInt32(length, this);
             }
         }
 
@@ -62,19 +62,19 @@ namespace MsgPack.Light
         {
             if (length <= 15)
             {
-                IntConverter.WriteValue((byte) ((byte) DataTypes.FixMap + length), this);
+                IntConverter.TryWriteUInt8((byte) ((byte) DataTypes.FixMap + length), this);
                 return;
             }
 
             if (length <= ushort.MaxValue)
             {
                 Write(DataTypes.Map16);
-                IntConverter.WriteValue((ushort) length, this);
+                IntConverter.TryWriteUInt16((ushort) length, this);
             }
             else
             {
                 Write(DataTypes.Map32);
-                IntConverter.WriteValue((uint) length, this);
+                IntConverter.TryWriteUInt32((uint) length, this);
             }
         }
     }

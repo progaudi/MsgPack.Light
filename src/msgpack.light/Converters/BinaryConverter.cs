@@ -62,19 +62,19 @@ namespace MsgPack.Light.Converters
             if (length <= byte.MaxValue)
             {
                 writer.Write(DataTypes.Bin8);
-                IntConverter.WriteValue((byte)length, writer);
+                IntConverter.TryWriteUInt8((byte)length, writer);
                 return;
             }
 
             if (length <= ushort.MaxValue)
             {
                 writer.Write(DataTypes.Bin16);
-                IntConverter.WriteValue((ushort)length, writer);
+                IntConverter.TryWriteUInt16((ushort)length, writer);
             }
             else
             {
                 writer.Write(DataTypes.Bin32);
-                IntConverter.WriteValue((uint)length, writer);
+                IntConverter.TryWriteUInt32((uint)length, writer);
             }
         }
     }
