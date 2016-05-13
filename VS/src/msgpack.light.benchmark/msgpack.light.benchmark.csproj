@@ -46,12 +46,14 @@
     <Compile Include="BeerDeserializeBenchmark.cs" />
     <Compile Include="BeerSerializerHardcore.cs" />
     <Compile Include="BeerSerializer.cs" />
+    <Compile Include="BeerSkip.cs" />
     <Compile Include="BenchmarkConfig.cs" />
     <Compile Include="Data.cs" />
     <Compile Include="NumberDeserialize.cs" />
     <Compile Include="NumberSerialize.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Serializers.cs" />
+    <Compile Include="SkipConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
