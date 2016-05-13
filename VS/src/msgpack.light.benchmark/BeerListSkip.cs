@@ -8,7 +8,7 @@ using MsgPack.Light;
 namespace msgpack.light.benchmark
 {
     [Config(typeof(BenchmarkConfig))]
-    public class BeerSkip
+    public class BeerSkipList
     {
         private readonly MemoryStream _inputStream;
 
@@ -18,9 +18,9 @@ namespace msgpack.light.benchmark
 
         private readonly Unpacker _unpacker;
 
-        public BeerSkip()
+        public BeerSkipList()
         {
-            var serialize = new BeerSerializeBenchmark();
+            var serialize = new BeerListSerializeBenchmark();
             _inputStream = PrepareMsgPack(serialize);
             _inputBytes = _inputStream.ToArray();
 
@@ -31,7 +31,7 @@ namespace msgpack.light.benchmark
 
         }
 
-        private MemoryStream PrepareMsgPack(BeerSerializeBenchmark serializer)
+        private MemoryStream PrepareMsgPack(BeerListSerializeBenchmark serializer)
         {
             var memoryStream = new MemoryStream();
             serializer.MsgPackSerialize(memoryStream);

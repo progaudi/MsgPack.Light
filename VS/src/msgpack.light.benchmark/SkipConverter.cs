@@ -4,13 +4,6 @@ namespace msgpack.light.benchmark
 {
     public class SkipConverter<T> :IMsgPackConverter<T>
     {
-        private readonly int _objectsCount;
-
-        public SkipConverter(int objectsCount = 1)
-        {
-            _objectsCount = objectsCount;
-        }
-
         public void Initialize(MsgPackContext context)
         {
             
@@ -23,11 +16,7 @@ namespace msgpack.light.benchmark
 
         public T Read(IMsgPackReader reader)
         {
-            for (var i = 0; i < _objectsCount; i++)
-            {
-                reader.SkipToken();
-            }
-
+            reader.SkipToken();
             return default(T);
         }
     }

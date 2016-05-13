@@ -17,11 +17,10 @@ namespace msgpack.light.benchmark
                     typeof (DoubleDeserialize),
                     typeof (IntSerialize),
                     typeof (DoubleSerialize),
-                    typeof (BeerSkip)
+                    typeof (BeerSkip),
+                    typeof (BeerSkipList)
                 });
             switcher.Run(args);
         }
-
-
     }
 }
