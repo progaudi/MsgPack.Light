@@ -19,19 +19,19 @@ Int arrays of course serialized as int arrays.
 BenchmarkDotNet=v0.9.5.0
 OS=Microsoft Windows NT 6.2.9200.0
 Processor=Intel(R) Core(TM) i5-4300U CPU @ 1.90GHz, ProcessorCount=4
-Frequency=2435769 ticks, Resolution=410.5480 ns, Timer=TSC
+Frequency=2435767 ticks, Resolution=410.5483 ns, Timer=TSC
 HostCLR=MS.NET 4.0.30319.42000, Arch=64-bit RELEASE [RyuJIT]
-JitModules=clrjit-v4.6.1078.0
+JitModules=clrjit-v4.6.1080.0
 
 Type=IntSerialize  Mode=Throughput  
 
 ```
-         Method |     Median |    StdDev | Scaled |
---------------- |----------- |---------- |------- |
-    MPCli_Array | 44.2989 us | 0.8690 us |   1.01 |
-   MPCli_Stream | 43.8341 us | 2.5219 us |   1.00 |
-  MPLight_Array | 48.7440 us | 2.4879 us |   1.11 |
- MPLight_Stream | 50.4261 us | 1.0596 us |   1.15 |
+         Method |      Median |    StdDev | Scaled |
+--------------- |------------ |---------- |------- |
+    MPCli_Array | 385.5996 ns | 7.8754 ns |   1.16 |
+   MPCli_Stream | 333.3653 ns | 3.7062 ns |   1.00 |
+  MPLight_Array | 477.7349 ns | 7.1181 ns |   1.43 |
+ MPLight_Stream | 438.5360 ns | 7.7678 ns |   1.32 |
 
 
 ### Int array deserialize
@@ -41,19 +41,19 @@ Type=IntSerialize  Mode=Throughput
 BenchmarkDotNet=v0.9.5.0
 OS=Microsoft Windows NT 6.2.9200.0
 Processor=Intel(R) Core(TM) i5-4300U CPU @ 1.90GHz, ProcessorCount=4
-Frequency=2435769 ticks, Resolution=410.5480 ns, Timer=TSC
+Frequency=2435767 ticks, Resolution=410.5483 ns, Timer=TSC
 HostCLR=MS.NET 4.0.30319.42000, Arch=64-bit RELEASE [RyuJIT]
-JitModules=clrjit-v4.6.1078.0
+JitModules=clrjit-v4.6.1080.0
 
 Type=IntDeserialize  Mode=Throughput  
 
 ```
-         Method |     Median |    StdDev | Scaled |
---------------- |----------- |---------- |------- |
-    MPCli_Array | 54.3273 us | 0.9087 us |   1.03 |
-   MPCli_Stream | 52.6379 us | 1.2348 us |   1.00 |
-  MPLight_Array | 36.7169 us | 0.7710 us |   0.70 |
- MPLight_Stream | 47.5450 us | 0.3847 us |   0.90 |
+         Method |      Median |     StdDev | Scaled |
+--------------- |------------ |----------- |------- |
+    MPCli_Array | 435.0537 ns | 41.2969 ns |   1.18 |
+   MPCli_Stream | 369.6012 ns |  6.5736 ns |   1.00 |
+  MPLight_Array | 290.2282 ns |  2.3186 ns |   0.79 |
+ MPLight_Stream | 359.7817 ns | 24.2372 ns |   0.97 |
 
 
 ### Double array serialize
@@ -63,19 +63,19 @@ Type=IntDeserialize  Mode=Throughput
 BenchmarkDotNet=v0.9.5.0
 OS=Microsoft Windows NT 6.2.9200.0
 Processor=Intel(R) Core(TM) i5-4300U CPU @ 1.90GHz, ProcessorCount=4
-Frequency=2435769 ticks, Resolution=410.5480 ns, Timer=TSC
+Frequency=2435767 ticks, Resolution=410.5483 ns, Timer=TSC
 HostCLR=MS.NET 4.0.30319.42000, Arch=64-bit RELEASE [RyuJIT]
-JitModules=clrjit-v4.6.1078.0
+JitModules=clrjit-v4.6.1080.0
 
 Type=DoubleSerialize  Mode=Throughput  
 
 ```
-         Method |     Median |    StdDev | Scaled |
---------------- |----------- |---------- |------- |
-    MPCli_Array | 83.8307 us | 4.6941 us |   1.02 |
-   MPCli_Stream | 82.5322 us | 7.4756 us |   1.00 |
-  MPLight_Array | 54.4167 us | 8.5853 us |   0.66 |
- MPLight_Stream | 53.8102 us | 9.0536 us |   0.65 |
+         Method |      Median |     StdDev | Scaled |
+--------------- |------------ |----------- |------- |
+    MPCli_Array | 720.6631 ns | 14.3266 ns |   1.06 |
+   MPCli_Stream | 681.4267 ns |  2.1806 ns |   1.00 |
+  MPLight_Array | 694.9290 ns |  7.8209 ns |   1.02 |
+ MPLight_Stream | 654.0637 ns | 10.3032 ns |   0.96 |
 
 
 ###Double array deserialize
@@ -85,19 +85,19 @@ Type=DoubleSerialize  Mode=Throughput
 BenchmarkDotNet=v0.9.5.0
 OS=Microsoft Windows NT 6.2.9200.0
 Processor=Intel(R) Core(TM) i5-4300U CPU @ 1.90GHz, ProcessorCount=4
-Frequency=2435769 ticks, Resolution=410.5480 ns, Timer=TSC
+Frequency=2435767 ticks, Resolution=410.5483 ns, Timer=TSC
 HostCLR=MS.NET 4.0.30319.42000, Arch=64-bit RELEASE [RyuJIT]
-JitModules=clrjit-v4.6.1078.0
+JitModules=clrjit-v4.6.1080.0
 
 Type=DoubleDeserialize  Mode=Throughput  
 
 ```
-         Method |     Median |    StdDev | Scaled |
---------------- |----------- |---------- |------- |
-    MPCli_Array | 61.2256 us | 1.1206 us |   0.98 |
-   MPCli_Stream | 62.5016 us | 1.5110 us |   1.00 |
-  MPLight_Array | 47.8698 us | 0.8309 us |   0.77 |
- MPLight_Stream | 77.0925 us | 1.2832 us |   1.23 |
+         Method |      Median |    StdDev | Scaled |
+--------------- |------------ |---------- |------- |
+    MPCli_Array | 491.0816 ns | 7.7126 ns |   1.08 |
+   MPCli_Stream | 452.7518 ns | 6.9093 ns |   1.00 |
+  MPLight_Array | 369.8179 ns | 5.9467 ns |   0.82 |
+ MPLight_Stream | 532.9527 ns | 8.2603 ns |   1.18 |
 
 
 ### Complex object serialize
@@ -163,25 +163,25 @@ Type=BeerDeserializeBenchmark  Mode=Throughput
 BenchmarkDotNet=v0.9.5.0
 OS=Microsoft Windows NT 6.2.9200.0
 Processor=Intel(R) Core(TM) i5-4300U CPU @ 1.90GHz, ProcessorCount=4
-Frequency=2435769 ticks, Resolution=410.5480 ns, Timer=TSC
+Frequency=2435767 ticks, Resolution=410.5483 ns, Timer=TSC
 HostCLR=MS.NET 4.0.30319.42000, Arch=64-bit RELEASE [RyuJIT]
-JitModules=clrjit-v4.6.1078.0
+JitModules=clrjit-v4.6.1080.0
 
 Type=BeerListSerializeBenchmark  Mode=Throughput  
 
 ```
-          Method |    Median |    StdDev | Scaled |
----------------- |---------- |---------- |------- |
-         JsonNet | 4.5902 ms | 0.1218 ms |   1.94 |
-       JsonStack | 3.5143 ms | 0.2123 ms |   1.48 |
-    MPCli_Stream | 2.3717 ms | 0.2183 ms |   1.00 |
-     MPCli_Array | 2.5020 ms | 0.2045 ms |   1.05 |
-  MPLight_Stream | 1.8023 ms | 0.1722 ms |   0.76 |
-   MPLight_Array | 1.9056 ms | 0.2487 ms |   0.80 |
-   MPCliH_Stream | 2.3718 ms | 0.0365 ms |   1.00 |
-    MPCliH_Array | 2.5071 ms | 0.0263 ms |   1.06 |
- MPLightH_Stream | 1.3780 ms | 0.0177 ms |   0.58 |
-  MPLightH_Array | 1.4804 ms | 0.0082 ms |   0.62 |
+          Method |     Median |    StdDev | Scaled |
+---------------- |----------- |---------- |------- |
+         JsonNet | 24.5087 us | 2.0821 us |   2.24 |
+       JsonStack | 15.7441 us | 1.6228 us |   1.44 |
+    MPCli_Stream | 10.9527 us | 0.5778 us |   1.00 |
+     MPCli_Array | 10.7575 us | 0.3782 us |   0.98 |
+  MPLight_Stream |  7.7205 us | 0.0801 us |   0.70 |
+   MPLight_Array |  6.8955 us | 0.1074 us |   0.63 |
+   MPCliH_Stream |  9.4939 us | 0.1882 us |   0.87 |
+    MPCliH_Array |  9.7598 us | 0.5073 us |   0.89 |
+ MPLightH_Stream |  5.0625 us | 0.0388 us |   0.46 |
+  MPLightH_Array |  5.1826 us | 0.0411 us |   0.47 |
 
 
 ### List of complex objects deserialize
@@ -191,23 +191,64 @@ Type=BeerListSerializeBenchmark  Mode=Throughput
 BenchmarkDotNet=v0.9.5.0
 OS=Microsoft Windows NT 6.2.9200.0
 Processor=Intel(R) Core(TM) i5-4300U CPU @ 1.90GHz, ProcessorCount=4
-Frequency=2435769 ticks, Resolution=410.5480 ns, Timer=TSC
+Frequency=2435767 ticks, Resolution=410.5483 ns, Timer=TSC
 HostCLR=MS.NET 4.0.30319.42000, Arch=64-bit RELEASE [RyuJIT]
-JitModules=clrjit-v4.6.1078.0
+JitModules=clrjit-v4.6.1080.0
 
 Type=BeerListDeserializeBenchmark  Mode=Throughput  
 
 ```
-          Method |    Median |    StdDev | Scaled |
----------------- |---------- |---------- |------- |
-         JsonNet | 4.6915 ms | 0.3156 ms |   0.54 |
-       JsonStack | 2.9909 ms | 0.0483 ms |   0.35 |
-    MPCli_Stream | 8.6678 ms | 0.1343 ms |   1.00 |
-     MPCli_Array | 8.6034 ms | 0.0804 ms |   0.99 |
-  MPLight_Stream | 2.4119 ms | 0.0430 ms |   0.28 |
-   MPLight_Array | 1.6990 ms | 0.0452 ms |   0.20 |
-   MPCliH_Stream | 8.5637 ms | 0.1457 ms |   0.99 |
-    MPCliH_Array | 8.5886 ms | 0.1011 ms |   0.99 |
- MPLightH_Stream | 2.4198 ms | 0.1155 ms |   0.28 |
-  MPLightH_Array | 1.6885 ms | 0.0280 ms |   0.19 |
+          Method |     Median |    StdDev | Scaled |
+---------------- |----------- |---------- |------- |
+         JsonNet | 20.4582 us | 0.2415 us |   0.61 |
+       JsonStack | 10.8642 us | 0.2068 us |   0.32 |
+    MPCli_Stream | 33.4607 us | 0.7212 us |   1.00 |
+     MPCli_Array | 33.8802 us | 0.4199 us |   1.01 |
+  MPLight_Stream |  8.5858 us | 0.0844 us |   0.26 |
+   MPLight_Array |  6.5429 us | 0.1721 us |   0.20 |
+   MPCliH_Stream | 34.0760 us | 6.1497 us |   1.02 |
+    MPCliH_Array | 34.6421 us | 6.1892 us |   1.04 |
+ MPLightH_Stream |  8.6054 us | 0.7411 us |   0.26 |
+  MPLightH_Array |  6.5587 us | 1.1443 us |   0.20 |
 
+
+### Object skip
+
+```ini
+
+BenchmarkDotNet=v0.9.5.0
+OS=Microsoft Windows NT 6.2.9200.0
+Processor=Intel(R) Core(TM) i5-4300U CPU @ 1.90GHz, ProcessorCount=4
+Frequency=2435767 ticks, Resolution=410.5483 ns, Timer=TSC
+HostCLR=MS.NET 4.0.30319.42000, Arch=64-bit RELEASE [RyuJIT]
+JitModules=clrjit-v4.6.1080.0
+
+Type=BeerSkip  Mode=Throughput  
+
+```
+                   Method |      Median |     StdDev | Scaled |
+------------------------- |------------ |----------- |------- |
+            MPackCli_Skip | 362.0120 ns | 15.8975 ns |   1.00 |
+ MsgPackLight_Skip_Stream | 454.8119 ns |  5.8138 ns |   1.26 |
+  MsgPackLight_Skip_Array | 410.8044 ns |  5.4830 ns |   1.13 |
+
+
+### Objects list skip
+
+```ini
+
+BenchmarkDotNet=v0.9.5.0
+OS=Microsoft Windows NT 6.2.9200.0
+Processor=Intel(R) Core(TM) i5-4300U CPU @ 1.90GHz, ProcessorCount=4
+Frequency=2435767 ticks, Resolution=410.5483 ns, Timer=TSC
+HostCLR=MS.NET 4.0.30319.42000, Arch=64-bit RELEASE [RyuJIT]
+JitModules=clrjit-v4.6.1080.0
+
+Type=BeerSkipList  Mode=Throughput  
+
+```
+                   Method |    Median |    StdDev | Scaled |
+------------------------- |---------- |---------- |------- |
+            MPackCli_Skip | 2.6013 us | 0.1113 us |   1.00 |
+ MsgPackLight_Skip_Stream | 2.8278 us | 0.0497 us |   1.09 |
+  MsgPackLight_Skip_Array | 2.5962 us | 0.0371 us |   1.00 |
