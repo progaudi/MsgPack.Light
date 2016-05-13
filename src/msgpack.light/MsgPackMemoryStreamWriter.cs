@@ -42,39 +42,40 @@ namespace MsgPack.Light
         {
             if (length <= 15)
             {
-                IntConverter.TryWriteUInt8((byte) ((byte) DataTypes.FixArray + length), this);
+                IntConverter.WriteByteValue((byte) ((byte) DataTypes.FixArray + length), this);
                 return;
             }
 
             if (length <= ushort.MaxValue)
             {
                 Write(DataTypes.Array16);
-                IntConverter.TryWriteUInt16((ushort) length, this);
+                IntConverter.WriteUShortValue((ushort) length, this);
             }
             else
             {
                 Write(DataTypes.Array32);
-                IntConverter.TryWriteUInt32(length, this);
+                IntConverter.WriteUIntValue(length, this);
             }
+
         }
 
         public void WriteMapHeader(uint length)
         {
             if (length <= 15)
             {
-                IntConverter.TryWriteUInt8((byte) ((byte) DataTypes.FixMap + length), this);
+                IntConverter.WriteByteValue((byte) ((byte) DataTypes.FixMap + length), this);
                 return;
             }
 
             if (length <= ushort.MaxValue)
             {
                 Write(DataTypes.Map16);
-                IntConverter.TryWriteUInt16((ushort) length, this);
+                IntConverter.WriteUShortValue((ushort) length, this);
             }
             else
             {
                 Write(DataTypes.Map32);
-                IntConverter.TryWriteUInt32((uint) length, this);
+                IntConverter.WriteUIntValue(length, this);
             }
         }
     }

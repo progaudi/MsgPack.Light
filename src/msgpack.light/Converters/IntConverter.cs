@@ -1,5 +1,3 @@
-using System;
-
 namespace MsgPack.Light.Converters
 {
     internal class IntConverter :
@@ -55,8 +53,12 @@ namespace MsgPack.Light.Converters
 
         public void Write(sbyte value, IMsgPackWriter writer)
         {
+            var unsignedValue = (byte)value;
             if (TryWriteSignedFixNum(value, writer) ||
-                TryWriteInt8(value, writer))
+                TryWriteInt8(value, writer) ||
+                (value > 0 && TryWriteUInt8(unsignedValue, writer)) ||
+                TryWriteInt16(value, writer) ||
+                (value > 0 && TryWriteUInt16(unsignedValue, writer)))
             {
             }
         }
@@ -87,9 +89,12 @@ namespace MsgPack.Light.Converters
 
         public void Write(short value, IMsgPackWriter writer)
         {
+            var unsignedValue = (ushort)value;
             if (TryWriteSignedFixNum(value, writer) ||
-                 TryWriteInt8(value, writer) ||
-                 TryWriteInt16(value, writer))
+                TryWriteInt8(value, writer) ||
+                (value > 0 && TryWriteUInt8(unsignedValue, writer)) ||
+                TryWriteInt16(value, writer) ||
+                (value > 0 && TryWriteUInt16(unsignedValue, writer)))
             {
             }
         }
@@ -172,13 +177,16 @@ namespace MsgPack.Light.Converters
 
         public void Write(int value, IMsgPackWriter writer)
         {
-            if (TryWriteSignedFixNum(value, writer))
-                return;
-            if (TryWriteInt8(value, writer))
-                return;
-            if (TryWriteInt16(value, writer))
-                return;
-            TryWriteInt32(value, writer);
+            var unsignedValue = (uint)value;
+            if (TryWriteSignedFixNum(value, writer) ||
+                TryWriteInt8(value, writer) ||
+                (value > 0 && TryWriteUInt8(unsignedValue, writer)) ||
+                TryWriteInt16(value, writer) ||
+                (value > 0 && TryWriteUInt16(unsignedValue, writer)) ||
+                TryWriteInt32(value, writer) ||
+                (value > 0 && TryWriteUInt32(unsignedValue, writer)))
+            {
+            }
         }
 
         int IMsgPackConverter<int>.Read(IMsgPackReader reader)
@@ -272,11 +280,16 @@ namespace MsgPack.Light.Converters
 
         public void Write(long value, IMsgPackWriter writer)
         {
+            var unsignedValue = (ulong)value;
             if (TryWriteSignedFixNum(value, writer) ||
                 TryWriteInt8(value, writer) ||
+                (value > 0 && TryWriteUInt8(unsignedValue, writer)) ||
                 TryWriteInt16(value, writer) ||
+                (value > 0 && TryWriteUInt16(unsignedValue, writer)) ||
                 TryWriteInt32(value, writer) ||
-                TryWriteInt64(value, writer))
+                (value > 0 && TryWriteUInt32(unsignedValue, writer)) ||
+                TryWriteInt64(value, writer) ||
+                (value > 0 && TryWriteUInt64(unsignedValue, writer)))
             {
             }
         }
@@ -328,10 +341,10 @@ namespace MsgPack.Light.Converters
         public void Write(ulong value, IMsgPackWriter writer)
         {
             if (TryWriteUnsignedFixNum(value, writer) ||
-                TryWriteUInt8(value, writer) ||
-                TryWriteUInt16(value, writer) ||
-                TryWriteUInt32(value, writer) ||
-                TryWriteUInt64(value, writer))
+               TryWriteUInt8(value, writer) ||
+               TryWriteUInt16(value, writer) ||
+               TryWriteUInt32(value, writer) ||
+               TryWriteUInt64(value, writer))
             {
             }
         }
@@ -466,26 +479,26 @@ namespace MsgPack.Light.Converters
             return (long)(temp - 1 - ulong.MaxValue);
         }
 
-        public static bool TryWriteSignedFixNum(long value, IMsgPackWriter writer)
+        private static bool TryWriteSignedFixNum(long value, IMsgPackWriter writer)
         {
             // positive fixnum
-            if ( value >= 0 && value < 128L )
+            if (value >= 0 && value < 128L)
             {
-                writer.Write( unchecked( ( byte )value ) );
+                writer.Write(unchecked((byte)value));
                 return true;
             }
 
             // negative fixnum
-            if ( value >= -32L && value <= -1L )
+            if (value >= -32L && value <= -1L)
             {
-                writer.Write( unchecked( ( byte )value ) );
+                writer.Write(unchecked((byte)value));
                 return true;
             }
 
             return false;
         }
 
-        public static bool TryWriteUnsignedFixNum(ulong value, IMsgPackWriter writer)
+        private static bool TryWriteUnsignedFixNum(ulong value, IMsgPackWriter writer)
         {
             // positive fixnum
             if (value < 128L)
@@ -497,7 +510,7 @@ namespace MsgPack.Light.Converters
             return false;
         }
 
-        public static bool TryWriteInt8(long value, IMsgPackWriter writer)
+        private static bool TryWriteInt8(long value, IMsgPackWriter writer)
         {
             if (value > sbyte.MaxValue || value < sbyte.MinValue)
             {
@@ -505,11 +518,16 @@ namespace MsgPack.Light.Converters
             }
 
             writer.Write(DataTypes.Int8);
-            writer.Write((byte)value);
+            WriteSByteValue((sbyte)value, writer);
             return true;
         }
 
-        public static bool TryWriteUInt8(ulong value, IMsgPackWriter writer)
+        public static void WriteSByteValue(sbyte value, IMsgPackWriter writer)
+        {
+            writer.Write((byte)value);
+        }
+
+        private static bool TryWriteUInt8(ulong value, IMsgPackWriter writer)
         {
             if (value > byte.MaxValue)
             {
@@ -517,11 +535,16 @@ namespace MsgPack.Light.Converters
             }
 
             writer.Write(DataTypes.UInt8);
-            writer.Write((byte)value);
+            WriteByteValue((byte)value, writer);
             return true;
         }
 
-        public static bool TryWriteInt16(long value, IMsgPackWriter writer)
+        public static void WriteByteValue(byte value, IMsgPackWriter writer)
+        {
+            writer.Write(value);
+        }
+
+        private static bool TryWriteInt16(long value, IMsgPackWriter writer)
         {
             if (value < short.MinValue || value > short.MaxValue)
             {
@@ -529,15 +552,20 @@ namespace MsgPack.Light.Converters
             }
 
             writer.Write(DataTypes.Int16);
+            WriteShortValue((short)value, writer);
+            return true;
+        }
+
+        public static void WriteShortValue(short value, IMsgPackWriter writer)
+        {
             unchecked
             {
                 writer.Write((byte)((value >> 8) & 0xff));
                 writer.Write((byte)(value & 0xff));
             }
-            return true;
         }
 
-        public static bool TryWriteUInt16(ulong value, IMsgPackWriter writer)
+        private static bool TryWriteUInt16(ulong value, IMsgPackWriter writer)
         {
             if (value > ushort.MaxValue)
             {
@@ -545,15 +573,20 @@ namespace MsgPack.Light.Converters
             }
 
             writer.Write(DataTypes.UInt16);
+            WriteUShortValue((ushort)value, writer);
+            return true;
+        }
+
+        public static void WriteUShortValue(ushort value, IMsgPackWriter writer)
+        {
             unchecked
             {
                 writer.Write((byte)((value >> 8) & 0xff));
                 writer.Write((byte)(value & 0xff));
             }
-            return true;
         }
 
-        public static bool TryWriteInt32(long value, IMsgPackWriter writer)
+        private static bool TryWriteInt32(long value, IMsgPackWriter writer)
         {
             if (value > int.MaxValue || value < int.MinValue)
             {
@@ -561,6 +594,12 @@ namespace MsgPack.Light.Converters
             }
 
             writer.Write(DataTypes.Int32);
+            WriteIntValue((int)value, writer);
+            return true;
+        }
+
+        public static void WriteIntValue(int value, IMsgPackWriter writer)
+        {
             unchecked
             {
                 writer.Write((byte)((value >> 24) & 0xff));
@@ -568,10 +607,9 @@ namespace MsgPack.Light.Converters
                 writer.Write((byte)((value >> 8) & 0xff));
                 writer.Write((byte)(value & 0xff));
             }
-            return true;
         }
 
-        public static bool TryWriteUInt32(ulong value, IMsgPackWriter writer)
+        private static bool TryWriteUInt32(ulong value, IMsgPackWriter writer)
         {
             if (value > uint.MaxValue)
             {
@@ -579,6 +617,12 @@ namespace MsgPack.Light.Converters
             }
 
             writer.Write(DataTypes.UInt32);
+            WriteUIntValue((uint)value, writer);
+            return true;
+        }
+
+        public static void WriteUIntValue(uint value, IMsgPackWriter writer)
+        {
             unchecked
             {
                 writer.Write((byte)((value >> 24) & 0xff));
@@ -586,29 +630,17 @@ namespace MsgPack.Light.Converters
                 writer.Write((byte)((value >> 8) & 0xff));
                 writer.Write((byte)(value & 0xff));
             }
-            return true;
         }
 
-        public static bool TryWriteInt64(long value, IMsgPackWriter writer)
+        private static bool TryWriteInt64(long value, IMsgPackWriter writer)
         {
             writer.Write(DataTypes.Int64);
-            unchecked
-            {
-                writer.Write((byte)((value >> 56) & 0xff));
-                writer.Write((byte)((value >> 48) & 0xff));
-                writer.Write((byte)((value >> 40) & 0xff));
-                writer.Write((byte)((value >> 32) & 0xff));
-                writer.Write((byte)((value >> 24) & 0xff));
-                writer.Write((byte)((value >> 16) & 0xff));
-                writer.Write((byte)((value >> 8) & 0xff));
-                writer.Write((byte)(value & 0xff));
-            }
+            WriteLongValue(value, writer);
             return true;
         }
 
-        public static bool TryWriteUInt64(ulong value, IMsgPackWriter writer)
+        public static void WriteLongValue(long value, IMsgPackWriter writer)
         {
-            writer.Write(DataTypes.UInt64);
             unchecked
             {
                 writer.Write((byte)((value >> 56) & 0xff));
@@ -620,7 +652,28 @@ namespace MsgPack.Light.Converters
                 writer.Write((byte)((value >> 8) & 0xff));
                 writer.Write((byte)(value & 0xff));
             }
+        }
+
+        private static bool TryWriteUInt64(ulong value, IMsgPackWriter writer)
+        {
+            writer.Write(DataTypes.UInt64);
+            WriteULongValue(value, writer);
             return true;
+        }
+
+        public static void WriteULongValue(ulong value, IMsgPackWriter writer)
+        {
+            unchecked
+            {
+                writer.Write((byte)((value >> 56) & 0xff));
+                writer.Write((byte)((value >> 48) & 0xff));
+                writer.Write((byte)((value >> 40) & 0xff));
+                writer.Write((byte)((value >> 32) & 0xff));
+                writer.Write((byte)((value >> 24) & 0xff));
+                writer.Write((byte)((value >> 16) & 0xff));
+                writer.Write((byte)((value >> 8) & 0xff));
+                writer.Write((byte)(value & 0xff));
+            }
         }
     }
 }
