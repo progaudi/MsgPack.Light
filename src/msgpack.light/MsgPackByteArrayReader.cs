@@ -20,10 +20,10 @@ namespace MsgPack.Light
             return _data[_offset++];
         }
 
-        public override ArraySegment<byte> ReadBytes(uint length)
+        public override byte[] ReadBytes(uint length)
         {
             _offset += length;
-            return new ArraySegment<byte>(_data, (int) (_offset - length), (int) length);
+            return SubArray(_data, _offset - length, length);
         }
 
         public override void Seek(long offset, SeekOrigin origin)
@@ -42,6 +42,13 @@ namespace MsgPack.Light
                 default:
                     throw new ArgumentOutOfRangeException(nameof(origin), origin, null);
             }
+        }
+
+        public static T[] SubArray<T>(T[] data, uint index, uint length)
+        {
+            T[] result = new T[length];
+            Array.Copy(data, (int) index, result, 0, (int) length);
+            return result;
         }
     }
 }

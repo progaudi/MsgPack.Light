@@ -24,13 +24,11 @@ namespace MsgPack.Light
             return (byte)temp;
         }
 
-        public override ArraySegment<byte> ReadBytes(uint length)
+        public override byte[] ReadBytes(uint length)
         {
             var buffer = new byte[length];
-            var read = _stream.Read(buffer, 0, buffer.Length);
-            if (read < buffer.Length)
-                throw ExceptionUtils.NotEnoughBytes(read, buffer.Length);
-            return new ArraySegment<byte>(buffer, 0, buffer.Length);
+            _stream.Read(buffer, 0, buffer.Length);
+            return buffer;
         }
 
         public override void Seek(long offset, SeekOrigin origin)

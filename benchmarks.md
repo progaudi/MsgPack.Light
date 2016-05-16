@@ -85,19 +85,19 @@ Type=DoubleSerialize  Mode=Throughput
 BenchmarkDotNet=v0.9.5.0
 OS=Microsoft Windows NT 6.2.9200.0
 Processor=Intel(R) Core(TM) i5-4300U CPU @ 1.90GHz, ProcessorCount=4
-Frequency=2435769 ticks, Resolution=410.5480 ns, Timer=TSC
+Frequency=2435767 ticks, Resolution=410.5483 ns, Timer=TSC
 HostCLR=MS.NET 4.0.30319.42000, Arch=64-bit RELEASE [RyuJIT]
-JitModules=clrjit-v4.6.1078.0
+JitModules=clrjit-v4.6.1080.0
 
 Type=DoubleDeserialize  Mode=Throughput  
 
 ```
          Method |     Median |    StdDev | Scaled |
 --------------- |----------- |---------- |------- |
-    MPCli_Array | 61.2256 us | 1.1206 us |   0.98 |
-   MPCli_Stream | 62.5016 us | 1.5110 us |   1.00 |
-  MPLight_Array | 47.8698 us | 0.8309 us |   0.77 |
- MPLight_Stream | 77.0925 us | 1.2832 us |   1.23 |
+    MPCli_Array | 71.9037 us | 9.0005 us |   1.08 |
+   MPCli_Stream | 66.6579 us | 0.9640 us |   1.00 |
+  MPLight_Array | 42.3633 us | 0.6825 us |   0.64 |
+ MPLight_Stream | 52.2952 us | 1.2281 us |   0.78 |
 
 
 ### Complex object serialize
