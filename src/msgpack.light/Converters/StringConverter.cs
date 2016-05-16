@@ -60,7 +60,7 @@ namespace MsgPack.Light.Converters
         {
             var buffer = reader.ReadBytes(length);
 
-            return Utf8.GetString(buffer.Array, buffer.Offset, buffer.Count);
+            return Utf8.GetString(buffer, 0, buffer.Length);
         }
 
         private bool TryGetFixstrLength(DataTypes type, out uint length)

@@ -9,7 +9,7 @@ namespace MsgPack.Light
 
         byte ReadByte();
 
-        ArraySegment<byte> ReadBytes(uint length);
+        byte[] ReadBytes(uint length);
 
         void Seek(long offset, SeekOrigin origin);
 

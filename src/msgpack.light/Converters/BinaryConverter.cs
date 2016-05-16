@@ -51,10 +51,7 @@ namespace MsgPack.Light.Converters
                     throw ExceptionUtils.BadTypeException(type, DataTypes.Bin8, DataTypes.Bin16, DataTypes.Bin32, DataTypes.Null);
             }
 
-            var segment = reader.ReadBytes(length);
-            var array = new byte[segment.Count];
-            Array.Copy(segment.Array, segment.Offset, array, 0, segment.Count);
-            return array;
+            return reader.ReadBytes(length);
         }
 
         private void WriteBinaryHeaderAndLength(int length, IMsgPackWriter writer)
