@@ -9,6 +9,8 @@ namespace MsgPack.Light
 {
     public class MsgPackContext
     {
+        private bool _isInitialized = false;
+
         private static readonly IMsgPackConverter<object> SharedNullConverter = new NullConverter();
 
         private readonly Dictionary<Type, IMsgPackConverter> _converters = new Dictionary<Type, IMsgPackConverter>
@@ -48,19 +50,20 @@ namespace MsgPack.Light
 
         private readonly Dictionary<Type, Func<object>> _objectActivators = new Dictionary<Type, Func<object>>();
 
-        public MsgPackContext()
+        public void Initialize()
         {
             foreach (var converter in _converters)
             {
                 converter.Value.Initialize(this);
             }
+
+            _isInitialized = true;
         }
 
         public IMsgPackConverter<object> NullConverter => SharedNullConverter;
 
         public void RegisterConverter<T>(IMsgPackConverter<T> converter)
         {
-            converter.Initialize(this);
             _converters[typeof(T)] = converter;
         }
 
@@ -78,6 +81,11 @@ namespace MsgPack.Light
 
         public IMsgPackConverter<T> GetConverter<T>()
         {
+            if (!_isInitialized)
+            {
+                throw new InvalidOperationException("MsgPackContext is not initialized yet!");
+            }
+
             var type = typeof(T);
             var result = (IMsgPackConverter<T>)GetConverterFromCache<T>();
             if (result != null)

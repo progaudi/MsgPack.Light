@@ -65,6 +65,8 @@ namespace MsgPack.Light.Tests.Writer
 
             var settings = new MsgPackContext();
             settings.RegisterConverter(new TestReflectionConverter());
+            settings.Initialize();
+
             MsgPackSerializer.Serialize(tests, settings).ShouldBe(data);
         }
     }

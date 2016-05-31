@@ -64,6 +64,7 @@ namespace MsgPack.Light.Tests.Reader
 
             var settings = new MsgPackContext();
             settings.RegisterConverter(new TestReflectionConverter());
+            settings.Initialize();
 
             MsgPackSerializer.Deserialize<object[]>(data, settings).ShouldBe(expected);
         }
