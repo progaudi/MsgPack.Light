@@ -8,7 +8,6 @@ namespace msgpack.light.benchmark
         public BenchmarkConfig()
         {
             Add(CsvMeasurementsExporter.Default);
-            Add(RPlotExporter.Default);
         }
     }
 }

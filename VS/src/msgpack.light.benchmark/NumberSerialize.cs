@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Linq;
 
 using BenchmarkDotNet.Attributes;
 
@@ -8,6 +7,7 @@ using MsgPack.Serialization;
 
 namespace msgpack.light.benchmark
 {
+    [Config(typeof(BenchmarkConfig))]
     public abstract class NumberSerialize<T>
     {
         private readonly MessagePackSerializer<T[]> _messagePackSerializer;

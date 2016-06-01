@@ -8,6 +8,7 @@ using MsgPack.Serialization;
 
 namespace msgpack.light.benchmark
 {
+    [Config(typeof(BenchmarkConfig))]
     public abstract class NumberDeserialize<T>
     {
         private readonly MessagePackSerializer<T[]> _messagePackSerializer;
