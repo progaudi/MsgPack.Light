@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace MsgPack.Light.Converters
 {
-    internal class ReadOnlyListConverter<TArray, TElement> : ArrayConverterBase<TArray, TElement>
+    public class ReadOnlyListConverter<TArray, TElement> : ArrayConverterBase<TArray, TElement>
         where TArray : IReadOnlyList<TElement>
     {
         public override void Write(TArray value, IMsgPackWriter writer)

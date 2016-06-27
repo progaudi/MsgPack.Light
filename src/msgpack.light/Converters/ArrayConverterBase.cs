@@ -1,6 +1,6 @@
 namespace MsgPack.Light.Converters
 {
-    internal abstract class ArrayConverterBase<TArray, TElement> : IMsgPackConverter<TArray>
+    public abstract class ArrayConverterBase<TArray, TElement> : IMsgPackConverter<TArray>
     {
         public abstract void Write(TArray value, IMsgPackWriter writer);
 

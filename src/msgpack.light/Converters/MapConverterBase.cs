@@ -1,6 +1,6 @@
 namespace MsgPack.Light.Converters
 {
-    internal abstract class MapConverterBase<TMap, TKey, TValue> : IMsgPackConverter<TMap>
+    public abstract class MapConverterBase<TMap, TKey, TValue> : IMsgPackConverter<TMap>
     {
         public void Initialize(MsgPackContext context)
         {

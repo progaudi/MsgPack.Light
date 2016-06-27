@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace MsgPack.Light.Converters
 {
-    internal class ReadOnlyMapConverter<TMap, TKey, TValue> : MapConverterBase<TMap, TKey, TValue>
+    public class ReadOnlyMapConverter<TMap, TKey, TValue> : MapConverterBase<TMap, TKey, TValue>
         where TMap : IReadOnlyDictionary<TKey, TValue>
     {
         public override void Write(TMap value, IMsgPackWriter writer)
