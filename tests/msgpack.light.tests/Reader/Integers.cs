@@ -81,6 +81,7 @@ namespace MsgPack.Light.Tests.Reader
         [InlineData(byte.MaxValue, new byte[] {0xcc, 0xff})]
         [InlineData(ushort.MaxValue, new byte[] {0xcd, 0xff, 0xff})]
         [InlineData(uint.MaxValue, new byte[] {0xce, 0xff, 0xff, 0xff, 0xff})]
+        [InlineData(0x10000000, new byte[] {0xce, 0x10, 0x00, 0x00, 0x00})]
         public void TetsUnsignedInt(uint number, byte[] data)
         {
             MsgPackSerializer.Deserialize<uint>(data).ShouldBe(number);

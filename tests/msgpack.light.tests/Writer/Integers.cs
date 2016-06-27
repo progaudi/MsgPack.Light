@@ -76,11 +76,12 @@ namespace MsgPack.Light.Tests.Writer
         }
 
         [Theory]
-        [InlineData(0, new byte[] {0x00})]
-        [InlineData(1, new byte[] {1})]
-        [InlineData(byte.MaxValue, new byte[] {0xcc, 0xff})]
-        [InlineData(ushort.MaxValue, new byte[] {0xcd, 0xff, 0xff})]
-        [InlineData(uint.MaxValue, new byte[] {0xce, 0xff, 0xff, 0xff, 0xff})]
+        [InlineData(0, new byte[] { 0x00 })]
+        [InlineData(1, new byte[] { 1 })]
+        [InlineData(byte.MaxValue, new byte[] { 0xcc, 0xff })]
+        [InlineData(ushort.MaxValue, new byte[] { 0xcd, 0xff, 0xff })]
+        [InlineData(uint.MaxValue, new byte[] { 0xce, 0xff, 0xff, 0xff, 0xff })]
+        [InlineData(0x10000000, new byte[] { 0xce, 0x10, 0x00, 0x00, 0x00 })]
         public void TetsUnsignedInt(uint number, byte[] data)
         {
             MsgPackSerializer.Serialize(number).ShouldBe(data);

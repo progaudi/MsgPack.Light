@@ -19,7 +19,7 @@ namespace MsgPack.Light.Converters
                 return;
             }
 
-            WriteBinaryHeaderAndLength(value.Length, writer);
+            WriteBinaryHeaderAndLength((uint)value.Length, writer);
 
             writer.Write(value);
         }
@@ -57,24 +57,22 @@ namespace MsgPack.Light.Converters
             return array;
         }
 
-        private void WriteBinaryHeaderAndLength(int length, IMsgPackWriter writer)
+        private void WriteBinaryHeaderAndLength(uint length, IMsgPackWriter writer)
         {
             if (length <= byte.MaxValue)
             {
                 writer.Write(DataTypes.Bin8);
-                IntConverter.WriteValue((byte)length, writer);
-                return;
+                IntConverter.WriteByteValue((byte) length, writer);
             }
-
-            if (length <= ushort.MaxValue)
+            else if (length <= ushort.MaxValue)
             {
                 writer.Write(DataTypes.Bin16);
-                IntConverter.WriteValue((ushort)length, writer);
+                IntConverter.WriteUShortValue((ushort) length, writer);
             }
             else
             {
                 writer.Write(DataTypes.Bin32);
-                IntConverter.WriteValue((uint)length, writer);
+                IntConverter.WriteUIntValue(length, writer);
             }
         }
     }
