@@ -133,10 +133,10 @@ namespace MsgPack.Light.Tests.Writer
         [InlineData(sbyte.MinValue, new byte[] { 208, 128 })]
         [InlineData(sbyte.MaxValue, new byte[] { 127 })]
         [InlineData(short.MinValue, new byte[] { 209, 128, 0 })]
-        [InlineData(short.MaxValue, new byte[] { 209, 127, 0xff })]
+        [InlineData(short.MaxValue, new byte[] { 205, 127, 0xff })]
         [InlineData(int.MinValue, new byte[] { 210, 128, 0, 0, 0 })]
-        [InlineData(int.MaxValue, new byte[] { 210, 127, 0xff, 0xff, 0xff })]
-        [InlineData(long.MaxValue, new byte[] { 211, 127, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff })]
+        [InlineData(int.MaxValue, new byte[] { 206, 127, 0xff, 0xff, 0xff })]
+        [InlineData(long.MaxValue, new byte[] { 207, 127, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff })]
         [InlineData(long.MinValue, new byte[] { 211, 128, 0, 0, 0, 0, 0, 0, 0 })]
         public void TestSignedLong(long number, byte[] data)
         {
@@ -150,9 +150,9 @@ namespace MsgPack.Light.Tests.Writer
         [InlineData(sbyte.MinValue, new byte[] { 208, 128 })]
         [InlineData(sbyte.MaxValue, new byte[] { 127 })]
         [InlineData(short.MinValue, new byte[] { 209, 128, 0 })]
-        [InlineData(short.MaxValue, new byte[] { 209, 127, 0xff })]
+        [InlineData(short.MaxValue, new byte[] { 205, 127, 0xff })]
         [InlineData(int.MinValue, new byte[] { 210, 128, 0, 0, 0 })]
-        [InlineData(int.MaxValue, new byte[] { 210, 127, 0xff, 0xff, 0xff })]
+        [InlineData(int.MaxValue, new byte[] { 206, 127, 0xff, 0xff, 0xff })]
         [InlineData(50505, new byte[] { 205, 197, 73 })]
         public void TestSignedInt(int number, byte[] data)
         {
@@ -166,7 +166,7 @@ namespace MsgPack.Light.Tests.Writer
         [InlineData(sbyte.MinValue, new byte[] { 208, 128 })]
         [InlineData(sbyte.MaxValue, new byte[] { 127 })]
         [InlineData(short.MinValue, new byte[] { 209, 128, 0 })]
-        [InlineData(short.MaxValue, new byte[] { 209, 127, 0xff })]
+        [InlineData(short.MaxValue, new byte[] { 205, 127, 0xff })]
         public void TestSignedShort(short number, byte[] data)
         {
             MsgPackSerializer.Serialize((short?)number).ShouldBe(data);
