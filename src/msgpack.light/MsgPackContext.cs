@@ -66,7 +66,7 @@ namespace MsgPack.Light
 
         public void RegisterGenericConverter(Type type)
         {
-            var converterType= GetGenericInterface(type, typeof(IMsgPackConverter<>));
+            var converterType = GetGenericInterface(type, typeof(IMsgPackConverter<>));
             if (converterType == null)
             {
                 throw new ArgumentException($"Error registering generic converter. Expected IMsgPackConverter<> implementation, but got {type}");
@@ -83,12 +83,10 @@ namespace MsgPack.Light
             if (result != null)
                 return result;
 
-            result = (IMsgPackConverter<T>) (TryGenerateConverterFromGenericConverter(type)
+            result = (IMsgPackConverter<T>)(TryGenerateConverterFromGenericConverter(type)
                 ?? TryGenerateArrayConverter(type)
                 ?? TryGenerateMapConverter(type)
                 ?? TryGenerateNullableConverter(type));
-
-            result.Initialize(this);
 
             return result;
         }
@@ -96,6 +94,13 @@ namespace MsgPack.Light
         public Func<object> GetObjectActivator(Type type)
         {
             return _objectActivators.GetOrAdd(type, CompiledLambdaActivatorFactory.GetActivator);
+        }
+
+        private IMsgPackConverter CreateAndInializeConverter(Func<object> converterActivator)
+        {
+            var converter = (IMsgPackConverter)converterActivator();
+            converter.Initialize(this);
+            return converter;
         }
 
         private IMsgPackConverter TryGenerateConverterFromGenericConverter(Type type)
@@ -113,7 +118,7 @@ namespace MsgPack.Light
             }
 
             var converterType = genericConverterType.MakeGenericType(type.GenericTypeArguments);
-            return _converters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(converterType)());
+            return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(converterType)));
         }
 
         private IMsgPackConverter TryGenerateMapConverter(Type type)
@@ -121,19 +126,19 @@ namespace MsgPack.Light
             var mapInterface = GetGenericInterface(type, typeof(IDictionary<,>));
             if (mapInterface != null)
             {
-                return _converters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(typeof(MapConverter<,,>).MakeGenericType(
+                return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(MapConverter<,,>).MakeGenericType(
                     x,
                     mapInterface.GenericTypeArguments[0],
-                    mapInterface.GenericTypeArguments[1]))());
+                    mapInterface.GenericTypeArguments[1]))));
             }
 
             mapInterface = GetGenericInterface(type, typeof(IReadOnlyDictionary<,>));
             if (mapInterface != null)
             {
-                return _converters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(typeof(ReadOnlyMapConverter<,,>).MakeGenericType(
+                return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(ReadOnlyMapConverter<,,>).MakeGenericType(
                     x,
                     mapInterface.GenericTypeArguments[0],
-                    mapInterface.GenericTypeArguments[1]))());
+                    mapInterface.GenericTypeArguments[1]))));
             }
 
             return null;
@@ -142,12 +147,12 @@ namespace MsgPack.Light
         private IMsgPackConverter TryGenerateNullableConverter(Type type)
         {
             var typeInfo = type.GetTypeInfo();
-            if (!typeInfo.IsGenericType || typeInfo.GetGenericTypeDefinition() != typeof (Nullable<>))
+            if (!typeInfo.IsGenericType || typeInfo.GetGenericTypeDefinition() != typeof(Nullable<>))
             {
                 return null;
             }
 
-            return _converters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(typeof(NullableConverter<>).MakeGenericType(x.GetTypeInfo().GenericTypeArguments[0]))());
+            return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(NullableConverter<>).MakeGenericType(x.GetTypeInfo().GenericTypeArguments[0]))));
         }
 
         private IMsgPackConverter TryGenerateArrayConverter(Type type)
@@ -155,12 +160,12 @@ namespace MsgPack.Light
             var arrayInterface = GetGenericInterface(type, typeof(IList<>));
             if (arrayInterface != null)
             {
-                return _converters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(typeof(ArrayConverter<,>).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))());
+                return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(ArrayConverter<,>).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))));
             }
 
             arrayInterface = GetGenericInterface(type, typeof(IReadOnlyList<>));
             return arrayInterface != null
-                ? _converters.GetOrAdd(type, x => (IMsgPackConverter)GetObjectActivator(typeof(ReadOnlyListConverter<,>).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))())
+                ? _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(ReadOnlyListConverter<,>).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))))
                 : null;
         }
 
