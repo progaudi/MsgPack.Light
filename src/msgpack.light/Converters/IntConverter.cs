@@ -53,12 +53,13 @@ namespace MsgPack.Light.Converters
 
         public void Write(sbyte value, IMsgPackWriter writer)
         {
-            var unsignedValue = (byte)value;
-            if (TryWriteSignedFixNum(value, writer) ||
-                TryWriteInt8(value, writer) ||
+            var unsignedValue = (byte) value;
+            if ((value > 0 && TryWriteUnsignedFixNum(unsignedValue, writer)) ||
+                TryWriteSignedFixNum(value, writer) ||
                 (value > 0 && TryWriteUInt8(unsignedValue, writer)) ||
-                TryWriteInt16(value, writer) ||
-                (value > 0 && TryWriteUInt16(unsignedValue, writer)))
+                TryWriteInt8(value, writer) ||
+                (value > 0 && TryWriteUInt16(unsignedValue, writer)) ||
+                TryWriteInt16(value, writer))
             {
             }
         }
@@ -90,11 +91,12 @@ namespace MsgPack.Light.Converters
         public void Write(short value, IMsgPackWriter writer)
         {
             var unsignedValue = (ushort)value;
-            if (TryWriteSignedFixNum(value, writer) ||
-                TryWriteInt8(value, writer) ||
+            if ((value > 0 && TryWriteUnsignedFixNum(unsignedValue, writer)) ||
+                TryWriteSignedFixNum(value, writer) ||
                 (value > 0 && TryWriteUInt8(unsignedValue, writer)) ||
-                TryWriteInt16(value, writer) ||
-                (value > 0 && TryWriteUInt16(unsignedValue, writer)))
+                TryWriteInt8(value, writer) ||
+                (value > 0 && TryWriteUInt16(unsignedValue, writer)) ||
+                TryWriteInt16(value, writer))
             {
             }
         }
@@ -178,13 +180,14 @@ namespace MsgPack.Light.Converters
         public void Write(int value, IMsgPackWriter writer)
         {
             var unsignedValue = (uint)value;
-            if (TryWriteSignedFixNum(value, writer) ||
-                TryWriteInt8(value, writer) ||
+            if ((value > 0 && TryWriteUnsignedFixNum(unsignedValue, writer)) ||
+                TryWriteSignedFixNum(value, writer) ||
                 (value > 0 && TryWriteUInt8(unsignedValue, writer)) ||
-                TryWriteInt16(value, writer) ||
+                TryWriteInt8(value, writer) ||
                 (value > 0 && TryWriteUInt16(unsignedValue, writer)) ||
-                TryWriteInt32(value, writer) ||
-                (value > 0 && TryWriteUInt32(unsignedValue, writer)))
+                TryWriteInt16(value, writer) ||
+                (value > 0 && TryWriteUInt32(unsignedValue, writer)) ||
+                TryWriteInt32(value, writer))
             {
             }
         }
@@ -281,15 +284,16 @@ namespace MsgPack.Light.Converters
         public void Write(long value, IMsgPackWriter writer)
         {
             var unsignedValue = (ulong)value;
-            if (TryWriteSignedFixNum(value, writer) ||
-                TryWriteInt8(value, writer) ||
+            if ((value > 0 && TryWriteUnsignedFixNum(unsignedValue, writer)) ||
+                TryWriteSignedFixNum(value, writer) ||
                 (value > 0 && TryWriteUInt8(unsignedValue, writer)) ||
-                TryWriteInt16(value, writer) ||
+                TryWriteInt8(value, writer) ||
                 (value > 0 && TryWriteUInt16(unsignedValue, writer)) ||
-                TryWriteInt32(value, writer) ||
+                TryWriteInt16(value, writer) ||
                 (value > 0 && TryWriteUInt32(unsignedValue, writer)) ||
-                TryWriteInt64(value, writer) ||
-                (value > 0 && TryWriteUInt64(unsignedValue, writer)))
+                TryWriteInt32(value, writer) ||
+                (value > 0 && TryWriteUInt64(unsignedValue, writer)) ||
+                TryWriteInt64(value, writer))
             {
             }
         }
