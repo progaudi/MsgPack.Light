@@ -53,7 +53,7 @@ namespace MsgPack.Light.Converters
 
         public void Write(sbyte value, IMsgPackWriter writer)
         {
-            var unsignedValue = (byte) value;
+            var unsignedValue = (byte)value;
             if ((value > 0 && TryWriteUnsignedFixNum(unsignedValue, writer)) ||
                 TryWriteSignedFixNum(value, writer) ||
                 (value > 0 && TryWriteUInt8(unsignedValue, writer)) ||
@@ -121,6 +121,15 @@ namespace MsgPack.Light.Converters
             {
                 case DataTypes.UInt8:
                     return ReadUInt8(reader);
+
+                case DataTypes.UInt16:
+                    var ushortValue = ReadUInt16(reader);
+                    if (ushortValue < short.MaxValue)
+                    {
+                        return (short)ushortValue;
+                    }
+
+                    throw ExceptionUtils.IntDeserializationFailure(type);
 
                 case DataTypes.Int8:
                     return ReadInt8(reader);
@@ -215,6 +224,15 @@ namespace MsgPack.Light.Converters
 
                 case DataTypes.UInt16:
                     return ReadUInt16(reader);
+
+                case DataTypes.UInt32:
+                    var uintValue = ReadUInt32(reader);
+                    if (uintValue < int.MaxValue)
+                    {
+                        return (int)uintValue;
+                    }
+
+                    throw ExceptionUtils.IntDeserializationFailure(type);
 
                 case DataTypes.Int8:
                     return ReadInt8(reader);
@@ -324,6 +342,15 @@ namespace MsgPack.Light.Converters
 
                 case DataTypes.UInt32:
                     return ReadUInt32(reader);
+
+                case DataTypes.UInt64:
+                    var ulongValue = ReadUInt64(reader);
+                    if (ulongValue < long.MaxValue)
+                    {
+                        return (long)ulongValue;
+                    }
+
+                    throw ExceptionUtils.IntDeserializationFailure(type);
 
                 case DataTypes.Int8:
                     return ReadInt8(reader);
