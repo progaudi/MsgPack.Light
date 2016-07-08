@@ -1,5 +1,5 @@
 {
-    "version": "0.5.7",
+    "version": "0.5.8",
     "description": "Lightweight MsgPack library",
     "authors": ["aensidhe", "roman-kozachenko"],
     "tags": ["msgpack", "serialization"],
