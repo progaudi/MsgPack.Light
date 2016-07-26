@@ -4,41 +4,39 @@ namespace MsgPack.Light.Converters
 {
     public class DateTimeConverter : IMsgPackConverter<DateTime>, IMsgPackConverter<DateTimeOffset>
     {
-        private MsgPackContext _context;
+        private Lazy<IMsgPackConverter<ulong>> _ulongConverter;
+        private Lazy<IMsgPackConverter<long>> _longConverter;
 
         public void Initialize(MsgPackContext context)
         {
-            _context = context;
+            _ulongConverter = new Lazy<IMsgPackConverter<ulong>>(context.GetConverter<ulong>);
+            _longConverter = new Lazy<IMsgPackConverter<long>>(context.GetConverter<long>);
         }
 
         public void Write(DateTime value, IMsgPackWriter writer)
         {
             var longValue = DateTimeUtils.FromDateTime(value);
-            var longConverter = _context.GetConverter<long>();
 
-            longConverter.Write(longValue, writer);
+            _longConverter.Value.Write(longValue, writer);
         }
 
         DateTime IMsgPackConverter<DateTime>.Read(IMsgPackReader reader)
         {
-            var longConverter = _context.GetConverter<long>();
-            var longValue = longConverter.Read(reader);
-            return DateTimeUtils.ToDateTime(longValue);
+            var ulongValue = _ulongConverter.Value.Read(reader);
+            return DateTimeUtils.ToDateTime((long)ulongValue);
         }
 
         public void Write(DateTimeOffset value, IMsgPackWriter writer)
         {
             var longValue = DateTimeUtils.FromDateTimeOffset(value);
-            var longConverter = _context.GetConverter<long>();
 
-            longConverter.Write(longValue, writer);
+            _longConverter.Value.Write(longValue, writer);
         }
 
         DateTimeOffset IMsgPackConverter<DateTimeOffset>.Read(IMsgPackReader reader)
         {
-            var longConverter = _context.GetConverter<long>();
-            var longValue = longConverter.Read(reader);
-            return DateTimeUtils.ToDateTimeOffset(longValue);
+            var ulongValue = _ulongConverter.Value.Read(reader);
+            return DateTimeUtils.ToDateTimeOffset((long)ulongValue);
         }
     }
 }
