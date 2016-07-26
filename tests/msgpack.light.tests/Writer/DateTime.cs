@@ -7,7 +7,7 @@ using Xunit;
 
 namespace MsgPack.Light.Tests.Writer
 {
-    public class DateTime1
+    public class DateTimeTest
     {
         [Fact]
         public void TestDateTime()
