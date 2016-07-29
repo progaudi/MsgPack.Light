@@ -28,6 +28,7 @@ namespace MsgPack.Light
             {typeof (ulong), new IntConverter()},
             {typeof (DateTime), new DateTimeConverter()},
             {typeof (DateTimeOffset), new DateTimeConverter()},
+            {typeof (TimeSpan), new TimeSpanConverter() },
 
             {typeof (bool?), new NullableConverter<bool>()},
             {typeof (float?), new NullableConverter<float>()},
