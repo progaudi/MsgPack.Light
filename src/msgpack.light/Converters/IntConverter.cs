@@ -124,7 +124,7 @@ namespace MsgPack.Light.Converters
 
                 case DataTypes.UInt16:
                     var ushortValue = ReadUInt16(reader);
-                    if (ushortValue < short.MaxValue)
+                    if (ushortValue <= short.MaxValue)
                     {
                         return (short)ushortValue;
                     }
@@ -227,7 +227,7 @@ namespace MsgPack.Light.Converters
 
                 case DataTypes.UInt32:
                     var uintValue = ReadUInt32(reader);
-                    if (uintValue < int.MaxValue)
+                    if (uintValue <= int.MaxValue)
                     {
                         return (int)uintValue;
                     }
@@ -345,7 +345,7 @@ namespace MsgPack.Light.Converters
 
                 case DataTypes.UInt64:
                     var ulongValue = ReadUInt64(reader);
-                    if (ulongValue < long.MaxValue)
+                    if (ulongValue <= long.MaxValue)
                     {
                         return (long)ulongValue;
                     }
