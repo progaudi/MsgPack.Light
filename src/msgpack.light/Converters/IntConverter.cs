@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace MsgPack.Light.Converters
 {
     internal class IntConverter :
@@ -16,10 +20,13 @@ namespace MsgPack.Light.Converters
 
         public void Write(byte value, IMsgPackWriter writer)
         {
-            if (TryWriteUnsignedFixNum(value, writer) ||
-                TryWriteUInt8(value, writer))
+            var positiveSerializationMethods = new Func<ulong, IMsgPackWriter, bool>[]
             {
-            }
+                TryWriteUnsignedFixNum,
+                TryWriteUInt8
+            };
+
+            WriteNonNegativeInteger(value, writer, positiveSerializationMethods);
         }
 
         byte IMsgPackConverter<byte>.Read(IMsgPackReader reader)
@@ -53,15 +60,18 @@ namespace MsgPack.Light.Converters
 
         public void Write(sbyte value, IMsgPackWriter writer)
         {
-            var unsignedValue = (byte)value;
-            if ((value > 0 && TryWriteUnsignedFixNum(unsignedValue, writer)) ||
-                TryWriteSignedFixNum(value, writer) ||
-                (value > 0 && TryWriteUInt8(unsignedValue, writer)) ||
-                TryWriteInt8(value, writer) ||
-                (value > 0 && TryWriteUInt16(unsignedValue, writer)) ||
-                TryWriteInt16(value, writer))
+            var negativeSerializationMethods = new Func<long, IMsgPackWriter, bool>[]
             {
-            }
+                TryWriteSignedFixNum,
+                TryWriteInt8
+            };
+            var positiveSerializationMethods = new Func<ulong, IMsgPackWriter, bool>[]
+            {
+                TryWriteUnsignedFixNum,
+                TryWriteUInt8
+            };
+
+            WriteInteger(value, writer, positiveSerializationMethods, negativeSerializationMethods);
         }
 
         sbyte IMsgPackConverter<sbyte>.Read(IMsgPackReader reader)
@@ -90,15 +100,21 @@ namespace MsgPack.Light.Converters
 
         public void Write(short value, IMsgPackWriter writer)
         {
-            var unsignedValue = (ushort)value;
-            if ((value > 0 && TryWriteUnsignedFixNum(unsignedValue, writer)) ||
-                TryWriteSignedFixNum(value, writer) ||
-                (value > 0 && TryWriteUInt8(unsignedValue, writer)) ||
-                TryWriteInt8(value, writer) ||
-                (value > 0 && TryWriteUInt16(unsignedValue, writer)) ||
-                TryWriteInt16(value, writer))
+            var negativeSerializationMethods = new Func<long, IMsgPackWriter, bool>[]
             {
-            }
+                TryWriteSignedFixNum,
+                TryWriteInt8,
+                TryWriteInt16
+            };
+
+            var positiveSerializationMethods = new Func<ulong, IMsgPackWriter, bool>[]
+            {
+                TryWriteUnsignedFixNum,
+                TryWriteUInt8,
+                TryWriteUInt16
+            };
+
+            WriteInteger(value, writer, positiveSerializationMethods, negativeSerializationMethods);
         }
 
         short IMsgPackConverter<short>.Read(IMsgPackReader reader)
@@ -144,11 +160,14 @@ namespace MsgPack.Light.Converters
 
         public void Write(ushort value, IMsgPackWriter writer)
         {
-            if (TryWriteUnsignedFixNum(value, writer) ||
-                TryWriteUInt8(value, writer) ||
-                TryWriteUInt16(value, writer))
-            {
-            }
+            var positiveSerializationMethods = new Func<ulong, IMsgPackWriter, bool>[]
+             {
+                TryWriteUnsignedFixNum,
+                TryWriteUInt8,
+                TryWriteUInt16
+             };
+
+            WriteNonNegativeInteger(value, writer, positiveSerializationMethods);
         }
 
         public ushort Read(IMsgPackReader reader)
@@ -188,17 +207,23 @@ namespace MsgPack.Light.Converters
 
         public void Write(int value, IMsgPackWriter writer)
         {
-            var unsignedValue = (uint)value;
-            if ((value > 0 && TryWriteUnsignedFixNum(unsignedValue, writer)) ||
-                TryWriteSignedFixNum(value, writer) ||
-                (value > 0 && TryWriteUInt8(unsignedValue, writer)) ||
-                TryWriteInt8(value, writer) ||
-                (value > 0 && TryWriteUInt16(unsignedValue, writer)) ||
-                TryWriteInt16(value, writer) ||
-                (value > 0 && TryWriteUInt32(unsignedValue, writer)) ||
-                TryWriteInt32(value, writer))
+            var negativeSerializationMethods = new Func<long, IMsgPackWriter, bool>[]
             {
-            }
+                TryWriteSignedFixNum,
+                TryWriteInt8,
+                TryWriteInt16,
+                TryWriteInt32
+            };
+
+            var positiveSerializationMethods = new Func<ulong, IMsgPackWriter, bool>[]
+            {
+                TryWriteUnsignedFixNum,
+                TryWriteUInt8,
+                TryWriteUInt16,
+                TryWriteUInt32
+            };
+
+            WriteInteger(value, writer, positiveSerializationMethods, negativeSerializationMethods);
         }
 
         int IMsgPackConverter<int>.Read(IMsgPackReader reader)
@@ -250,12 +275,15 @@ namespace MsgPack.Light.Converters
 
         public void Write(uint value, IMsgPackWriter writer)
         {
-            if (TryWriteUnsignedFixNum(value, writer) ||
-                TryWriteUInt8(value, writer) ||
-                TryWriteUInt16(value, writer) ||
-                TryWriteUInt32(value, writer))
+            var positiveSerializationMethods = new Func<ulong, IMsgPackWriter, bool>[]
             {
-            }
+                TryWriteUnsignedFixNum,
+                TryWriteUInt8,
+                TryWriteUInt16,
+                TryWriteUInt32
+            };
+
+            WriteNonNegativeInteger(value, writer, positiveSerializationMethods);
         }
 
         uint IMsgPackConverter<uint>.Read(IMsgPackReader reader)
@@ -301,19 +329,25 @@ namespace MsgPack.Light.Converters
 
         public void Write(long value, IMsgPackWriter writer)
         {
-            var unsignedValue = (ulong)value;
-            if ((value > 0 && TryWriteUnsignedFixNum(unsignedValue, writer)) ||
-                TryWriteSignedFixNum(value, writer) ||
-                (value > 0 && TryWriteUInt8(unsignedValue, writer)) ||
-                TryWriteInt8(value, writer) ||
-                (value > 0 && TryWriteUInt16(unsignedValue, writer)) ||
-                TryWriteInt16(value, writer) ||
-                (value > 0 && TryWriteUInt32(unsignedValue, writer)) ||
-                TryWriteInt32(value, writer) ||
-                (value > 0 && TryWriteUInt64(unsignedValue, writer)) ||
-                TryWriteInt64(value, writer))
+            var negativeSerializationMethods = new Func<long, IMsgPackWriter, bool>[]
             {
-            }
+                TryWriteSignedFixNum,
+                TryWriteInt8,
+                TryWriteInt16,
+                TryWriteInt32,
+                TryWriteInt64
+            };
+
+            var positiveSerializationMethods = new Func<ulong, IMsgPackWriter, bool>[]
+            {
+                TryWriteUnsignedFixNum,
+                TryWriteUInt8,
+                TryWriteUInt16,
+                TryWriteUInt32,
+                TryWriteUInt64
+            };
+
+            WriteInteger(value, writer, positiveSerializationMethods, negativeSerializationMethods);
         }
 
         long IMsgPackConverter<long>.Read(IMsgPackReader reader)
@@ -371,13 +405,16 @@ namespace MsgPack.Light.Converters
 
         public void Write(ulong value, IMsgPackWriter writer)
         {
-            if (TryWriteUnsignedFixNum(value, writer) ||
-               TryWriteUInt8(value, writer) ||
-               TryWriteUInt16(value, writer) ||
-               TryWriteUInt32(value, writer) ||
-               TryWriteUInt64(value, writer))
+            var positiveSerializationMethods = new Func<ulong, IMsgPackWriter, bool>[]
             {
-            }
+                TryWriteUnsignedFixNum,
+                TryWriteUInt8,
+                TryWriteUInt16,
+                TryWriteUInt32,
+                TryWriteUInt64
+            };
+
+            WriteNonNegativeInteger(value, writer, positiveSerializationMethods);
         }
 
         ulong IMsgPackConverter<ulong>.Read(IMsgPackReader reader)
@@ -704,6 +741,46 @@ namespace MsgPack.Light.Converters
                 writer.Write((byte)((value >> 16) & 0xff));
                 writer.Write((byte)((value >> 8) & 0xff));
                 writer.Write((byte)(value & 0xff));
+            }
+        }
+
+        private static void WriteInteger(
+            long value,
+            IMsgPackWriter writer,
+            IEnumerable<Func<ulong, IMsgPackWriter, bool>> positiveSerializationMethods,
+            IEnumerable<Func<long, IMsgPackWriter, bool>> negativeSerializationMethods)
+        {
+            var success = false;
+            if (value >= 0)
+            {
+                var unsignedValue = (ulong)value;
+                if (positiveSerializationMethods.Any(method => method(unsignedValue, writer)))
+                {
+                    success = true;
+                }
+            }
+            else
+            {
+                if (negativeSerializationMethods.Any(method => method(value, writer)))
+                {
+                    success = true;
+                }
+            }
+
+            if (!success)
+            {
+                throw ExceptionUtils.IntSerializationFailture(value);
+            }
+        }
+
+        private static void WriteNonNegativeInteger(
+            ulong value,
+            IMsgPackWriter writer,
+            IEnumerable<Func<ulong, IMsgPackWriter, bool>> positiveSerializationMethods)
+        {
+            if (!positiveSerializationMethods.Any(method => method(value, writer)))
+            {
+                throw ExceptionUtils.IntSerializationFailture(value);
             }
         }
     }
