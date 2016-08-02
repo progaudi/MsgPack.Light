@@ -44,5 +44,15 @@ namespace MsgPack.Light
         {
             return new SerializationException($"Waited for an int, got {type:G} (0x{type:X})");
         }
+
+        public static Exception IntSerializationFailture(long value)
+        {
+            return new SerializationException($"Can't serialize {value}");
+        }
+
+        public static Exception IntSerializationFailture(ulong value)
+        {
+            return new SerializationException($"Can't serialize {value}");
+        }
     }
 }
