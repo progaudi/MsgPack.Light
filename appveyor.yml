@@ -28,7 +28,7 @@ after_build:
 - dotnet pack "src\msgpack.light" -c %CONFIGURATION% --no-build --version-suffix %LABEL% -o artifacts
 
 test_script:
-  - dotnet test "test\MyFirstUnitTests" -c %CONFIGURATION%
+  - dotnet test "test\msgpack.light.tests" -c %CONFIGURATION%
 
 artifacts:
 - path: artifacts\**\*.*
