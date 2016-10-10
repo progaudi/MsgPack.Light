@@ -16,25 +16,19 @@ matrix:
 
 init:
   - git config --global core.autocrlf true
-
-install:
-  - ps: "&{$Branch='dev';iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}"
-  - ps: C:\Users\appveyor\.dnx\bin\dnvm update-self
-  - ps: C:\Users\appveyor\.dnx\bin\dnvm upgrade
-  - ps: C:\Users\appveyor\.dnx\bin\dnvm install 1.0.0-rc1-update1
-  - ps: C:\Users\appveyor\.dnx\bin\dnvm list
-  - ps: C:\Users\appveyor\.dnx\bin\dnvm use 1.0.0-rc1-update1
+  - ps: $Env:LABEL = "CI" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0")
 
 before_build:
-  - ps: dnu restore
+- appveyor-retry dotnet restore -v Minimal
 
-build:
-  parallel: true
-  project: msgpack.sln
-  verbosity: minimal
+build_script:
+- dotnet build "src\msgpack.light" -c %CONFIGURATION% --no-dependencies --version-suffix %LABEL%
+
+after_build:
+- dotnet pack "src\msgpack.light" -c %CONFIGURATION% --no-build --version-suffix %LABEL% -o artifacts
 
 test_script:
-  - ps: dnx -p tests/msgpack.light.tests test
+  - dotnet test "test\MyFirstUnitTests" -c %CONFIGURATION%
 
 artifacts:
-  - path: artifacts\bin\msgpack.light\Release\*.nupkg
+- path: artifacts\**\*.*
