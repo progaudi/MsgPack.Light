@@ -10,16 +10,17 @@
     "buildOptions": {
         "warningsAsErrors": true
     },
-    "frameworks": {
-        "netcoreapp1.0": {
-            "dependencies": {
-                "Microsoft.NETCore.App": {
-                    "type": "platform",
-                    "version": "1.0.0"
-                }
-            }
+  "frameworks": {
+    "net461": {},
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0"
         }
-    },
+      }
+    }
+  },
     "dependencies": {
         "JetBrains.Annotations": "10.2.0",
         "System.Runtime.Serialization.Primitives": "4.1.1"
