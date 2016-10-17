@@ -2,29 +2,32 @@
     "version": "1.0.0",
     "description": "Tests for MsgPack.Light library",
     "authors": [ "aensidhe", "roman-kozachenko" ],
-    "tags": [ "tests", "xunit", "msgpack", "serialization" ],
-    "projectUrl": "https://github.com/roman-kozachenko/MsgPack.Light",
-    "licenseUrl": "https://raw.githubusercontent.com/roman-kozachenko/MsgPack.Light/master/LICENSE",
-
+    "packOptions": {
+        "projectUrl": "https://github.com/roman-kozachenko/MsgPack.Light",
+        "licenseUrl": "https://raw.githubusercontent.com/roman-kozachenko/MsgPack.Light/master/LICENSE",
+        "tags": [ "tests", "xunit", "msgpack", "serialization" ]
+    },
     "commands": {
         "test": "xunit.runner.dnx"
     },
-
-    "compilationOptions": {
+    "testRunner": "xunit",
+    "buildOptions": {
         "warningsAsErrors": true
     },
     "frameworks": {
-        "dnx451": { },
-        "dnxcore50": {
+        "netcoreapp1.0": {
             "dependencies": {
-                "System.Reflection.TypeExtensions": "4.1.0-beta-23516"
+                "Microsoft.NETCore.App": {
+                    "type": "platform",
+                    "version": "1.0.0"
+                }
             }
         }
     },
     "dependencies": {
         "msgpack.light": { "target": "project" },
-        "xUnit": "2.1.0",
-        "xunit.runner.dnx": "2.1.0-rc1-build204",
-        "Shouldly": "2.7.0"
+        "xunit": "2.2.0-beta3-build3402",
+        "dotnet-test-xunit": "2.2.0-preview2-build1029",
+        "Shouldly": "2.8.2"
     }
 }
