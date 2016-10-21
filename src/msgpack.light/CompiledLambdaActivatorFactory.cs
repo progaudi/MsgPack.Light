@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 // ReSharper disable once RedundantUsingDirective
 using System.Reflection;
 
-namespace MsgPack.Light
+namespace ProGaudi.MsgPack.Light
 {
     public class CompiledLambdaActivatorFactory
     {
@@ -19,7 +19,7 @@ namespace MsgPack.Light
             //Expression as body and our param object[] as arg
             var lambda =
                 Expression.Lambda(typeof(Func<object>), newExp);
-                
+
             //compile it
             var compiled = (Func<object>)lambda.Compile();
             return compiled;

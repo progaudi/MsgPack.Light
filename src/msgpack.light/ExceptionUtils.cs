@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace MsgPack.Light
+namespace ProGaudi.MsgPack.Light
 {
     public static class ExceptionUtils
     {
@@ -53,6 +53,11 @@ namespace MsgPack.Light
         public static Exception IntSerializationFailture(ulong value)
         {
             return new SerializationException($"Can't serialize {value}");
+        }
+
+        public static Exception ConverterNotFound(Type type)
+        {
+            return new ConverterNotFoundException(type);
         }
     }
 }

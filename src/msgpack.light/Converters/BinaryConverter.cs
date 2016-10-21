@@ -1,6 +1,6 @@
 using System;
 
-namespace MsgPack.Light.Converters
+namespace ProGaudi.MsgPack.Light.Converters
 {
     internal class BinaryConverter : IMsgPackConverter<byte[]>
     {

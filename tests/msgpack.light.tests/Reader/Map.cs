@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Xunit;
 
-namespace MsgPack.Light.Tests.Reader
+namespace ProGaudi.MsgPack.Light.Tests.Reader
 {
     public class Map
     {

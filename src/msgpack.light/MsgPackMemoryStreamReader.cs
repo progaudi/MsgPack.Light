@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace MsgPack.Light
+namespace ProGaudi.MsgPack.Light
 {
     internal class MsgPackMemoryStreamReader : BaseMsgPackReader, IDisposable
     {
@@ -37,7 +37,7 @@ namespace MsgPack.Light
         {
             _stream.Seek(offset, origin);
         }
-        
+
         public void Dispose()
         {
             if (_disposeStream)

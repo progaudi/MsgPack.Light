@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using JetBrains.Annotations;
 
-namespace MsgPack.Light
+namespace ProGaudi.MsgPack.Light
 {
     internal static class Extensions
     {

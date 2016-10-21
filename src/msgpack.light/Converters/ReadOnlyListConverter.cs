@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace MsgPack.Light.Converters
+namespace ProGaudi.MsgPack.Light.Converters
 {
     public class ReadOnlyListConverter<TArray, TElement> : ArrayConverterBase<TArray, TElement>
         where TArray : IReadOnlyList<TElement>

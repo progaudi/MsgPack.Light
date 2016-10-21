@@ -4,9 +4,9 @@ using System.Text;
 
 using BenchmarkDotNet.Attributes;
 
-using MsgPack.Light;
+using ProGaudi.MsgPack.Light;
 
-namespace msgpack.light.benchmark
+namespace ProGaudi.MsgPack.Light.benchmark
 {
     [Config(typeof(BenchmarkConfig))]
     public class BeerSerializeBenchmark

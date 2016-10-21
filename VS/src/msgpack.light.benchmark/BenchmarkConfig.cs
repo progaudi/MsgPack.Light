@@ -1,7 +1,7 @@
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Exporters;
 
-namespace msgpack.light.benchmark
+namespace ProGaudi.MsgPack.Light.benchmark
 {
     internal class BenchmarkConfig : ManualConfig
     {

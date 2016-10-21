@@ -2,7 +2,7 @@ using Shouldly;
 
 using Xunit;
 
-namespace MsgPack.Light.Tests.Reader
+namespace ProGaudi.MsgPack.Light.Tests.Reader
 {
     public class Binary
     {

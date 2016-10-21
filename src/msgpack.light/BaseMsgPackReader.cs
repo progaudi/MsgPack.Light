@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 
-using MsgPack.Light.Converters;
+using ProGaudi.MsgPack.Light.Converters;
 
-namespace MsgPack.Light
+namespace ProGaudi.MsgPack.Light
 {
     internal abstract class BaseMsgPackReader : IMsgPackReader
     {
@@ -150,10 +150,10 @@ namespace MsgPack.Light
                 SkipBytes(stringLength.Value);
                 return;
             }
-            
+
             throw new ArgumentOutOfRangeException();
         }
-        
+
         private void SkipMapItems(uint count)
         {
             for (var i = 0; i < count; i++)

@@ -7,8 +7,8 @@
     <ProjectGuid>{87DAE4A0-E1EF-40A3-A051-25A76D92BF8E}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>msgpack.light.benchmark</RootNamespace>
-    <AssemblyName>msgpack.light.benchmark</AssemblyName>
+    <RootNamespace>ProGaudi.MsgPack.Light.benchmark</RootNamespace>
+    <AssemblyName>ProGaudi.MsgPack.Light.benchmark</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

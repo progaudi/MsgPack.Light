@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace MsgPack.Light.Converters
+namespace ProGaudi.MsgPack.Light.Converters
 {
     internal class FloatConverter : IMsgPackConverter<float>, IMsgPackConverter<double>
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace msgpack.light.benchmark
+namespace ProGaudi.MsgPack.Light.benchmark
 {
     public static class Data
     {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-using MsgPack.Light.Converters;
+using ProGaudi.MsgPack.Light.Converters;
 
-namespace MsgPack.Light
+namespace ProGaudi.MsgPack.Light
 {
     public class MsgPackContext
     {
@@ -88,6 +88,11 @@ namespace MsgPack.Light
                 ?? TryGenerateArrayConverter(type)
                 ?? TryGenerateMapConverter(type)
                 ?? TryGenerateNullableConverter(type));
+
+            if (result == null)
+            {
+                throw ExceptionUtils.ConverterNotFound(type);
+            }
 
             return result;
         }

@@ -13,3 +13,4 @@ VS/.vs/config/applicationhost.config
 *.DotSettings.user
 Debug
 Release
+.idea

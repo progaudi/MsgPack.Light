@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-using MsgPack.Light;
+using ProGaudi.MsgPack.Light;
 
-namespace msgpack.light.benchmark
+namespace ProGaudi.MsgPack.Light.benchmark
 {
     [Serializable]
     public class Beer

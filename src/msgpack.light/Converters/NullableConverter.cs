@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace MsgPack.Light.Converters
+namespace ProGaudi.MsgPack.Light.Converters
 {
     public class NullableConverter<T> : IMsgPackConverter<T?>
         where T : struct
