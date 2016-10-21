@@ -89,6 +89,11 @@ namespace ProGaudi.MsgPack.Light
                 ?? TryGenerateMapConverter(type)
                 ?? TryGenerateNullableConverter(type));
 
+            if (result == null)
+            {
+                throw ExceptionUtils.ConverterNotFound(type);
+            }
+
             return result;
         }
 

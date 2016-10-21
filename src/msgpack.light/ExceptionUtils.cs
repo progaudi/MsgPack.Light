@@ -54,5 +54,10 @@ namespace ProGaudi.MsgPack.Light
         {
             return new SerializationException($"Can't serialize {value}");
         }
+
+        public static Exception ConverterNotFound(Type type)
+        {
+            return new ConverterNotFoundException(type);
+        }
     }
 }
