@@ -1,28 +1,37 @@
 {
     "version": "1.0.0",
     "description": "Lightweight MsgPack library",
-    "authors": ["aensidhe", "roman-kozachenko"],
+    "authors": [
+        "aensidhe",
+        "roman-kozachenko"
+    ],
     "packOptions": {
         "projectUrl": "https://github.com/progaudi/MsgPack.Light",
         "licenseUrl": "https://raw.githubusercontent.com/progaudi/MsgPack.Light/master/LICENSE",
-        "tags": ["msgpack", "serialization"]
+        "tags": [
+            "msgpack",
+            "serialization"
+        ]
     },
     "buildOptions": {
         "warningsAsErrors": true
     },
-  "frameworks": {
-    "net461": {},
-    "netcoreapp1.0": {
-      "dependencies": {
-        "Microsoft.NETCore.App": {
-          "type": "platform",
-          "version": "1.0.0"
+    "frameworks": {
+        "net461": {},
+        "netcoreapp1.0": {
+            "dependencies": {
+                "Microsoft.NETCore.App": {
+                    "type": "platform",
+                    "version": "1.0.0"
+                }
+            }
         }
-      }
-    }
-  },
+    },
     "dependencies": {
         "JetBrains.Annotations": "10.2.0",
         "System.Runtime.Serialization.Primitives": "4.1.1"
+    },
+    "tooling": {
+        "defaultNamespace": "ProGaudi.MsgPack.Light"
     }
 }
