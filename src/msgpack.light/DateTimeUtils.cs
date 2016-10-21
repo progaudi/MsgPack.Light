@@ -1,6 +1,6 @@
 using System;
 
-namespace MsgPack.Light
+namespace ProGaudi.MsgPack.Light
 {
     public static class DateTimeUtils
     {

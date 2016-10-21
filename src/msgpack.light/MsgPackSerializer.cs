@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 using JetBrains.Annotations;
 
-namespace MsgPack.Light
+namespace ProGaudi.MsgPack.Light
 {
     public static class MsgPackSerializer
     {

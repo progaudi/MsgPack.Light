@@ -10,7 +10,7 @@ MsgPack.Light is a lightweight [MsgPack](http://msgpack.org/) serialization libr
 * Simple usage
 
 ## Install
-Simpliest way to start using MsgPack.Light is to install it from [NuGet](https://www.nuget.org/packages/MsgPack.Light/).
+Simpliest way to start using ProGaudi.MsgPack.Light is to install it from [NuGet](https://www.nuget.org/packages/MsgPack.Light/).
 
 ## Usage
 ### Serialization to bytes array:

@@ -3,8 +3,8 @@
     "description": "Tests for MsgPack.Light library",
     "authors": [ "aensidhe", "roman-kozachenko" ],
     "packOptions": {
-        "projectUrl": "https://github.com/roman-kozachenko/MsgPack.Light",
-        "licenseUrl": "https://raw.githubusercontent.com/roman-kozachenko/MsgPack.Light/master/LICENSE",
+        "projectUrl": "https://github.com/progaudi/MsgPack.Light",
+        "licenseUrl": "https://raw.githubusercontent.com/progaudi/MsgPack.Light/master/LICENSE",
         "tags": [ "tests", "xunit", "msgpack", "serialization" ]
     },
     "commands": {

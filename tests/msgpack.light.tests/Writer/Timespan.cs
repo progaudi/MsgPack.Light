@@ -5,7 +5,7 @@ using Shouldly;
 
 using Xunit;
 
-namespace MsgPack.Light.Tests.Writer
+namespace ProGaudi.MsgPack.Light.Tests.Writer
 {
     public class Timespan
     {

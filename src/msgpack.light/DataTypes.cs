@@ -1,4 +1,4 @@
-namespace MsgPack.Light
+namespace ProGaudi.MsgPack.Light
 {
     public enum DataTypes : byte
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MsgPack.Light.Converters
+namespace ProGaudi.MsgPack.Light.Converters
 {
     public class TimeSpanConverter : IMsgPackConverter<TimeSpan>
     {

@@ -7,7 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
 
-namespace MsgPack.Light.Tests
+namespace ProGaudi.MsgPack.Light.Tests
 {
     public class TestReflectionConverter : IMsgPackConverter<object>
     {

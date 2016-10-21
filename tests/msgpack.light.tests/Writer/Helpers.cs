@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace MsgPack.Light.Tests.Writer
+namespace ProGaudi.MsgPack.Light.Tests.Writer
 {
     public class Helpers
     {

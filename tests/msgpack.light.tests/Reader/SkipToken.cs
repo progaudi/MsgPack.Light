@@ -4,7 +4,7 @@ using System.IO;
 using Xunit;
 using Shouldly;
 
-namespace MsgPack.Light.Tests.Reader
+namespace ProGaudi.MsgPack.Light.Tests.Reader
 {
     public class SkipToken
     {

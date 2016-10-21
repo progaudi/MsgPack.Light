@@ -1,4 +1,4 @@
-namespace MsgPack.Light.Converters
+namespace ProGaudi.MsgPack.Light.Converters
 {
     public abstract class ArrayConverterBase<TArray, TElement> : IMsgPackConverter<TArray>
     {

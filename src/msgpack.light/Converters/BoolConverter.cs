@@ -1,4 +1,4 @@
-namespace MsgPack.Light.Converters
+namespace ProGaudi.MsgPack.Light.Converters
 {
     internal class BoolConverter : IMsgPackConverter<bool>
     {

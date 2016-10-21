@@ -2,10 +2,10 @@
 
 using BenchmarkDotNet.Attributes;
 
-using MsgPack.Light;
+using ProGaudi.MsgPack.Light;
 using MsgPack.Serialization;
 
-namespace msgpack.light.benchmark
+namespace ProGaudi.MsgPack.Light.benchmark
 {
     [Config(typeof(BenchmarkConfig))]
     public abstract class NumberSerialize<T>
