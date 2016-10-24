@@ -67,4 +67,3 @@ Windows build status:
 Linux and OSX build status (it's not possible to separate build status per OS, so if any OS is failing build status will be failing):
 
 [![Linux and OSX build status](https://travis-ci.org/progaudi/MsgPack.Light.svg?branch=master)](https://travis-ci.org/progaudi/MsgPack.Light)
- 
