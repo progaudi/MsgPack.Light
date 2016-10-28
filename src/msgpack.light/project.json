@@ -17,7 +17,8 @@
         "warningsAsErrors": true
     },
     "frameworks": {
-        "net461": {},
+        "net460": {},
+        "net461": {}, 
         "netcoreapp1.0": {
             "dependencies": {
                 "Microsoft.NETCore.App": {
