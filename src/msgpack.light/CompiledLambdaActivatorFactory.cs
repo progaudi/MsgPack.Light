@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 // ReSharper disable once RedundantUsingDirective
 using System.Reflection;
@@ -9,7 +10,7 @@ namespace ProGaudi.MsgPack.Light
     {
         public static Func<object> GetActivator(Type type)
         {
-            var ctor = type.GetConstructor(Type.EmptyTypes);
+            var ctor = type.GetTypeInfo().DeclaredConstructors.First(x => x.GetParameters().Length == 0);
 
             //make a NewExpression that calls the
             //ctor with the args we just created
