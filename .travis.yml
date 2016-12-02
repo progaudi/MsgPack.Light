@@ -14,6 +14,6 @@ before_script:
   - dotnet restore
 
 script:
-  - dotnet build -c netstandard1.3 src/msgpack.light/msgpack.light.csproj
-  - dotnet build -c netstandard1.3 tests/msgpack.light.tests/msgpack.light.tests.csproj
+  - dotnet build -f netstandard1.3 -c Release src/msgpack.light/msgpack.light.csproj
+  - dotnet build -f netstandard1.3 -c Release tests/msgpack.light.tests/msgpack.light.tests.csproj
   - dotnet test tests/msgpack.light.tests/msgpack.light.tests.csproj
