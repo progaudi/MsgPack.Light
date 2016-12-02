@@ -14,3 +14,5 @@ VS/.vs/config/applicationhost.config
 Debug
 Release
 .idea
+bin
+obj
