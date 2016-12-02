@@ -4,23 +4,27 @@
     <Description>Tests for MsgPack.Light library</Description>
     <TargetFrameworks>net46</TargetFrameworks>
     <WarningsAsErrors>true</WarningsAsErrors>
+
     <AssemblyName>msgpack.light.tests</AssemblyName>
+    <RootNamespace>ProGaudi.MsgPack.Light.Tests</RootNamespace>
     <Product>msgpack.light</Product>
     <Copyright>Copyright © 2016</Copyright>
+
     <PackageTags>tests;xunit;msgpack;serialization</PackageTags>
     <PackageProjectUrl>https://github.com/progaudi/MsgPack.Light</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/progaudi/MsgPack.Light/master/LICENSE</PackageLicenseUrl>
+
     <GenerateAssemblyTitleAttribute>true</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyProductAttribute>true</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCopyrightAttribute>true</GenerateAssemblyCopyrightAttribute>
-  </PropertyGroup>
 
+    <ProjectGuid>{4DD9051D-548F-4E11-86EA-746F443CEA67}</ProjectGuid>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="**\*.cs" />
     <EmbeddedResource Include="**\*.resx" />
     <EmbeddedResource Include="compiler\resources\**\*" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="NETStandard.Library">
       <Version>1.6</Version>
@@ -38,14 +42,21 @@
     <PackageReference Include="dotnet-test-xunit">
       <Version>2.2.0-preview2-build1029</Version>
     </PackageReference>
+    <PackageReference Include="JetBrains.Annotations">
+      <Version>10.2.1</Version>
+    </PackageReference>
   </ItemGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.4' ">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\msgpack.light\msgpack.light.csproj">
+      <Project>{04D4E761-F756-43D8-B31C-79B1B0671243}</Project>
+      <Name>msgpack.light</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
     <DefineConstants>$(DefineConstants);PROGAUDI_NETCORE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
   </PropertyGroup>
-  
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
