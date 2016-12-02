@@ -16,4 +16,4 @@ before_script:
 script:
   - dotnet build -f netstandard1.3 -c Release src/msgpack.light/msgpack.light.csproj
   - dotnet build -f netstandard1.3 -c Release tests/msgpack.light.tests/msgpack.light.tests.csproj
-  - dotnet test tests/msgpack.light.tests/msgpack.light.tests.csproj
+  - dotnet test -f netstandard1.3 -c Release tests/msgpack.light.tests/msgpack.light.tests.csproj
