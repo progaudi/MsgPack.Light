@@ -2,7 +2,7 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
     <Description>Tests for MsgPack.Light library</Description>
-    <TargetFrameworks>net46</TargetFrameworks>
+    <TargetFrameworks>net46;netstandard1.3</TargetFrameworks>
     <WarningsAsErrors>true</WarningsAsErrors>
 
     <AssemblyName>msgpack.light.tests</AssemblyName>
@@ -33,17 +33,17 @@
       <Version>1.0.0-alpha-20161104-2</Version>
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="xunit">
-      <Version>2.2.0-beta4-build3444</Version>
+    <PackageReference Include="JetBrains.Annotations">
+      <Version>10.2.1</Version>
     </PackageReference>
     <PackageReference Include="Shouldly">
       <Version>2.8.2</Version>
     </PackageReference>
-    <PackageReference Include="dotnet-test-xunit">
-      <Version>2.2.0-preview2-build1029</Version>
+    <PackageReference Include="xunit">
+      <Version>2.2.0-beta4-build3444</Version>
     </PackageReference>
-    <PackageReference Include="JetBrains.Annotations">
-      <Version>10.2.1</Version>
+    <PackageReference Include="xunit.runner.console">
+      <Version>2.2.0-beta4-build3444</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -52,7 +52,7 @@
       <Name>msgpack.light</Name>
     </ProjectReference>
   </ItemGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
     <DefineConstants>$(DefineConstants);PROGAUDI_NETCORE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">

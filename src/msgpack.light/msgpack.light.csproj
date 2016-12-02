@@ -23,17 +23,18 @@
   <ItemGroup>
     <Compile Include="**\*.cs" />
     <EmbeddedResource Include="**\*.resx" />
+    <EmbeddedResource Include="compiler\resources\**\*" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations">
-      <Version>10.2.1</Version>
-    </PackageReference>
     <PackageReference Include="NETStandard.Library">
       <Version>1.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Sdk">
       <Version>1.0.0-alpha-20161104-2</Version>
       <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="JetBrains.Annotations">
+      <Version>10.2.1</Version>
     </PackageReference>
     <PackageReference Include="System.Runtime.Serialization.Primitives">
       <Version>4.3.0</Version>
