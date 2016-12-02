@@ -14,5 +14,6 @@ before_script:
   - dotnet restore
 
 script:
-  - dotnet build src/msgpack.light
-  - dotnet test tests/msgpack.light.tests
+  - dotnet build src/msgpack.light/msgpack.light.csproj
+  - dotnet build tests/msgpack.light.tests/msgpack.light.tests.csproj
+  - dotnet test tests/msgpack.light.tests/msgpack.light.tests.csproj
