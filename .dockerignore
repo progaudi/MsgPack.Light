@@ -1,0 +1,18 @@
+################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+*.xproj.user
+*.lock.json
+*.suo
+
+/artifacts/bin
+/artifacts/obj
+/.vs/config/applicationhost.config
+VS/.vs/config/applicationhost.config
+*.DotSettings.user
+Debug
+Release
+.idea
+bin
+obj
