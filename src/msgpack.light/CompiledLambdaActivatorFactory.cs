@@ -11,7 +11,7 @@ namespace ProGaudi.MsgPack.Light
         public static Func<object> GetActivator(Type type)
         {
 #if PROGAUDI_NETCORE
-            var ctor = type.GetTypeInfo().DeclaredConstructors.First(x => x.GetParameters().Length == 0);
+            var ctor = type.GetTypeInfo().DeclaredConstructors.First(x => x.GetParameters().Length == 0 && !x.IsStatic);
 #else
             var ctor = type.GetConstructor(Type.EmptyTypes);
 #endif
