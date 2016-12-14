@@ -5,6 +5,7 @@
 *.xproj.user
 *.lock.json
 *.suo
+*.deps.json
 
 /artifacts/bin
 /artifacts/obj
