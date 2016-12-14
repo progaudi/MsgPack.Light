@@ -54,4 +54,6 @@ WORKDIR /app
 COPY . .
 RUN dotnet --version
 RUN dotnet restore
-RUN dotnet build
+RUN dotnet build -f netstandard1.4 src/msgpack.light/msgpack.light.csproj
+RUN dotnet build -f netcoreapp1.0 tests/msgpack.light.tests/msgpack.light.tests.csproj
+RUN dotnet test --noBuild tests/msgpack.light.tests/msgpack.light.tests.csproj
