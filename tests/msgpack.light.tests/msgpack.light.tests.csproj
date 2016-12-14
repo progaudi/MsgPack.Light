@@ -1,9 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
+    <Description>Tests for MsgPack.Light library</Description>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp1.0</TargetFramework>
-  </PropertyGroup>
+    <WarningsAsErrors>true</WarningsAsErrors>
 
+    <AssemblyName>msgpack.light.tests</AssemblyName>
+    <RootNamespace>ProGaudi.MsgPack.Light.Tests</RootNamespace>
+    <Product>msgpack.light</Product>
+    <Copyright>Copyright © 2016</Copyright>
+
+    <PackageTags>tests;xunit;msgpack;serialization</PackageTags>
+    <PackageProjectUrl>https://github.com/progaudi/MsgPack.Light</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/progaudi/MsgPack.Light/master/LICENSE</PackageLicenseUrl>
+
+    <GenerateAssemblyTitleAttribute>true</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyProductAttribute>true</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCopyrightAttribute>true</GenerateAssemblyCopyrightAttribute>
+
+    <ProjectGuid>{4DD9051D-548F-4E11-86EA-746F443CEA67}</ProjectGuid>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="**\*.cs" />
     <EmbeddedResource Include="**\*.resx" />
@@ -14,14 +30,14 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20161123-03" />
     <PackageReference Include="xunit" Version="2.2.0-beta4-build3444" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0-beta4-build1194" />
-      <PackageReference Include="JetBrains.Annotations">
+    <PackageReference Include="JetBrains.Annotations">
       <Version>10.2.1</Version>
     </PackageReference>
     <PackageReference Include="Shouldly">
       <Version>2.8.2</Version>
     </PackageReference>
   </ItemGroup>
- <ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\src\msgpack.light\msgpack.light.csproj">
       <Project>{04D4E761-F756-43D8-B31C-79B1B0671243}</Project>
       <Name>msgpack.light</Name>

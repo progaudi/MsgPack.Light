@@ -1,7 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.4</TargetFrameworks>
+    <Description>Lightweight msgpack serialization library</Description>
+    <TargetFrameworks>net46;netstandard1.4</TargetFrameworks>
+    <WarningsAsErrors>true</WarningsAsErrors>
+
+    <AssemblyTitle>msgpack.light</AssemblyTitle>
+    <RootNamespace>ProGaudi.MsgPack.Light</RootNamespace>
+    <Product>msgpack.light</Product>
+    <Copyright>Copyright © 2016</Copyright>
+
+    <PackageTags>msgpack;serialization</PackageTags>
+    <PackageProjectUrl>https://github.com/progaudi/MsgPack.Light</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/progaudi/MsgPack.Light/master/LICENSE</PackageLicenseUrl>
+
+    <GenerateAssemblyTitleAttribute>true</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyProductAttribute>true</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCopyrightAttribute>true</GenerateAssemblyCopyrightAttribute>
+
+    <ProjectGuid>{04D4E761-F756-43D8-B31C-79B1B0671243}</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,5 +37,8 @@
   </ItemGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.4' ">
     <DefineConstants>$(DefineConstants);PROGAUDI_NETCORE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
   </PropertyGroup>
 </Project>
