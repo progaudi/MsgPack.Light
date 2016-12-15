@@ -41,6 +41,18 @@ And deserialize:
 var beer = MsgPackSerializer.Deserialize<Beer>(bytes, context);
 ```
 
+## Build
+To build MsgPack.Light you have to install dotnet SDK version ```1.0.0-preview4-004233``` or higher (you can find corresponding build on [dotnet/cli project](https://github.com/dotnet/cli).
+After dotnet is installed, run following commands:
+```
+git clone https://github.com/progaudi/MsgPack.Light.git
+cd MsgPack.Light
+dotnet build -c Release -f netstandard1.4 src/msgpack.light/msgpack.light.csproj
+dotnet build -c Release -f netcoreapp1.0 tests/msgpack.light.tests/msgpack.light.tests.csproj
+dotnet test -c Release --noBuild tests/msgpack.light.tests/msgpack.light.tests.csproj
+```
+MsgPack.Light should built and all test should be passed.
+
 ## Performance
 * Serialization performance is comparable with msgpack.cli
 * Deserialization performance 2-3 times faster
@@ -59,10 +71,6 @@ var beer = MsgPackSerializer.Deserialize<Beer>(bytes, context);
 
 
 ## Build statuses for master branch
-
-Windows build status:
-
-[![Windows build status](https://ci.appveyor.com/api/projects/status/42f0d1sdyn5kkcpc?svg=true)](https://ci.appveyor.com/project/progaudi/msgpack-light/branch/master)
 
 Linux and OSX build status (it's not possible to separate build status per OS, so if any OS is failing build status will be failing):
 
