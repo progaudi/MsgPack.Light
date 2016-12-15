@@ -1,3 +1,5 @@
+#!/bin/bash
+
 brew update
 brew install openssl
 mkdir -p /usr/local/lib
