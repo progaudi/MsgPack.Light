@@ -1,5 +1,3 @@
-language: csharp
-
 matrix:
   include:
     - os: osx # OSX 10.11
@@ -14,11 +12,11 @@ before_install:
   - curl -o "/tmp/dotnet.pkg" -fL https://dotnetcli.blob.core.windows.net/dotnet/Sdk/rel-1.0.0/dotnet-dev-osx-x64.latest.pkg
   
 install:
-  - installer -pkg /tmp/dotnet.pkg -target /
+  - sudo installer -pkg /tmp/dotnet.pkg -target /
 
 before_script:
   - dotnet restore
-  
+
 script:
   - dotnet build -c Release -f netstandard1.4 src/msgpack.light/msgpack.light.csproj
   - dotnet build -c Release -f netcoreapp1.0 tests/msgpack.light.tests/msgpack.light.tests.csproj
