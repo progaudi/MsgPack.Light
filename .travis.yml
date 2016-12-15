@@ -13,6 +13,7 @@ before_install:
   
 install:
   - sudo installer -pkg /tmp/dotnet.pkg -target /
+  - sudo ln -s /usr/local/share/dotnet/dotnet /usr/local/bin/
 
 before_script:
   - dotnet restore
