@@ -9,6 +9,6 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 
-[assembly: Guid("26884d70-2d12-46ac-884e-158e10e9314a")]
+[assembly: Guid("04D4E761-F756-43D8-B31C-79B1B0671243")]
 
 [assembly: InternalsVisibleTo("MsgPack.Light.Tests")]
