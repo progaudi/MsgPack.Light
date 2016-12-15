@@ -17,7 +17,7 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo sh ./scripts/osx-dotnet-install.sh ; fi
 
 before_script:
-  - dotnet restore
+  - if [[ "$BUILD_DOCKER" == false ]]; then dotnet restore ; fi
 
 script:
   - if [[ "$BUILD_DOCKER" == false ]]; then dotnet build -c Release -f netstandard1.4 src/msgpack.light/msgpack.light.csproj ; fi
