@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 brew update
 brew install openssl
