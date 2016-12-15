@@ -53,6 +53,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
 
             var settings = new MsgPackContext();
             settings.RegisterConverter(new TestReflectionConverter());
+            settings.Initialize();
+
             MsgPackSerializer.Serialize(tests, settings).ShouldBe(data);
         }
 

@@ -49,7 +49,7 @@ namespace ProGaudi.MsgPack.Light
 
         private readonly Dictionary<Type, Func<object>> _objectActivators = new Dictionary<Type, Func<object>>();
 
-        public MsgPackContext()
+        public void Initialize()
         {
             foreach (var converter in _converters)
             {
@@ -61,7 +61,6 @@ namespace ProGaudi.MsgPack.Light
 
         public void RegisterConverter<T>(IMsgPackConverter<T> converter)
         {
-            converter.Initialize(this);
             _converters[typeof(T)] = converter;
         }
 

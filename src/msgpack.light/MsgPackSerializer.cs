@@ -9,7 +9,10 @@ namespace ProGaudi.MsgPack.Light
     {
         public static byte[] Serialize<T>(T data)
         {
-            return Serialize(data, new MsgPackContext());
+            var context = new MsgPackContext();
+            context.Initialize();
+
+            return Serialize(data, context);
         }
 
         public static byte[] Serialize<T>(T data, [NotNull]MsgPackContext context)
@@ -25,7 +28,10 @@ namespace ProGaudi.MsgPack.Light
 
         public static void Serialize<T>(T data, MemoryStream stream)
         {
-            Serialize(data, stream, new MsgPackContext());
+            var context = new MsgPackContext();
+            context.Initialize();
+
+            Serialize(data, stream, context);
         }
 
         public static void Serialize<T>(T data, MemoryStream stream, [NotNull]MsgPackContext context)
@@ -39,7 +45,10 @@ namespace ProGaudi.MsgPack.Light
 
         public static T Deserialize<T>(byte[] data)
         {
-            return Deserialize<T>(data, new MsgPackContext());
+            var context  = new MsgPackContext();
+            context.Initialize();
+
+            return Deserialize<T>(data, context);
         }
 
         public static T Deserialize<T>(byte[] data, [NotNull]MsgPackContext context)
@@ -51,7 +60,10 @@ namespace ProGaudi.MsgPack.Light
 
         public static T Deserialize<T>(MemoryStream stream)
         {
-            return Deserialize<T>(stream, new MsgPackContext());
+            var context = new MsgPackContext();
+            context.Initialize();
+
+            return Deserialize<T>(stream, context);
         }
 
         public static T Deserialize<T>(MemoryStream stream, [NotNull]MsgPackContext context)
