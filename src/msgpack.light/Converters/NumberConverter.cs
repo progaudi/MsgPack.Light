@@ -34,6 +34,31 @@ namespace ProGaudi.MsgPack.Light.Converters
             TryWriteInt64
         };
 
+        public static void WriteByteValue(byte value, IMsgPackWriter writer)
+        {
+            writer.Write(value);
+        }
+
+        public static void WriteUShortValue(ushort value, IMsgPackWriter writer)
+        {
+            unchecked
+            {
+                writer.Write((byte)((value >> 8) & 0xff));
+                writer.Write((byte)(value & 0xff));
+            }
+        }
+
+        public static void WriteUIntValue(uint value, IMsgPackWriter writer)
+        {
+            unchecked
+            {
+                writer.Write((byte)((value >> 24) & 0xff));
+                writer.Write((byte)((value >> 16) & 0xff));
+                writer.Write((byte)((value >> 8) & 0xff));
+                writer.Write((byte)(value & 0xff));
+            }
+        }
+
         public void Initialize(MsgPackContext context)
         {
         }
@@ -81,7 +106,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             var type = reader.ReadDataType();
 
             if (type != DataTypes.Single && type != DataTypes.Double)
-                throw ExceptionUtils.BadTypeException(type, DataTypes.Single, DataTypes.Double);
+                return TryGetInt64(type, reader) ?? throw ExceptionUtils.BadTypeException(type, DataTypes.Single, DataTypes.Double);
 
             if (type == DataTypes.Single)
             {
@@ -127,10 +152,12 @@ namespace ProGaudi.MsgPack.Light.Converters
         {
             var type = reader.ReadDataType();
 
-            if (type != DataTypes.Single)
-                throw ExceptionUtils.BadTypeException(type, DataTypes.Single);
+            if (type == DataTypes.Single)
+            {
+                return ReadFloat(reader);
+            }
 
-            return ReadFloat(reader);
+            return TryGetInt32(type, reader) ?? throw ExceptionUtils.BadTypeException(type, DataTypes.Single);
         }
 
         public void Write(byte value, IMsgPackWriter writer)
@@ -292,45 +319,7 @@ namespace ProGaudi.MsgPack.Light.Converters
         {
             var type = reader.ReadDataType();
 
-            if (TryGetFixPositiveNumber(type, out byte temp))
-            {
-                return temp;
-            }
-
-            if (TryGetNegativeNumber(type, out sbyte tempInt8))
-            {
-                return tempInt8;
-            }
-
-            switch (type)
-            {
-                case DataTypes.UInt8:
-                    return ReadUInt8(reader);
-
-                case DataTypes.UInt16:
-                    return ReadUInt16(reader);
-
-                case DataTypes.UInt32:
-                    var uintValue = ReadUInt32(reader);
-                    if (uintValue <= int.MaxValue)
-                    {
-                        return (int)uintValue;
-                    }
-
-                    throw ExceptionUtils.IntDeserializationFailure(type);
-
-                case DataTypes.Int8:
-                    return ReadInt8(reader);
-
-                case DataTypes.Int16:
-                    return ReadInt16(reader);
-
-                case DataTypes.Int32:
-                    return ReadInt32(reader);
-
-                default:
-                    throw ExceptionUtils.IntDeserializationFailure(type);
-            }
+            return TryGetInt32(type, reader) ?? throw ExceptionUtils.IntDeserializationFailure(type);
         }
 
         public void Write(uint value, IMsgPackWriter writer)
@@ -386,51 +375,7 @@ namespace ProGaudi.MsgPack.Light.Converters
         {
             var type = reader.ReadDataType();
 
-            if (TryGetFixPositiveNumber(type, out byte tempUInt8))
-            {
-                return tempUInt8;
-            }
-
-            if (TryGetNegativeNumber(type, out sbyte tempInt8))
-            {
-                return tempInt8;
-            }
-
-            switch (type)
-            {
-                case DataTypes.UInt8:
-                    return ReadUInt8(reader);
-
-                case DataTypes.UInt16:
-                    return ReadUInt16(reader);
-
-                case DataTypes.UInt32:
-                    return ReadUInt32(reader);
-
-                case DataTypes.UInt64:
-                    var ulongValue = ReadUInt64(reader);
-                    if (ulongValue <= long.MaxValue)
-                    {
-                        return (long)ulongValue;
-                    }
-
-                    throw ExceptionUtils.IntDeserializationFailure(type);
-
-                case DataTypes.Int8:
-                    return ReadInt8(reader);
-
-                case DataTypes.Int16:
-                    return ReadInt16(reader);
-
-                case DataTypes.Int32:
-                    return ReadInt32(reader);
-
-                case DataTypes.Int64:
-                    return ReadInt64(reader);
-
-                default:
-                    throw ExceptionUtils.IntDeserializationFailure(type);
-            }
+            return TryGetInt64(type, reader) ?? throw ExceptionUtils.IntDeserializationFailure(type);
         }
 
         public void Write(ulong value, IMsgPackWriter writer)
@@ -481,19 +426,6 @@ namespace ProGaudi.MsgPack.Light.Converters
                 default:
                     throw ExceptionUtils.IntDeserializationFailure(type);
             }
-        }
-
-        private static bool TryGetFixPositiveNumber(DataTypes type, out byte temp)
-        {
-            temp = (byte)type;
-            return type.GetHighBits(1) == DataTypes.PositiveFixNum.GetHighBits(1);
-        }
-
-        private static bool TryGetNegativeNumber(DataTypes type, out sbyte temp)
-        {
-            temp = (sbyte)((byte)type - 1 - byte.MaxValue);
-
-            return type.GetHighBits(3) == DataTypes.NegativeFixNum.GetHighBits(3);
         }
 
         internal static sbyte ReadInt8(IMsgPackReader reader)
@@ -609,7 +541,110 @@ namespace ProGaudi.MsgPack.Light.Converters
             return true;
         }
 
-        public static void WriteSByteValue(sbyte value, IMsgPackWriter writer)
+        private static bool TryGetFixPositiveNumber(DataTypes type, out byte temp)
+        {
+            temp = (byte)type;
+            return type.GetHighBits(1) == DataTypes.PositiveFixNum.GetHighBits(1);
+        }
+
+        private static bool TryGetNegativeNumber(DataTypes type, out sbyte temp)
+        {
+            temp = (sbyte)((byte)type - 1 - byte.MaxValue);
+
+            return type.GetHighBits(3) == DataTypes.NegativeFixNum.GetHighBits(3);
+        }
+
+        private static int? TryGetInt32(DataTypes type, IMsgPackReader reader)
+        {
+            if (TryGetFixPositiveNumber(type, out byte temp))
+            {
+                return temp;
+            }
+
+            if (TryGetNegativeNumber(type, out sbyte tempInt8))
+            {
+                return tempInt8;
+            }
+
+            switch (type)
+            {
+                case DataTypes.UInt8:
+                    return ReadUInt8(reader);
+
+                case DataTypes.UInt16:
+                    return ReadUInt16(reader);
+
+                case DataTypes.UInt32:
+                    var uintValue = ReadUInt32(reader);
+                    if (uintValue <= int.MaxValue)
+                    {
+                        return (int) uintValue;
+                    }
+                    return null;
+
+                case DataTypes.Int8:
+                    return ReadInt8(reader);
+
+                case DataTypes.Int16:
+                    return ReadInt16(reader);
+
+                case DataTypes.Int32:
+                    return ReadInt32(reader);
+
+                default:
+                    return null;
+            }
+        }
+
+        private static long? TryGetInt64(DataTypes type, IMsgPackReader reader)
+        {
+            if (TryGetFixPositiveNumber(type, out byte tempUInt8))
+            {
+                return tempUInt8;
+            }
+
+            if (TryGetNegativeNumber(type, out sbyte tempInt8))
+            {
+                return tempInt8;
+            }
+
+            switch (type)
+            {
+                case DataTypes.UInt8:
+                    return ReadUInt8(reader);
+
+                case DataTypes.UInt16:
+                    return ReadUInt16(reader);
+
+                case DataTypes.UInt32:
+                    return ReadUInt32(reader);
+
+                case DataTypes.UInt64:
+                    var ulongValue = ReadUInt64(reader);
+                    if (ulongValue <= long.MaxValue)
+                    {
+                        return (long) ulongValue;
+                    }
+                    return null;
+
+                case DataTypes.Int8:
+                    return ReadInt8(reader);
+
+                case DataTypes.Int16:
+                    return ReadInt16(reader);
+
+                case DataTypes.Int32:
+                    return ReadInt32(reader);
+
+                case DataTypes.Int64:
+                    return ReadInt64(reader);
+
+                default:
+                    return null;
+            }
+        }
+
+        private static void WriteSByteValue(sbyte value, IMsgPackWriter writer)
         {
             writer.Write((byte)value);
         }
@@ -626,11 +661,6 @@ namespace ProGaudi.MsgPack.Light.Converters
             return true;
         }
 
-        public static void WriteByteValue(byte value, IMsgPackWriter writer)
-        {
-            writer.Write(value);
-        }
-
         private static bool TryWriteInt16(long value, IMsgPackWriter writer)
         {
             if (value < short.MinValue || value > short.MaxValue)
@@ -643,7 +673,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             return true;
         }
 
-        public static void WriteShortValue(short value, IMsgPackWriter writer)
+        private static void WriteShortValue(short value, IMsgPackWriter writer)
         {
             unchecked
             {
@@ -664,15 +694,6 @@ namespace ProGaudi.MsgPack.Light.Converters
             return true;
         }
 
-        public static void WriteUShortValue(ushort value, IMsgPackWriter writer)
-        {
-            unchecked
-            {
-                writer.Write((byte)((value >> 8) & 0xff));
-                writer.Write((byte)(value & 0xff));
-            }
-        }
-
         private static bool TryWriteInt32(long value, IMsgPackWriter writer)
         {
             if (value > int.MaxValue || value < int.MinValue)
@@ -685,7 +706,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             return true;
         }
 
-        public static void WriteIntValue(int value, IMsgPackWriter writer)
+        private static void WriteIntValue(int value, IMsgPackWriter writer)
         {
             unchecked
             {
@@ -708,17 +729,6 @@ namespace ProGaudi.MsgPack.Light.Converters
             return true;
         }
 
-        public static void WriteUIntValue(uint value, IMsgPackWriter writer)
-        {
-            unchecked
-            {
-                writer.Write((byte)((value >> 24) & 0xff));
-                writer.Write((byte)((value >> 16) & 0xff));
-                writer.Write((byte)((value >> 8) & 0xff));
-                writer.Write((byte)(value & 0xff));
-            }
-        }
-
         private static bool TryWriteInt64(long value, IMsgPackWriter writer)
         {
             writer.Write(DataTypes.Int64);
@@ -726,7 +736,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             return true;
         }
 
-        public static void WriteLongValue(long value, IMsgPackWriter writer)
+        private static void WriteLongValue(long value, IMsgPackWriter writer)
         {
             unchecked
             {
@@ -748,7 +758,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             return true;
         }
 
-        public static void WriteULongValue(ulong value, IMsgPackWriter writer)
+        private static void WriteULongValue(ulong value, IMsgPackWriter writer)
         {
             unchecked
             {

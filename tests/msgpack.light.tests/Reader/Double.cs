@@ -23,9 +23,19 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         [InlineData(double.MinValue, new byte[] {203, 255, 239, 255, 255, 255, 255, 255, 255})]
         [InlineData(double.PositiveInfinity, new byte[] {203, 127, 240, 0, 0, 0, 0, 0, 0})]
         [InlineData(double.NegativeInfinity, new byte[] {203, 255, 240, 0, 0, 0, 0, 0, 0})]
+        // integers
+        [InlineData(sbyte.MinValue, new byte[] { 208, 128 })]
+        [InlineData(sbyte.MaxValue, new byte[] { 127 })]
+        [InlineData(short.MinValue, new byte[] { 209, 128, 0 })]
+        [InlineData(short.MaxValue, new byte[] { 209, 127, 0xff })]
+        [InlineData(int.MinValue, new byte[] { 210, 128, 0, 0, 0 })]
+        [InlineData(int.MaxValue, new byte[] { 210, 127, 0xff, 0xff, 0xff })]
+        [InlineData(long.MinValue / 128, new byte[] { 211, 0xff, 0, 0, 0, 0, 0, 0, 0 })]
+        [InlineData(long.MaxValue / 128, new byte[] { 207, 0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff })]
         public void TestDouble(double value, byte[] bytes)
         {
-            MsgPackSerializer.Deserialize<double>(bytes).ShouldBe(value);
+            var d = MsgPackSerializer.Deserialize<double>(bytes);
+            d.ShouldBe(value);
         }
 
         [Theory]
@@ -43,6 +53,13 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         [InlineData(float.MinValue, new byte[] {202, 255, 127, 255, 255})]
         [InlineData(float.PositiveInfinity, new byte[] {202, 127, 128, 0, 0})]
         [InlineData(float.NegativeInfinity, new byte[] {202, 255, 128, 0, 0})]
+        // integers
+        [InlineData(sbyte.MinValue, new byte[] { 208, 128 })]
+        [InlineData(sbyte.MaxValue, new byte[] { 127 })]
+        [InlineData(short.MinValue, new byte[] { 209, 128, 0 })]
+        [InlineData(short.MaxValue, new byte[] { 209, 127, 0xff })]
+        [InlineData(int.MinValue / 128, new byte[] { 210, 0xff, 0, 0, 0 })]
+        [InlineData(int.MaxValue / 128, new byte[] { 206, 0, 0xff, 0xff, 0xff })]
         public void TestFloat(float value, byte[] bytes)
         {
             MsgPackSerializer.Deserialize<float>(bytes).ShouldBe(value);
