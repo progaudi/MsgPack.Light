@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace ProGaudi.MsgPack.Light.Converters
@@ -770,12 +771,9 @@ namespace ProGaudi.MsgPack.Light.Converters
                 return;
             }
 
-            for (var i = 0; i < NegativeSerializationMethods.Length; i++)
+            if (NegativeSerializationMethods.Any(method => method(value, writer)))
             {
-                if (NegativeSerializationMethods[i](value, writer))
-                {
-                    return;
-                }
+                return;
             }
 
             throw ExceptionUtils.IntSerializationFailure(value);
@@ -783,12 +781,9 @@ namespace ProGaudi.MsgPack.Light.Converters
 
         private static void WriteNonNegativeInteger(ulong value, IMsgPackWriter writer)
         {
-            for (var i = 0; i < PositiveSerializationMethods.Length; i++)
+            if (PositiveSerializationMethods.Any(method => method(value, writer)))
             {
-                if (PositiveSerializationMethods[i](value, writer))
-                {
-                    return;
-                }
+                return;
             }
 
             throw ExceptionUtils.IntSerializationFailure(value);
