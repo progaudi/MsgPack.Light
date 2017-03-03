@@ -42,19 +42,19 @@ namespace ProGaudi.MsgPack.Light
         {
             if (length <= 15)
             {
-                IntConverter.WriteByteValue((byte) ((byte) DataTypes.FixArray + length), this);
+                NumberConverter.WriteByteValue((byte) ((byte) DataTypes.FixArray + length), this);
                 return;
             }
 
             if (length <= ushort.MaxValue)
             {
                 Write(DataTypes.Array16);
-                IntConverter.WriteUShortValue((ushort) length, this);
+                NumberConverter.WriteUShortValue((ushort) length, this);
             }
             else
             {
                 Write(DataTypes.Array32);
-                IntConverter.WriteUIntValue(length, this);
+                NumberConverter.WriteUIntValue(length, this);
             }
 
         }
@@ -63,19 +63,19 @@ namespace ProGaudi.MsgPack.Light
         {
             if (length <= 15)
             {
-                IntConverter.WriteByteValue((byte) ((byte) DataTypes.FixMap + length), this);
+                NumberConverter.WriteByteValue((byte) ((byte) DataTypes.FixMap + length), this);
                 return;
             }
 
             if (length <= ushort.MaxValue)
             {
                 Write(DataTypes.Map16);
-                IntConverter.WriteUShortValue((ushort) length, this);
+                NumberConverter.WriteUShortValue((ushort) length, this);
             }
             else
             {
                 Write(DataTypes.Map32);
-                IntConverter.WriteUIntValue(length, this);
+                NumberConverter.WriteUIntValue(length, this);
             }
         }
     }

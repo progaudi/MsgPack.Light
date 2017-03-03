@@ -1,10 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace ProGaudi.MsgPack.Light.Converters
 {
-    internal class IntConverter :
+    internal class NumberConverter :
         IMsgPackConverter<byte>,
         IMsgPackConverter<sbyte>,
         IMsgPackConverter<short>,
@@ -12,35 +11,151 @@ namespace ProGaudi.MsgPack.Light.Converters
         IMsgPackConverter<int>,
         IMsgPackConverter<uint>,
         IMsgPackConverter<long>,
-        IMsgPackConverter<ulong>
+        IMsgPackConverter<ulong>,
+        IMsgPackConverter<float>,
+        IMsgPackConverter<double>
     {
+        private static readonly Func<ulong, IMsgPackWriter, bool>[] PositiveSerializationMethods =
+        {
+            TryWriteUnsignedFixNum,
+            TryWriteUInt8,
+            TryWriteUInt16,
+            TryWriteUInt32,
+            TryWriteUInt64
+        };
+
+        private static readonly Func<long, IMsgPackWriter, bool>[] NegativeSerializationMethods =
+        {
+            TryWriteSignedFixNum,
+            TryWriteInt8,
+            TryWriteInt16,
+            TryWriteInt32,
+            TryWriteInt64
+        };
+
         public void Initialize(MsgPackContext context)
         {
         }
 
+        public void Write(double value, IMsgPackWriter writer)
+        {
+            var binary = new DoubleBinary(value);
+            byte[] bytes;
+            if (BitConverter.IsLittleEndian)
+            {
+                bytes = new[]
+                {
+                    (byte) DataTypes.Double,
+                    binary.byte7,
+                    binary.byte6,
+                    binary.byte5,
+                    binary.byte4,
+                    binary.byte3,
+                    binary.byte2,
+                    binary.byte1,
+                    binary.byte0
+                };
+            }
+            else
+            {
+                bytes = new[]
+                {
+                    (byte) DataTypes.Double,
+                    binary.byte0,
+                    binary.byte1,
+                    binary.byte2,
+                    binary.byte3,
+                    binary.byte4,
+                    binary.byte5,
+                    binary.byte6,
+                    binary.byte7
+                };
+            }
+
+            writer.Write(bytes);
+        }
+
+        double IMsgPackConverter<double>.Read(IMsgPackReader reader)
+        {
+            var type = reader.ReadDataType();
+
+            if (type != DataTypes.Single && type != DataTypes.Double)
+                throw ExceptionUtils.BadTypeException(type, DataTypes.Single, DataTypes.Double);
+
+            if (type == DataTypes.Single)
+            {
+                return ReadFloat(reader);
+            }
+
+            var bytes = ReadBytes(reader, 8);
+
+            return new DoubleBinary(bytes).value;
+        }
+
+        public void Write(float value, IMsgPackWriter writer)
+        {
+            var binary = new FloatBinary(value);
+            byte[] bytes;
+            if (BitConverter.IsLittleEndian)
+            {
+                bytes = new[]
+                {
+                    (byte) DataTypes.Single,
+                    binary.byte3,
+                    binary.byte2,
+                    binary.byte1,
+                    binary.byte0
+                };
+            }
+            else
+            {
+                bytes = new[]
+                {
+                    (byte) DataTypes.Single,
+                    binary.byte0,
+                    binary.byte1,
+                    binary.byte2,
+                    binary.byte3
+                };
+            }
+
+            writer.Write(bytes);
+        }
+
+        float IMsgPackConverter<float>.Read(IMsgPackReader reader)
+        {
+            var type = reader.ReadDataType();
+
+            if (type != DataTypes.Single)
+                throw ExceptionUtils.BadTypeException(type, DataTypes.Single);
+
+            return ReadFloat(reader);
+        }
+
         public void Write(byte value, IMsgPackWriter writer)
         {
-            var positiveSerializationMethods = new Func<ulong, IMsgPackWriter, bool>[]
+            // positive fixnum
+            if (value < 128L)
             {
-                TryWriteUnsignedFixNum,
-                TryWriteUInt8
-            };
-
-            WriteNonNegativeInteger(value, writer, positiveSerializationMethods);
+                writer.Write(value);
+            }
+            else
+            {
+                writer.Write(DataTypes.UInt8);
+                WriteByteValue(value, writer);
+            }
         }
 
         byte IMsgPackConverter<byte>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
-            byte temp;
-            if (TryGetFixPositiveNumber(type, out temp))
+            if (TryGetFixPositiveNumber(type, out byte temp))
             {
                 return temp;
             }
 
-            sbyte tempInt8;
-            if (TryGetNegativeNumber(type, out tempInt8))
+            if (TryGetNegativeNumber(type, out sbyte tempInt8))
             {
                 return (byte)tempInt8;
             }
@@ -60,32 +175,19 @@ namespace ProGaudi.MsgPack.Light.Converters
 
         public void Write(sbyte value, IMsgPackWriter writer)
         {
-            var negativeSerializationMethods = new Func<long, IMsgPackWriter, bool>[]
-            {
-                TryWriteSignedFixNum,
-                TryWriteInt8
-            };
-            var positiveSerializationMethods = new Func<ulong, IMsgPackWriter, bool>[]
-            {
-                TryWriteUnsignedFixNum,
-                TryWriteUInt8
-            };
-
-            WriteInteger(value, writer, positiveSerializationMethods, negativeSerializationMethods);
+            WriteInteger(value, writer);
         }
 
         sbyte IMsgPackConverter<sbyte>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
-            byte temp;
-            if (TryGetFixPositiveNumber(type, out temp))
+            if (TryGetFixPositiveNumber(type, out byte temp))
             {
                 return (sbyte)temp;
             }
 
-            sbyte tempInt8;
-            if (TryGetNegativeNumber(type, out tempInt8))
+            if (TryGetNegativeNumber(type, out sbyte tempInt8))
             {
                 return tempInt8;
             }
@@ -100,35 +202,19 @@ namespace ProGaudi.MsgPack.Light.Converters
 
         public void Write(short value, IMsgPackWriter writer)
         {
-            var negativeSerializationMethods = new Func<long, IMsgPackWriter, bool>[]
-            {
-                TryWriteSignedFixNum,
-                TryWriteInt8,
-                TryWriteInt16
-            };
-
-            var positiveSerializationMethods = new Func<ulong, IMsgPackWriter, bool>[]
-            {
-                TryWriteUnsignedFixNum,
-                TryWriteUInt8,
-                TryWriteUInt16
-            };
-
-            WriteInteger(value, writer, positiveSerializationMethods, negativeSerializationMethods);
+            WriteInteger(value, writer);
         }
 
         short IMsgPackConverter<short>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
-            byte temp;
-            if (TryGetFixPositiveNumber(type, out temp))
+            if (TryGetFixPositiveNumber(type, out byte temp))
             {
                 return temp;
             }
 
-            sbyte tempInt8;
-            if (TryGetNegativeNumber(type, out tempInt8))
+            if (TryGetNegativeNumber(type, out sbyte tempInt8))
             {
                 return tempInt8;
             }
@@ -160,28 +246,19 @@ namespace ProGaudi.MsgPack.Light.Converters
 
         public void Write(ushort value, IMsgPackWriter writer)
         {
-            var positiveSerializationMethods = new Func<ulong, IMsgPackWriter, bool>[]
-             {
-                TryWriteUnsignedFixNum,
-                TryWriteUInt8,
-                TryWriteUInt16
-             };
-
-            WriteNonNegativeInteger(value, writer, positiveSerializationMethods);
+            WriteNonNegativeInteger(value, writer);
         }
 
         public ushort Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
-            byte temp;
-            if (TryGetFixPositiveNumber(type, out temp))
+            if (TryGetFixPositiveNumber(type, out byte temp))
             {
                 return temp;
             }
 
-            sbyte tempInt8;
-            if (TryGetNegativeNumber(type, out tempInt8))
+            if (TryGetNegativeNumber(type, out sbyte tempInt8))
             {
                 return (ushort)tempInt8;
             }
@@ -207,37 +284,19 @@ namespace ProGaudi.MsgPack.Light.Converters
 
         public void Write(int value, IMsgPackWriter writer)
         {
-            var negativeSerializationMethods = new Func<long, IMsgPackWriter, bool>[]
-            {
-                TryWriteSignedFixNum,
-                TryWriteInt8,
-                TryWriteInt16,
-                TryWriteInt32
-            };
-
-            var positiveSerializationMethods = new Func<ulong, IMsgPackWriter, bool>[]
-            {
-                TryWriteUnsignedFixNum,
-                TryWriteUInt8,
-                TryWriteUInt16,
-                TryWriteUInt32
-            };
-
-            WriteInteger(value, writer, positiveSerializationMethods, negativeSerializationMethods);
+            WriteInteger(value, writer);
         }
 
         int IMsgPackConverter<int>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
-            byte temp;
-            if (TryGetFixPositiveNumber(type, out temp))
+            if (TryGetFixPositiveNumber(type, out byte temp))
             {
                 return temp;
             }
 
-            sbyte tempInt8;
-            if (TryGetNegativeNumber(type, out tempInt8))
+            if (TryGetNegativeNumber(type, out sbyte tempInt8))
             {
                 return tempInt8;
             }
@@ -275,29 +334,19 @@ namespace ProGaudi.MsgPack.Light.Converters
 
         public void Write(uint value, IMsgPackWriter writer)
         {
-            var positiveSerializationMethods = new Func<ulong, IMsgPackWriter, bool>[]
-            {
-                TryWriteUnsignedFixNum,
-                TryWriteUInt8,
-                TryWriteUInt16,
-                TryWriteUInt32
-            };
-
-            WriteNonNegativeInteger(value, writer, positiveSerializationMethods);
+            WriteNonNegativeInteger(value, writer);
         }
 
         uint IMsgPackConverter<uint>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
-            byte temp;
-            if (TryGetFixPositiveNumber(type, out temp))
+            if (TryGetFixPositiveNumber(type, out byte temp))
             {
                 return temp;
             }
 
-            sbyte tempInt8;
-            if (TryGetNegativeNumber(type, out tempInt8))
+            if (TryGetNegativeNumber(type, out sbyte tempInt8))
             {
                 return (uint)tempInt8;
             }
@@ -329,39 +378,19 @@ namespace ProGaudi.MsgPack.Light.Converters
 
         public void Write(long value, IMsgPackWriter writer)
         {
-            var negativeSerializationMethods = new Func<long, IMsgPackWriter, bool>[]
-            {
-                TryWriteSignedFixNum,
-                TryWriteInt8,
-                TryWriteInt16,
-                TryWriteInt32,
-                TryWriteInt64
-            };
-
-            var positiveSerializationMethods = new Func<ulong, IMsgPackWriter, bool>[]
-            {
-                TryWriteUnsignedFixNum,
-                TryWriteUInt8,
-                TryWriteUInt16,
-                TryWriteUInt32,
-                TryWriteUInt64
-            };
-
-            WriteInteger(value, writer, positiveSerializationMethods, negativeSerializationMethods);
+            WriteInteger(value, writer);
         }
 
         long IMsgPackConverter<long>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
-            byte tempUInt8;
-            if (TryGetFixPositiveNumber(type, out tempUInt8))
+            if (TryGetFixPositiveNumber(type, out byte tempUInt8))
             {
                 return tempUInt8;
             }
 
-            sbyte tempInt8;
-            if (TryGetNegativeNumber(type, out tempInt8))
+            if (TryGetNegativeNumber(type, out sbyte tempInt8))
             {
                 return tempInt8;
             }
@@ -405,30 +434,19 @@ namespace ProGaudi.MsgPack.Light.Converters
 
         public void Write(ulong value, IMsgPackWriter writer)
         {
-            var positiveSerializationMethods = new Func<ulong, IMsgPackWriter, bool>[]
-            {
-                TryWriteUnsignedFixNum,
-                TryWriteUInt8,
-                TryWriteUInt16,
-                TryWriteUInt32,
-                TryWriteUInt64
-            };
-
-            WriteNonNegativeInteger(value, writer, positiveSerializationMethods);
+            WriteNonNegativeInteger(value, writer);
         }
 
         ulong IMsgPackConverter<ulong>.Read(IMsgPackReader reader)
         {
             var type = reader.ReadDataType();
 
-            byte temp;
-            if (TryGetFixPositiveNumber(type, out temp))
+            if (TryGetFixPositiveNumber(type, out byte temp))
             {
                 return temp;
             }
 
-            sbyte tempInt8;
-            if (TryGetNegativeNumber(type, out tempInt8))
+            if (TryGetNegativeNumber(type, out sbyte tempInt8))
             {
                 return (ulong)tempInt8;
             }
@@ -744,43 +762,155 @@ namespace ProGaudi.MsgPack.Light.Converters
             }
         }
 
-        private static void WriteInteger(
-            long value,
-            IMsgPackWriter writer,
-            IEnumerable<Func<ulong, IMsgPackWriter, bool>> positiveSerializationMethods,
-            IEnumerable<Func<long, IMsgPackWriter, bool>> negativeSerializationMethods)
+        private static void WriteInteger(long value, IMsgPackWriter writer)
         {
-            var success = false;
             if (value >= 0)
             {
-                var unsignedValue = (ulong)value;
-                if (positiveSerializationMethods.Any(method => method(unsignedValue, writer)))
-                {
-                    success = true;
-                }
+                WriteNonNegativeInteger((ulong)value, writer);
+                return;
             }
-            else
+
+            for (var i = 0; i < NegativeSerializationMethods.Length; i++)
             {
-                if (negativeSerializationMethods.Any(method => method(value, writer)))
+                if (NegativeSerializationMethods[i](value, writer))
                 {
-                    success = true;
+                    return;
                 }
             }
 
-            if (!success)
+            throw ExceptionUtils.IntSerializationFailure(value);
+        }
+
+        private static void WriteNonNegativeInteger(ulong value, IMsgPackWriter writer)
+        {
+            for (var i = 0; i < PositiveSerializationMethods.Length; i++)
             {
-                throw ExceptionUtils.IntSerializationFailture(value);
+                if (PositiveSerializationMethods[i](value, writer))
+                {
+                    return;
+                }
+            }
+
+            throw ExceptionUtils.IntSerializationFailure(value);
+        }
+
+        private static float ReadFloat(IMsgPackReader reader)
+        {
+            var bytes = ReadBytes(reader, 4);
+
+            return new FloatBinary(bytes).value;
+        }
+
+        private static ArraySegment<byte> ReadBytes(IMsgPackReader reader, uint length)
+        {
+            return reader.ReadBytes(length);
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct FloatBinary
+        {
+            [FieldOffset(0)]
+            public readonly float value;
+
+            [FieldOffset(0)]
+            public readonly byte byte0;
+
+            [FieldOffset(1)]
+            public readonly byte byte1;
+
+            [FieldOffset(2)]
+            public readonly byte byte2;
+
+            [FieldOffset(3)]
+            public readonly byte byte3;
+
+            public FloatBinary(float f)
+            {
+                this = default(FloatBinary);
+                value = f;
+            }
+
+            public FloatBinary(ArraySegment<byte> bytes)
+            {
+                value = 0;
+                if (BitConverter.IsLittleEndian)
+                {
+                    byte0 = bytes.Array[bytes.Offset + 3];
+                    byte1 = bytes.Array[bytes.Offset + 2];
+                    byte2 = bytes.Array[bytes.Offset + 1];
+                    byte3 = bytes.Array[bytes.Offset + 0];
+                }
+                else
+                {
+                    byte0 = bytes.Array[bytes.Offset + 0];
+                    byte1 = bytes.Array[bytes.Offset + 1];
+                    byte2 = bytes.Array[bytes.Offset + 2];
+                    byte3 = bytes.Array[bytes.Offset + 3];
+                }
             }
         }
 
-        private static void WriteNonNegativeInteger(
-            ulong value,
-            IMsgPackWriter writer,
-            IEnumerable<Func<ulong, IMsgPackWriter, bool>> positiveSerializationMethods)
+        [StructLayout(LayoutKind.Explicit)]
+        private struct DoubleBinary
         {
-            if (!positiveSerializationMethods.Any(method => method(value, writer)))
+            [FieldOffset(0)]
+            public readonly double value;
+
+            [FieldOffset(0)]
+            public readonly byte byte0;
+
+            [FieldOffset(1)]
+            public readonly byte byte1;
+
+            [FieldOffset(2)]
+            public readonly byte byte2;
+
+            [FieldOffset(3)]
+            public readonly byte byte3;
+
+            [FieldOffset(4)]
+            public readonly byte byte4;
+
+            [FieldOffset(5)]
+            public readonly byte byte5;
+
+            [FieldOffset(6)]
+            public readonly byte byte6;
+
+            [FieldOffset(7)]
+            public readonly byte byte7;
+
+            public DoubleBinary(double f)
             {
-                throw ExceptionUtils.IntSerializationFailture(value);
+                this = default(DoubleBinary);
+                value = f;
+            }
+
+            public DoubleBinary(ArraySegment<byte> bytes)
+            {
+                value = 0;
+                if (BitConverter.IsLittleEndian)
+                {
+                    byte0 = bytes.Array[bytes.Offset + 7];
+                    byte1 = bytes.Array[bytes.Offset + 6];
+                    byte2 = bytes.Array[bytes.Offset + 5];
+                    byte3 = bytes.Array[bytes.Offset + 4];
+                    byte4 = bytes.Array[bytes.Offset + 3];
+                    byte5 = bytes.Array[bytes.Offset + 2];
+                    byte6 = bytes.Array[bytes.Offset + 1];
+                    byte7 = bytes.Array[bytes.Offset + 0];
+                }
+                else
+                {
+                    byte0 = bytes.Array[bytes.Offset + 0];
+                    byte1 = bytes.Array[bytes.Offset + 1];
+                    byte2 = bytes.Array[bytes.Offset + 2];
+                    byte3 = bytes.Array[bytes.Offset + 3];
+                    byte4 = bytes.Array[bytes.Offset + 4];
+                    byte5 = bytes.Array[bytes.Offset + 5];
+                    byte6 = bytes.Array[bytes.Offset + 6];
+                    byte7 = bytes.Array[bytes.Offset + 7];
+                }
             }
         }
     }
