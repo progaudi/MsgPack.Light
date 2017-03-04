@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Serialization;
 
 using Shouldly;
 
@@ -63,6 +64,34 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TestFloat(float value, byte[] bytes)
         {
             MsgPackSerializer.Deserialize<float>(bytes).ShouldBe(value);
+        }
+
+        [Theory]
+        [InlineData(new byte[] { 208, 128 })]
+        [InlineData(new byte[] { 127 })]
+        [InlineData(new byte[] { 209, 128, 0 })]
+        [InlineData(new byte[] { 209, 127, 0xff })]
+        [InlineData(new byte[] { 210, 128, 0, 0, 0 })]
+        [InlineData(new byte[] { 210, 127, 0xff, 0xff, 0xff })]
+        [InlineData(new byte[] { 211, 0xff, 0, 0, 0, 0, 0, 0, 0 })]
+        [InlineData(new byte[] { 207, 0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff })]
+        public void TestDoubleStritctParsing(byte[] bytes)
+        {
+            var e = Should.Throw<SerializationException>(() => MsgPackSerializer.Deserialize<double>(bytes, new MsgPackContext(true)));
+            e.Message.ShouldBe(ExceptionUtils.BadTypeException((DataTypes)bytes[0], DataTypes.Single, DataTypes.Double).Message);
+        }
+
+        [Theory]
+        [InlineData(new byte[] { 208, 128 })]
+        [InlineData(new byte[] { 127 })]
+        [InlineData(new byte[] { 209, 128, 0 })]
+        [InlineData(new byte[] { 209, 127, 0xff })]
+        [InlineData(new byte[] { 210, 0xff, 0, 0, 0 })]
+        [InlineData(new byte[] { 206, 0, 0xff, 0xff, 0xff })]
+        public void TestFloatStritctParsing(byte[] bytes)
+        {
+            var e = Should.Throw<SerializationException>(() => MsgPackSerializer.Deserialize<float>(bytes, new MsgPackContext(true)));
+            e.Message.ShouldBe(ExceptionUtils.BadTypeException((DataTypes)bytes[0], DataTypes.Single).Message);
         }
     }
 }

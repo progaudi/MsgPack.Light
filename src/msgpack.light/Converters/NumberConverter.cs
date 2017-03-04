@@ -16,6 +16,8 @@ namespace ProGaudi.MsgPack.Light.Converters
         IMsgPackConverter<float>,
         IMsgPackConverter<double>
     {
+        private readonly bool _strictParseOfFloat;
+
         private static readonly Func<ulong, IMsgPackWriter, bool>[] PositiveSerializationMethods =
         {
             TryWriteUnsignedFixNum,
@@ -33,6 +35,11 @@ namespace ProGaudi.MsgPack.Light.Converters
             TryWriteInt32,
             TryWriteInt64
         };
+
+        public NumberConverter(bool strictParseOfFloat)
+        {
+            _strictParseOfFloat = strictParseOfFloat;
+        }
 
         public static void WriteByteValue(byte value, IMsgPackWriter writer)
         {
@@ -106,7 +113,12 @@ namespace ProGaudi.MsgPack.Light.Converters
             var type = reader.ReadDataType();
 
             if (type != DataTypes.Single && type != DataTypes.Double)
+            {
+                if (_strictParseOfFloat)
+                    throw ExceptionUtils.BadTypeException(type, DataTypes.Single, DataTypes.Double);
+
                 return TryGetInt64(type, reader) ?? throw ExceptionUtils.BadTypeException(type, DataTypes.Single, DataTypes.Double);
+            }
 
             if (type == DataTypes.Single)
             {
@@ -155,6 +167,11 @@ namespace ProGaudi.MsgPack.Light.Converters
             if (type == DataTypes.Single)
             {
                 return ReadFloat(reader);
+            }
+
+            if (_strictParseOfFloat)
+            {
+                throw ExceptionUtils.BadTypeException(type, DataTypes.Single);
             }
 
             return TryGetInt32(type, reader) ?? throw ExceptionUtils.BadTypeException(type, DataTypes.Single);
