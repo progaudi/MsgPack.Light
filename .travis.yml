@@ -10,11 +10,8 @@ matrix:
       osx_image: xcode8.2
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_DOCKER" != true ]]; then sudo apt-get -qq update ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_DOCKER" != true ]]; then sudo apt-get install -y jq libunwind8 libunwind8-dev gettext libicu-dev liblttng-ust-dev libcurl4-openssl-dev libssl-dev uuid-dev unzip ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install openssl jq ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew link openssl --force ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_DOCKER" != true ]]; then sudo ./scripts/ubuntu-prereqs.sh ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./scripts/mac-prereqs.sh ; fi
 
 install:
   - if [[ "$BUILD_DOCKER" != true ]]; then ./scripts/dotnet-install.sh ; fi
