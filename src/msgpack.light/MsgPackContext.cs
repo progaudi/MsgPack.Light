@@ -19,24 +19,25 @@ namespace ProGaudi.MsgPack.Light
 
         public MsgPackContext(bool strictParseOfFloat = false)
         {
-            var numberConverter = new NumberConverter(strictParseOfFloat);
+            var dateTimeConverter = new DateTimeConverter();
+            var tokenConverter = new MsgPackTokenConverter(strictParseOfFloat);
             _converters = new Dictionary<Type, IMsgPackConverter>
             {
-                {typeof (bool), new BoolConverter()},
-                {typeof (string), new StringConverter()},
-                {typeof (byte[]), new BinaryConverter()},
-                {typeof (float), numberConverter},
-                {typeof (double), numberConverter},
-                {typeof (byte), numberConverter},
-                {typeof (sbyte), numberConverter},
-                {typeof (short), numberConverter},
-                {typeof (ushort), numberConverter},
-                {typeof (int), numberConverter},
-                {typeof (uint), numberConverter},
-                {typeof (long), numberConverter},
-                {typeof (ulong), numberConverter},
-                {typeof (DateTime), new DateTimeConverter()},
-                {typeof (DateTimeOffset), new DateTimeConverter()},
+                {typeof (bool), tokenConverter},
+                {typeof (string), tokenConverter},
+                {typeof (byte[]), tokenConverter},
+                {typeof (float), tokenConverter},
+                {typeof (double), tokenConverter},
+                {typeof (byte), tokenConverter},
+                {typeof (sbyte), tokenConverter},
+                {typeof (short), tokenConverter},
+                {typeof (ushort), tokenConverter},
+                {typeof (int), tokenConverter},
+                {typeof (uint), tokenConverter},
+                {typeof (long), tokenConverter},
+                {typeof (ulong), tokenConverter},
+                {typeof (DateTime), dateTimeConverter},
+                {typeof (DateTimeOffset), dateTimeConverter},
                 {typeof (TimeSpan), new TimeSpanConverter() },
 
                 {typeof (bool?), new NullableConverter<bool>()},

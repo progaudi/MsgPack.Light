@@ -21,14 +21,15 @@ namespace ProGaudi.MsgPack.Light.Converters
             Context = context;
         }
 
-        public abstract void Write(TMap value, IMsgPackWriter writer);
-
-        public abstract TMap Read(IMsgPackReader reader);
 
         protected MsgPackContext Context { get; private set; }
 
         protected IMsgPackConverter<TValue> ValueConverter { get; private set; }
 
         protected IMsgPackConverter<TKey> KeyConverter { get; private set; }
+
+        public abstract MsgPackToken Write(TMap value);
+
+        public abstract TMap Read(MsgPackToken token);
     }
 }

@@ -6,18 +6,19 @@ namespace ProGaudi.MsgPack.Light.Converters
         {
         }
 
-        public void Write(object value, IMsgPackWriter writer)
+        public MsgPackToken Write(object value)
         {
-            writer.Write(DataTypes.Null);
+            return null;
         }
 
-        public object Read(IMsgPackReader reader)
+        public object Read(MsgPackToken token)
         {
-            var type = reader.ReadDataType();
-            if (type == DataTypes.Null)
+            if (token.DataType == DataTypes.Null)
+            {
                 return null;
+            }
 
-            throw ExceptionUtils.BadTypeException(type, DataTypes.Null);
+            throw ExceptionUtils.BadTypeException(token.DataType, DataTypes.Null);
         }
     }
 }

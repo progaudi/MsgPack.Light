@@ -1,11 +1,12 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.IO;
-
-// ReSharper disable once RedundantUsingDirective
 using System.Reflection;
 using System.Runtime.Serialization;
+
+using JetBrains.Annotations;
+
+// ReSharper disable once RedundantUsingDirective
 
 namespace ProGaudi.MsgPack.Light.Tests
 {
@@ -18,26 +19,25 @@ namespace ProGaudi.MsgPack.Light.Tests
             _context = context;
         }
 
-        public void Write(object value, IMsgPackWriter writer)
+        public MsgPackToken Write(object value)
         {
             if (value == null)
             {
-                _context.NullConverter.Write(null, writer);
-                return;
+                return null;
             }
 
             var converter = GetConverter(_context, value.GetType());
 
             var methodDefinition = typeof(IMsgPackConverter<>).MakeGenericType(value.GetType()).GetMethod(
                 "Write",
-                new[] { value.GetType(), typeof(IMsgPackWriter) });
+                new[] { value.GetType() });
 
-            methodDefinition.Invoke(converter, new[] { value, writer });
+            return (MsgPackToken) methodDefinition.Invoke(converter, new[] { value });
         }
 
-        public object Read(IMsgPackReader reader)
+        public object Read(MsgPackToken token)
         {
-            var msgPackType = reader.ReadDataType();
+            var msgPackType = token.DataType;
 
             Type type;
             switch (msgPackType)
@@ -136,13 +136,12 @@ namespace ProGaudi.MsgPack.Light.Tests
                     break;
             }
 
-            reader.Seek(-1, SeekOrigin.Current);
             var converter = GetConverter(_context, type);
             var methodDefinition = typeof(IMsgPackConverter<>).MakeGenericType(type).GetMethod(
                 "Read",
-                new[] { typeof(IMsgPackReader) });
+                new[] { typeof(MsgPackToken) });
 
-            return methodDefinition.Invoke(converter, new object[] { reader });
+            return methodDefinition.Invoke(converter, new object[] { token });
         }
 
         private Type TryInferFromFixedLength(DataTypes msgPackType)

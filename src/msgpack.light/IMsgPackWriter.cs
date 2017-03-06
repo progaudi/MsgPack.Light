@@ -7,9 +7,5 @@ namespace ProGaudi.MsgPack.Light
         void Write(byte value);
 
         void Write(byte[] array);
-
-        void WriteArrayHeader(uint length);
-
-        void WriteMapHeader(uint length);
     }
 }

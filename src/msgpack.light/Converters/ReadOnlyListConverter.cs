@@ -5,23 +5,24 @@ namespace ProGaudi.MsgPack.Light.Converters
     public class ReadOnlyListConverter<TArray, TElement> : ArrayConverterBase<TArray, TElement>
         where TArray : IReadOnlyList<TElement>
     {
-        public override void Write(TArray value, IMsgPackWriter writer)
+        public override MsgPackToken Write(TArray value)
         {
             if (value == null)
             {
-                Context.NullConverter.Write(value, writer);
-                return;
+                return null;
             }
 
-            writer.WriteArrayHeader((uint) value.Count);
+            var arrayElements = new MsgPackToken[value.Count];
 
-            foreach (var element in value)
+            for (var index = 0; index < value.Count; index++)
             {
-                ElementConverter.Write(element, writer);
+                arrayElements[index] = ElementConverter.Write(value[index]);
             }
+
+            return (MsgPackToken) arrayElements;
         }
 
-        public override TArray Read(IMsgPackReader reader)
+        public override TArray Read(MsgPackToken reader)
         {
             throw ExceptionUtils.CantReadReadOnlyCollection(typeof(TArray));
         }

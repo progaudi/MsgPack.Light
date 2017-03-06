@@ -11,14 +11,14 @@ namespace ProGaudi.MsgPack.Light.Converters
             _longConverter = new Lazy<IMsgPackConverter<long>>(context.GetConverter<long>);
         }
 
-        public void Write(TimeSpan value, IMsgPackWriter writer)
+        public MsgPackToken Write(TimeSpan value)
         {
-            _longConverter.Value.Write(value.Ticks, writer);
+            return _longConverter.Value.Write(value.Ticks);
         }
 
-        public TimeSpan Read(IMsgPackReader reader)
+        public TimeSpan Read(MsgPackToken token)
         {
-            var longValue = _longConverter.Value.Read(reader);
+            var longValue = _longConverter.Value.Read(token);
 
             return TimeSpan.FromTicks(longValue);
         }

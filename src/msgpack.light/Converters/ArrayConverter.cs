@@ -13,54 +13,55 @@ namespace ProGaudi.MsgPack.Light.Converters
             IsSingleDimensionArray = type.IsArray && type.GetArrayRank() == 1 && type.GetElementType() == typeof(TElement);
         }
 
-        public override void Write(TArray value, IMsgPackWriter writer)
+        public override MsgPackToken Write(TArray value)
         {
             if (value == null)
             {
-                Context.NullConverter.Write(value, writer);
-                return;
+                return null;
             }
 
-            writer.WriteArrayHeader((uint) value.Count);
+            var arrayElements = new MsgPackToken[value.Count];
 
-            foreach (var element in value)
+            for (var index = 0; index < value.Count; index++)
             {
-                ElementConverter.Write(element, writer);
+                arrayElements[index] = ElementConverter.Write(value[index]);
             }
+
+            return (MsgPackToken) arrayElements;
         }
 
-        public override TArray Read(IMsgPackReader reader)
+        public override TArray Read(MsgPackToken token)
         {
-            var length = reader.ReadArrayLength();
-            return length.HasValue ? ReadArray(reader, length.Value) : default(TArray);
-        }
+            var elements = (MsgPackToken[])token;
 
-        private TArray ReadArray(IMsgPackReader reader, uint length)
-        {
+            if (elements == null)
+            {
+                return default(TArray);
+            }
+
+            var length = elements.Length;
+
             if (!IsSingleDimensionArray)
-                return ReadList(reader, length);
+            {
+                var array = (TArray)Context.GetObjectActivator(typeof(TArray))();
+
+                for (var i = 0u; i < length; i++)
+                {
+                    array.Add(ElementConverter.Read(elements[i]));
+                }
+
+                return array;
+            }
 
             // ReSharper disable once RedundantCast
             var result = (TArray)(object)new TElement[length];
 
             for (var i = 0; i < length; i++)
             {
-                result[i] = ElementConverter.Read(reader);
+                result[i] = ElementConverter.Read(elements[i]);
             }
 
             return result;
-        }
-
-        private TArray ReadList(IMsgPackReader reader, uint length)
-        {
-            var array = (TArray)Context.GetObjectActivator(typeof (TArray))();
-
-            for (var i = 0u; i < length; i++)
-            {
-                array.Add(ElementConverter.Read(reader));
-            }
-
-            return array;
         }
     }
 }

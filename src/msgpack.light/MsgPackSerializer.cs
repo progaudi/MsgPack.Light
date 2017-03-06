@@ -17,8 +17,10 @@ namespace ProGaudi.MsgPack.Light
             var memoryStream = new MemoryStream();
             using (var writer = new MsgPackMemoryStreamWriter(memoryStream))
             {
+                var tokenWriter = new TokenWriter(writer);
                 var converter = GetConverter<T>(context);
-                converter.Write(data, writer);
+                var token = converter.Write(data);
+                tokenWriter.Write(token);
                 return memoryStream.ToArray();
             }
         }
@@ -32,8 +34,9 @@ namespace ProGaudi.MsgPack.Light
         {
             using (var writer = new MsgPackMemoryStreamWriter(stream, false))
             {
+                var tokenWriter = new TokenWriter(writer);
                 var converter = GetConverter<T>(context);
-                converter.Write(data, writer);
+                tokenWriter.Write(converter.Write(data));
             }
         }
 
@@ -45,8 +48,7 @@ namespace ProGaudi.MsgPack.Light
         public static T Deserialize<T>(byte[] data, [NotNull]MsgPackContext context)
         {
             var reader = new MsgPackByteArrayReader(data);
-            var converter = GetConverter<T>(context);
-            return converter.Read(reader);
+            return DeserializeInternal<T>(context, reader);
         }
 
         public static T Deserialize<T>(MemoryStream stream)
@@ -58,8 +60,7 @@ namespace ProGaudi.MsgPack.Light
         {
             using (var reader = new MsgPackMemoryStreamReader(stream, false))
             {
-                var converter = GetConverter<T>(context);
-                return converter.Read(reader);
+                return DeserializeInternal<T>(context, reader);
             }
         }
 
@@ -75,5 +76,14 @@ namespace ProGaudi.MsgPack.Light
 
             return converter;
         }
+
+
+        private static T DeserializeInternal<T>(MsgPackContext context, IMsgPackReader reader)
+        {
+            var tokenReader = new TokenReader(reader);
+            var converter = GetConverter<T>(context);
+            return converter.Read(tokenReader.Read());
+        }
+
     }
 }

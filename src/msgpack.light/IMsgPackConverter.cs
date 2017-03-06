@@ -1,5 +1,4 @@
 using JetBrains.Annotations;
-using System;
 
 namespace ProGaudi.MsgPack.Light
 {
@@ -10,8 +9,8 @@ namespace ProGaudi.MsgPack.Light
 
     public interface IMsgPackConverter<T> : IMsgPackConverter
     {
-        void Write([CanBeNull] T value, [NotNull] IMsgPackWriter writer);
+        MsgPackToken Write([CanBeNull] T value);
 
-        T Read([NotNull] IMsgPackReader reader);
+        T Read([NotNull] MsgPackToken token);
     }
 }

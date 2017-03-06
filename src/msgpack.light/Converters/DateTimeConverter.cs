@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace ProGaudi.MsgPack.Light.Converters
 {
@@ -12,30 +12,30 @@ namespace ProGaudi.MsgPack.Light.Converters
             _ulongConverter = new Lazy<IMsgPackConverter<ulong>>(context.GetConverter<ulong>);
             _longConverter = new Lazy<IMsgPackConverter<long>>(context.GetConverter<long>);
         }
-
-        public void Write(DateTime value, IMsgPackWriter writer)
+        
+        public MsgPackToken Write(DateTime value)
         {
             var longValue = DateTimeUtils.FromDateTime(value);
 
-            _longConverter.Value.Write(longValue, writer);
+            return _longConverter.Value.Write(longValue);
         }
 
-        DateTime IMsgPackConverter<DateTime>.Read(IMsgPackReader reader)
+        DateTime IMsgPackConverter<DateTime>.Read(MsgPackToken token)
         {
-            var ulongValue = _ulongConverter.Value.Read(reader);
+            var ulongValue = _ulongConverter.Value.Read(token);
             return DateTimeUtils.ToDateTime((long)ulongValue);
         }
 
-        public void Write(DateTimeOffset value, IMsgPackWriter writer)
+        public MsgPackToken Write(DateTimeOffset value)
         {
             var longValue = DateTimeUtils.FromDateTimeOffset(value);
 
-            _longConverter.Value.Write(longValue, writer);
+            return _longConverter.Value.Write(longValue);
         }
 
-        DateTimeOffset IMsgPackConverter<DateTimeOffset>.Read(IMsgPackReader reader)
+        DateTimeOffset IMsgPackConverter<DateTimeOffset>.Read(MsgPackToken token)
         {
-            var ulongValue = _ulongConverter.Value.Read(reader);
+            var ulongValue = _ulongConverter.Value.Read(token);
             return DateTimeUtils.ToDateTimeOffset((long)ulongValue);
         }
     }

@@ -59,5 +59,10 @@ namespace ProGaudi.MsgPack.Light
         {
             return new ConverterNotFoundException(type);
         }
+
+        public static Exception NullTokenExpection(string typeName)
+        {
+            return new NullReferenceException($"Can't cast null-token to {typeName}");
+        }
     }
 }

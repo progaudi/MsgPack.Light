@@ -12,11 +12,5 @@ namespace ProGaudi.MsgPack.Light
         ArraySegment<byte> ReadBytes(uint length);
 
         void Seek(long offset, SeekOrigin origin);
-
-        uint? ReadArrayLength();
-
-        uint? ReadMapLength();
-
-        void SkipToken();
     }
 }

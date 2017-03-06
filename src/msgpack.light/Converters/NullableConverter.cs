@@ -9,34 +9,23 @@ namespace ProGaudi.MsgPack.Light.Converters
 
         private IMsgPackConverter<T> _converter;
 
-        public T? Read(IMsgPackReader reader)
-        {
-            var type = reader.ReadDataType();
-
-            if (type == DataTypes.Null)
-                return null;
-
-            reader.Seek(-1, SeekOrigin.Current);
-
-            return _converter.Read(reader);
-        }
-
-        public void Write(T? value, IMsgPackWriter writer)
-        {
-            if (value.HasValue)
-            {
-                _converter.Write(value.Value, writer);
-            }
-            else
-            {
-                _context.NullConverter.Write(null, writer);
-            }
-        }
-
         public void Initialize(MsgPackContext context)
         {
             _context = context;
             _converter = context.GetConverter<T>();
+        }
+        
+        public MsgPackToken Write(T? value)
+        {
+            return value.HasValue ? _converter.Write(value.Value) : _context.NullConverter.Write(null);
+        }
+
+        public T? Read(MsgPackToken token)
+        {
+            if (token.DataType == DataTypes.Null)
+                return null;
+
+            return _converter.Read(token);
         }
     }
 }
