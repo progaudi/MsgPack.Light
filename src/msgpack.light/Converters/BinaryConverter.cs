@@ -36,15 +36,15 @@ namespace ProGaudi.MsgPack.Light.Converters
                     return null;
 
                 case DataTypes.Bin8:
-                    length = IntConverter.ReadUInt8(reader);
+                    length = NumberConverter.ReadUInt8(reader);
                     break;
 
                 case DataTypes.Bin16:
-                    length = IntConverter.ReadUInt16(reader);
+                    length = NumberConverter.ReadUInt16(reader);
                     break;
 
                 case DataTypes.Bin32:
-                    length = IntConverter.ReadUInt32(reader);
+                    length = NumberConverter.ReadUInt32(reader);
                     break;
 
                 default:
@@ -62,17 +62,17 @@ namespace ProGaudi.MsgPack.Light.Converters
             if (length <= byte.MaxValue)
             {
                 writer.Write(DataTypes.Bin8);
-                IntConverter.WriteByteValue((byte) length, writer);
+                NumberConverter.WriteByteValue((byte) length, writer);
             }
             else if (length <= ushort.MaxValue)
             {
                 writer.Write(DataTypes.Bin16);
-                IntConverter.WriteUShortValue((ushort) length, writer);
+                NumberConverter.WriteUShortValue((ushort) length, writer);
             }
             else
             {
                 writer.Write(DataTypes.Bin32);
-                IntConverter.WriteUIntValue(length, writer);
+                NumberConverter.WriteUIntValue(length, writer);
             }
         }
     }

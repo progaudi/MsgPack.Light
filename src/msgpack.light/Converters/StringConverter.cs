@@ -38,13 +38,13 @@ namespace ProGaudi.MsgPack.Light.Converters
                     return null;
 
                 case DataTypes.Str8:
-                    return ReadString(reader, IntConverter.ReadUInt8(reader));
+                    return ReadString(reader, NumberConverter.ReadUInt8(reader));
 
                 case DataTypes.Str16:
-                    return ReadString(reader, IntConverter.ReadUInt16(reader));
+                    return ReadString(reader, NumberConverter.ReadUInt16(reader));
 
                 case DataTypes.Str32:
-                    return ReadString(reader, IntConverter.ReadUInt32(reader));
+                    return ReadString(reader, NumberConverter.ReadUInt32(reader));
             }
 
             uint length;
@@ -80,17 +80,17 @@ namespace ProGaudi.MsgPack.Light.Converters
             if (length <= byte.MaxValue)
             {
                 writer.Write(DataTypes.Str8);
-                IntConverter.WriteByteValue((byte) length, writer);
+                NumberConverter.WriteByteValue((byte) length, writer);
             }
             else if (length <= ushort.MaxValue)
             {
                 writer.Write(DataTypes.Str16);
-                IntConverter.WriteUShortValue((ushort)length, writer);
+                NumberConverter.WriteUShortValue((ushort)length, writer);
             }
             else
             {
                 writer.Write(DataTypes.Str32);
-                IntConverter.WriteUIntValue((uint)length, writer);
+                NumberConverter.WriteUIntValue((uint)length, writer);
             }
         }
     }

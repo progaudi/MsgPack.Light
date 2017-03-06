@@ -21,10 +21,10 @@ namespace ProGaudi.MsgPack.Light
                 case DataTypes.Null:
                     return null;
                 case DataTypes.Array16:
-                    return IntConverter.ReadUInt16(this);
+                    return NumberConverter.ReadUInt16(this);
 
                 case DataTypes.Array32:
-                    return IntConverter.ReadUInt32(this);
+                    return NumberConverter.ReadUInt32(this);
             }
 
             var length = TryGetLengthFromFixArray(type);
@@ -46,10 +46,10 @@ namespace ProGaudi.MsgPack.Light
                 case DataTypes.Null:
                     return null;
                 case DataTypes.Map16:
-                    return IntConverter.ReadUInt16(this);
+                    return NumberConverter.ReadUInt16(this);
 
                 case DataTypes.Map32:
-                    return IntConverter.ReadUInt32(this);
+                    return NumberConverter.ReadUInt32(this);
             }
 
             var length = TryGetLengthFromFixMap(type);
@@ -93,34 +93,34 @@ namespace ProGaudi.MsgPack.Light
                     SkipBytes(8);
                     return;
                 case DataTypes.Array16:
-                    SkipArrayItems(IntConverter.ReadUInt16(this));
+                    SkipArrayItems(NumberConverter.ReadUInt16(this));
                     return;
                 case DataTypes.Array32:
-                    SkipArrayItems(IntConverter.ReadUInt32(this));
+                    SkipArrayItems(NumberConverter.ReadUInt32(this));
                     return;
                 case DataTypes.Map16:
-                    SkipMapItems(IntConverter.ReadUInt16(this));
+                    SkipMapItems(NumberConverter.ReadUInt16(this));
                     return;
                 case DataTypes.Map32:
-                    SkipMapItems(IntConverter.ReadUInt32(this));
+                    SkipMapItems(NumberConverter.ReadUInt32(this));
                     return;
                 case DataTypes.Str8:
-                    SkipBytes(IntConverter.ReadUInt8(this));
+                    SkipBytes(NumberConverter.ReadUInt8(this));
                     return;
                 case DataTypes.Str16:
-                    SkipBytes(IntConverter.ReadUInt16(this));
+                    SkipBytes(NumberConverter.ReadUInt16(this));
                     return;
                 case DataTypes.Str32:
-                    SkipBytes(IntConverter.ReadUInt32(this));
+                    SkipBytes(NumberConverter.ReadUInt32(this));
                     return;
                 case DataTypes.Bin8:
-                    SkipBytes(IntConverter.ReadUInt8(this));
+                    SkipBytes(NumberConverter.ReadUInt8(this));
                     return;
                 case DataTypes.Bin16:
-                    SkipBytes(IntConverter.ReadUInt16(this));
+                    SkipBytes(NumberConverter.ReadUInt16(this));
                     return;
                 case DataTypes.Bin32:
-                    SkipBytes(IntConverter.ReadUInt32(this));
+                    SkipBytes(NumberConverter.ReadUInt32(this));
                     return;
             }
 

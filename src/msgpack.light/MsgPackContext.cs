@@ -11,46 +11,49 @@ namespace ProGaudi.MsgPack.Light
     {
         private static readonly IMsgPackConverter<object> SharedNullConverter = new NullConverter();
 
-        private readonly Dictionary<Type, IMsgPackConverter> _converters = new Dictionary<Type, IMsgPackConverter>
-        {
-            {typeof (bool), new BoolConverter()},
-            {typeof (string), new StringConverter()},
-            {typeof (byte[]), new BinaryConverter()},
-            {typeof (float), new FloatConverter()},
-            {typeof (double), new FloatConverter()},
-            {typeof (byte), new IntConverter()},
-            {typeof (sbyte), new IntConverter()},
-            {typeof (short), new IntConverter()},
-            {typeof (ushort), new IntConverter()},
-            {typeof (int), new IntConverter()},
-            {typeof (uint), new IntConverter()},
-            {typeof (long), new IntConverter()},
-            {typeof (ulong), new IntConverter()},
-            {typeof (DateTime), new DateTimeConverter()},
-            {typeof (DateTimeOffset), new DateTimeConverter()},
-            {typeof (TimeSpan), new TimeSpanConverter() },
-
-            {typeof (bool?), new NullableConverter<bool>()},
-            {typeof (float?), new NullableConverter<float>()},
-            {typeof (double?), new NullableConverter<double>()},
-            {typeof (byte?), new NullableConverter<byte>()},
-            {typeof (sbyte?), new NullableConverter<sbyte>()},
-            {typeof (short?), new NullableConverter<short>()},
-            {typeof (ushort?), new NullableConverter<ushort>()},
-            {typeof (int?), new NullableConverter<int>()},
-            {typeof (uint?), new NullableConverter<uint>()},
-            {typeof (long?), new NullableConverter<long>()},
-            {typeof (ulong?), new NullableConverter<ulong>()},
-            {typeof (DateTime?), new NullableConverter<DateTime>()},
-            {typeof (DateTimeOffset?), new NullableConverter<DateTimeOffset>()}
-        };
+        private readonly Dictionary<Type, IMsgPackConverter> _converters;
 
         private readonly Dictionary<Type, Type> _genericConverters = new Dictionary<Type, Type>();
 
         private readonly Dictionary<Type, Func<object>> _objectActivators = new Dictionary<Type, Func<object>>();
 
-        public MsgPackContext()
+        public MsgPackContext(bool strictParseOfFloat = false)
         {
+            var numberConverter = new NumberConverter(strictParseOfFloat);
+            _converters = new Dictionary<Type, IMsgPackConverter>
+            {
+                {typeof (bool), new BoolConverter()},
+                {typeof (string), new StringConverter()},
+                {typeof (byte[]), new BinaryConverter()},
+                {typeof (float), numberConverter},
+                {typeof (double), numberConverter},
+                {typeof (byte), numberConverter},
+                {typeof (sbyte), numberConverter},
+                {typeof (short), numberConverter},
+                {typeof (ushort), numberConverter},
+                {typeof (int), numberConverter},
+                {typeof (uint), numberConverter},
+                {typeof (long), numberConverter},
+                {typeof (ulong), numberConverter},
+                {typeof (DateTime), new DateTimeConverter()},
+                {typeof (DateTimeOffset), new DateTimeConverter()},
+                {typeof (TimeSpan), new TimeSpanConverter() },
+
+                {typeof (bool?), new NullableConverter<bool>()},
+                {typeof (float?), new NullableConverter<float>()},
+                {typeof (double?), new NullableConverter<double>()},
+                {typeof (byte?), new NullableConverter<byte>()},
+                {typeof (sbyte?), new NullableConverter<sbyte>()},
+                {typeof (short?), new NullableConverter<short>()},
+                {typeof (ushort?), new NullableConverter<ushort>()},
+                {typeof (int?), new NullableConverter<int>()},
+                {typeof (uint?), new NullableConverter<uint>()},
+                {typeof (long?), new NullableConverter<long>()},
+                {typeof (ulong?), new NullableConverter<ulong>()},
+                {typeof (DateTime?), new NullableConverter<DateTime>()},
+                {typeof (DateTimeOffset?), new NullableConverter<DateTimeOffset>()}
+            };
+
             foreach (var converter in _converters)
             {
                 converter.Value.Initialize(this);

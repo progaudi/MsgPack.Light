@@ -48,8 +48,8 @@ After dotnet is installed, run following commands:
 git clone https://github.com/progaudi/MsgPack.Light.git
 cd MsgPack.Light
 dotnet build -c Release -f netstandard1.4 src/msgpack.light/msgpack.light.csproj
-dotnet build -c Release -f netcoreapp1.0 tests/msgpack.light.tests/msgpack.light.tests.csproj
-dotnet test -c Release --noBuild tests/msgpack.light.tests/msgpack.light.tests.csproj
+dotnet build -c Release -f netcoreapp1.1 tests/msgpack.light.tests/msgpack.light.tests.csproj
+dotnet test -c Release --no-build tests/msgpack.light.tests/msgpack.light.tests.csproj
 ```
 MsgPack.Light should built and all test should be passed.
 
