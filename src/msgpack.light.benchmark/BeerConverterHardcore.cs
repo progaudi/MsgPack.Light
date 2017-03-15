@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 using ProGaudi.MsgPack.Light;
 
 namespace ProGaudi.MsgPack.Light.benchmark
 {
-    internal class BeerConverterHardCore : IMsgPackConverter<Beer>
+    internal class BeerConverterHardCore : IMsgPackTokenConverter<Beer>
     {
-        private IMsgPackConverter<string> _stringConverter;
+        private IMsgPackTokenConverter<string> _stringConverter;
 
-        private IMsgPackConverter<List<string>> _listStringConverter;
+        private IMsgPackTokenConverter<List<string>> _listStringConverter;
 
-        private IMsgPackConverter<float> _floatConverter;
+        private IMsgPackTokenConverter<float> _floatConverter;
 
         private MsgPackContext _context;
 
@@ -23,58 +24,61 @@ namespace ProGaudi.MsgPack.Light.benchmark
 
         private byte[] _brewery;
 
-        public void Write(Beer value, IMsgPackWriter writer)
+        public MsgPackToken ConvertFrom(Beer value)
         {
             if (value == null)
             {
-                _context.NullConverter.Write(null, writer);
-                return;
+                return _context.NullTokenConverter.ConvertFrom(null);
             }
+            var map = new[]
+            {
+                new KeyValuePair<MsgPackToken, MsgPackToken>(
+                    (MsgPackToken)_brand,
+                    _stringConverter.ConvertFrom(value.Brand)),
+                new KeyValuePair<MsgPackToken, MsgPackToken>(
+                    (MsgPackToken)_sort,
+                    _listStringConverter.ConvertFrom(value.Sort)),
+                new KeyValuePair<MsgPackToken, MsgPackToken>(
+                    (MsgPackToken)_alcohol,
+                    _floatConverter.ConvertFrom(value.Alcohol)),
+                new KeyValuePair<MsgPackToken, MsgPackToken>(
+                    (MsgPackToken)_brewery,
+                    _stringConverter.ConvertFrom(value.Brewery))
+            };
 
-            writer.WriteMapHeader(4);
-            writer.Write(_brand);
-            _stringConverter.Write(value.Brand, writer);
-
-            writer.Write(_sort);
-            _listStringConverter.Write(value.Sort, writer);
-
-            writer.Write(_alcohol);
-            _floatConverter.Write(value.Alcohol, writer);
-
-            writer.Write(_brewery);
-            _stringConverter.Write(value.Brewery, writer);
+            return (MsgPackToken)map;
         }
 
-        public Beer Read(IMsgPackReader reader)
+        public Beer ConvertTo(MsgPackToken token)
         {
-            var length = reader.ReadMapLength();
-            if (length == null)
+            var propertiesMap = (KeyValuePair<MsgPackToken, MsgPackToken>[])token;
+            if (propertiesMap == null)
             {
                 return null;
             }
 
-            if (length != 4)
+            if (propertiesMap.Length != 4)
             {
                 throw new SerializationException("Bad format");
             }
 
             var result = new Beer();
-            for (var i = 0; i < length.Value; i++)
+            foreach (var pair in propertiesMap)
             {
-                var propertyName = _stringConverter.Read(reader);
+                var propertyName = _stringConverter.ConvertTo(pair.Key);
                 switch (propertyName)
                 {
                     case nameof(result.Brand):
-                        result.Brand = _stringConverter.Read(reader);
+                        result.Brand = _stringConverter.ConvertTo(pair.Value);
                         break;
                     case nameof(result.Sort):
-                        result.Sort = _listStringConverter.Read(reader);
+                        result.Sort = _listStringConverter.ConvertTo(pair.Value);
                         break;
                     case nameof(result.Alcohol):
-                        result.Alcohol = _floatConverter.Read(reader);
+                        result.Alcohol = _floatConverter.ConvertTo(pair.Value);
                         break;
                     case nameof(result.Brewery):
-                        result.Brewery = _stringConverter.Read(reader);
+                        result.Brewery = _stringConverter.ConvertTo(pair.Value);
                         break;
                     default:
                         throw new SerializationException("Bad format");
