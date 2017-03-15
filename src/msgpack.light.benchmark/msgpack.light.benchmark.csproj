@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>msgpack.light.benchmark Console Application</Description>
     <Authors>aensidhe</Authors>
-    <TargetFramework>net45</TargetFramework>
+    <TargetFrameworks>net45;netcoreapp1.1</TargetFrameworks>
     <AssemblyName>msgpack.light.benchmark</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>msgpack.light.benchmark</PackageId>
@@ -19,9 +19,8 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.10.3" />
-    <PackageReference Include="MsgPack.Cli" Version="0.9.0-beta2" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.1-beta1" />
-    <PackageReference Include="ServiceStack.Text" Version="4.5.6" />
+    <PackageReference Include="MsgPack.Cli" Version="0.8.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
 
   <ItemGroup>

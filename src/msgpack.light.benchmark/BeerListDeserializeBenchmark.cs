@@ -54,17 +54,7 @@ namespace ProGaudi.MsgPack.Light.benchmark
                 var beer = Serializers<Beer[]>.Newtonsoft.Deserialize(reader, typeof(Beer[]));
             }
         }
-
-        [Benchmark]
-        public void JsonStack()
-        {
-            _json.Seek(0, SeekOrigin.Begin);
-            using (var reader = new StreamReader(_json, Encoding.UTF8, false, 1024, true))
-            {
-                var beer = Serializers<Beer[]>.ServiceStack.DeserializeFromReader(reader);
-            }
-        }
-
+        
         [Benchmark(Baseline = true)]
         public void MPCli_Stream()
         {
