@@ -39,18 +39,7 @@ namespace ProGaudi.MsgPack.Light.benchmark
                 writer.Flush();
             }
         }
-
-        [Benchmark]
-        public void JsonStack()
-        {
-            var memoryStream = new MemoryStream();
-            using (var writer = new StreamWriter(memoryStream, Encoding.UTF8))
-            {
-                Serializers<Beer>.ServiceStack.SerializeToWriter(_testBeer, writer);
-                writer.Flush();
-            }
-        }
-
+        
         [Benchmark(Baseline = true)]
         public void MPCli_Stream()
         {

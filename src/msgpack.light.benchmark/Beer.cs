@@ -6,7 +6,6 @@ using ProGaudi.MsgPack.Light;
 
 namespace ProGaudi.MsgPack.Light.benchmark
 {
-    [Serializable]
     public class Beer
     {
         public string Brand { get; set; }

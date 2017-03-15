@@ -1,8 +1,4 @@
-﻿using ProGaudi.MsgPack.Light;
-using MsgPack.Serialization;
-
-using ServiceStack.Text;
-
+﻿using MsgPack.Serialization;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace ProGaudi.MsgPack.Light.benchmark
@@ -10,7 +6,6 @@ namespace ProGaudi.MsgPack.Light.benchmark
     public static class Serializers<T>
     {
         public static readonly JsonSerializer Newtonsoft = new JsonSerializer();
-        public static readonly TypeSerializer<T> ServiceStack = new TypeSerializer<T>();
         public static readonly SerializationContext MsgPack = new SerializationContext();
         public static readonly SerializationContext MsgPackHardcore = new SerializationContext();
         public static readonly MsgPackContext MsgPackLight = new MsgPackContext();

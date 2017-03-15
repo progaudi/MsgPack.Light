@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+
+  <PropertyGroup>
+    <Description>msgpack.light.benchmark Console Application</Description>
+    <Authors>aensidhe</Authors>
+    <TargetFrameworks>net45;netcoreapp1.1</TargetFrameworks>
+    <AssemblyName>msgpack.light.benchmark</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <PackageId>msgpack.light.benchmark</PackageId>
+    <PackageTags>benchmark;BenchmarkDotNet;MsgPack.Cli;MsgPack.Light;MsgPack</PackageTags>
+    <RuntimeIdentifiers>win</RuntimeIdentifiers>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.10.3" />
+    <PackageReference Include="MsgPack.Cli" Version="0.8.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\msgpack.light\msgpack.light.csproj" />
+  </ItemGroup>
+
+</Project>
