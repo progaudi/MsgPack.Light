@@ -1,17 +1,17 @@
 namespace ProGaudi.MsgPack.Light.Converters
 {
-    internal class NullConverter : IMsgPackConverter<object>
+    internal class NullTokenConverter : IMsgPackTokenConverter<object>
     {
         public void Initialize(MsgPackContext context)
         {
         }
 
-        public MsgPackToken Write(object value)
+        public MsgPackToken ConvertFrom(object value)
         {
             return null;
         }
 
-        public object Read(MsgPackToken token)
+        public object ConvertTo(MsgPackToken token)
         {
             if (token.DataType == DataTypes.Null)
             {

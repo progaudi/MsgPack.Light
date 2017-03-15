@@ -124,7 +124,7 @@ namespace ProGaudi.MsgPack.Light
             return result;
         }
 
-        private byte[] ReadBytes(IMsgPackReader reader, uint bytesCount)
+        private static byte[] ReadBytes(IMsgPackReader reader, uint bytesCount)
         {
             return reader.ReadBytes(bytesCount).ToArray();
         }

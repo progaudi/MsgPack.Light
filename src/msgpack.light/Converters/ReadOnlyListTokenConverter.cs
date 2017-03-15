@@ -2,10 +2,10 @@ using System.Collections.Generic;
 
 namespace ProGaudi.MsgPack.Light.Converters
 {
-    public class ReadOnlyListConverter<TArray, TElement> : ArrayConverterBase<TArray, TElement>
+    public class ReadOnlyListTokenConverter<TArray, TElement> : ArrayTokenConverterBase<TArray, TElement>
         where TArray : IReadOnlyList<TElement>
     {
-        public override MsgPackToken Write(TArray value)
+        public override MsgPackToken ConvertFrom(TArray value)
         {
             if (value == null)
             {
@@ -16,13 +16,13 @@ namespace ProGaudi.MsgPack.Light.Converters
 
             for (var index = 0; index < value.Count; index++)
             {
-                arrayElements[index] = ElementConverter.Write(value[index]);
+                arrayElements[index] = ElementTokenConverter.ConvertFrom(value[index]);
             }
 
             return (MsgPackToken) arrayElements;
         }
 
-        public override TArray Read(MsgPackToken reader)
+        public override TArray ConvertTo(MsgPackToken reader)
         {
             throw ExceptionUtils.CantReadReadOnlyCollection(typeof(TArray));
         }

@@ -2,18 +2,18 @@ using System.Collections.Generic;
 
 namespace ProGaudi.MsgPack.Light.Converters
 {
-    internal class ArrayConverter<TArray, TElement> : ArrayConverterBase<TArray, TElement>
+    internal class ArrayTokenConverter<TArray, TElement> : ArrayTokenConverterBase<TArray, TElement>
         where TArray : IList<TElement>
     {
         private static readonly bool IsSingleDimensionArray;
 
-        static ArrayConverter()
+        static ArrayTokenConverter()
         {
             var type = typeof(TArray);
             IsSingleDimensionArray = type.IsArray && type.GetArrayRank() == 1 && type.GetElementType() == typeof(TElement);
         }
 
-        public override MsgPackToken Write(TArray value)
+        public override MsgPackToken ConvertFrom(TArray value)
         {
             if (value == null)
             {
@@ -24,13 +24,13 @@ namespace ProGaudi.MsgPack.Light.Converters
 
             for (var index = 0; index < value.Count; index++)
             {
-                arrayElements[index] = ElementConverter.Write(value[index]);
+                arrayElements[index] = ElementTokenConverter.ConvertFrom(value[index]);
             }
 
             return (MsgPackToken) arrayElements;
         }
 
-        public override TArray Read(MsgPackToken token)
+        public override TArray ConvertTo(MsgPackToken token)
         {
             var elements = (MsgPackToken[])token;
 
@@ -47,7 +47,7 @@ namespace ProGaudi.MsgPack.Light.Converters
 
                 for (var i = 0u; i < length; i++)
                 {
-                    array.Add(ElementConverter.Read(elements[i]));
+                    array.Add(ElementTokenConverter.ConvertTo(elements[i]));
                 }
 
                 return array;
@@ -58,7 +58,7 @@ namespace ProGaudi.MsgPack.Light.Converters
 
             for (var i = 0; i < length; i++)
             {
-                result[i] = ElementConverter.Read(elements[i]);
+                result[i] = ElementTokenConverter.ConvertTo(elements[i]);
             }
 
             return result;

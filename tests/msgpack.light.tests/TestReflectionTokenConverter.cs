@@ -10,7 +10,7 @@ using JetBrains.Annotations;
 
 namespace ProGaudi.MsgPack.Light.Tests
 {
-    public class TestReflectionConverter : IMsgPackConverter<object>
+    public class TestReflectionTokenConverter : IMsgPackTokenConverter<object>
     {
         private MsgPackContext _context;
 
@@ -19,7 +19,7 @@ namespace ProGaudi.MsgPack.Light.Tests
             _context = context;
         }
 
-        public MsgPackToken Write(object value)
+        public MsgPackToken ConvertFrom(object value)
         {
             if (value == null)
             {
@@ -28,14 +28,14 @@ namespace ProGaudi.MsgPack.Light.Tests
 
             var converter = GetConverter(_context, value.GetType());
 
-            var methodDefinition = typeof(IMsgPackConverter<>).MakeGenericType(value.GetType()).GetMethod(
-                "Write",
+            var methodDefinition = typeof(IMsgPackTokenConverter<>).MakeGenericType(value.GetType()).GetMethod(
+                "ConvertFrom",
                 new[] { value.GetType() });
 
             return (MsgPackToken) methodDefinition.Invoke(converter, new[] { value });
         }
 
-        public object Read(MsgPackToken token)
+        public object ConvertTo(MsgPackToken token)
         {
             var msgPackType = token.DataType;
 
@@ -137,8 +137,8 @@ namespace ProGaudi.MsgPack.Light.Tests
             }
 
             var converter = GetConverter(_context, type);
-            var methodDefinition = typeof(IMsgPackConverter<>).MakeGenericType(type).GetMethod(
-                "Read",
+            var methodDefinition = typeof(IMsgPackTokenConverter<>).MakeGenericType(type).GetMethod(
+                "ConvertTo",
                 new[] { typeof(MsgPackToken) });
 
             return methodDefinition.Invoke(converter, new object[] { token });

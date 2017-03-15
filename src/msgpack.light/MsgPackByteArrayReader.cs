@@ -30,23 +30,5 @@ namespace ProGaudi.MsgPack.Light
             _offset += length;
             return new ArraySegment<byte>(_data, (int)(_offset - length), (int)length);
         }
-
-        public void Seek(long offset, SeekOrigin origin)
-        {
-            switch (origin)
-            {
-                case SeekOrigin.Begin:
-                    _offset = (uint)offset;
-                    break;
-                case SeekOrigin.Current:
-                    _offset = (uint)(_offset + offset);
-                    break;
-                case SeekOrigin.End:
-                    _offset = (uint)(_data.Length + offset);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(origin), origin, null);
-            }
-        }
     }
 }

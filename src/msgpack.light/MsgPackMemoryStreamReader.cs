@@ -37,12 +37,7 @@ namespace ProGaudi.MsgPack.Light
                 throw ExceptionUtils.NotEnoughBytes(read, buffer.Length);
             return new ArraySegment<byte>(buffer, 0, buffer.Length);
         }
-
-        public void Seek(long offset, SeekOrigin origin)
-        {
-            _stream.Seek(offset, origin);
-        }
-
+        
         public void Dispose()
         {
             if (_disposeStream)

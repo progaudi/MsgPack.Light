@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 
 namespace ProGaudi.MsgPack.Light
 {
@@ -10,7 +9,5 @@ namespace ProGaudi.MsgPack.Light
         byte ReadByte();
 
         ArraySegment<byte> ReadBytes(uint length);
-
-        void Seek(long offset, SeekOrigin origin);
     }
 }

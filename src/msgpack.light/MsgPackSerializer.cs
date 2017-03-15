@@ -19,7 +19,7 @@ namespace ProGaudi.MsgPack.Light
             {
                 var tokenWriter = new TokenWriter(writer);
                 var converter = GetConverter<T>(context);
-                var token = converter.Write(data);
+                var token = converter.ConvertFrom(data);
                 tokenWriter.Write(token);
                 return memoryStream.ToArray();
             }
@@ -36,7 +36,7 @@ namespace ProGaudi.MsgPack.Light
             {
                 var tokenWriter = new TokenWriter(writer);
                 var converter = GetConverter<T>(context);
-                tokenWriter.Write(converter.Write(data));
+                tokenWriter.Write(converter.ConvertFrom(data));
             }
         }
 
@@ -65,13 +65,13 @@ namespace ProGaudi.MsgPack.Light
         }
 
         [NotNull]
-        private static IMsgPackConverter<T> GetConverter<T>(MsgPackContext context)
+        private static IMsgPackTokenConverter<T> GetConverter<T>(MsgPackContext context)
         {
             var converter = context.GetConverter<T>();
 
             if (converter == null)
             {
-                throw new SerializationException($"Provide converter for {typeof(T).Name}");
+                throw new SerializationException($"Provide tokenConverter for {typeof(T).Name}");
             }
 
             return converter;
@@ -82,7 +82,7 @@ namespace ProGaudi.MsgPack.Light
         {
             var tokenReader = new TokenReader(reader);
             var converter = GetConverter<T>(context);
-            return converter.Read(tokenReader.Read());
+            return converter.ConvertTo(tokenReader.Read());
         }
 
     }

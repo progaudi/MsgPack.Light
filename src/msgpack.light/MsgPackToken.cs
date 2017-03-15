@@ -7,7 +7,7 @@ namespace ProGaudi.MsgPack.Light
 {
     public class MsgPackToken
     {
-        public DataTypes DataType { get; }
+        internal DataTypes DataType { get; }
 
         internal byte[] ValueBytes { get; }
 

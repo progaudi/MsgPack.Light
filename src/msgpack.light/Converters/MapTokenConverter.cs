@@ -2,10 +2,10 @@ using System.Collections.Generic;
 
 namespace ProGaudi.MsgPack.Light.Converters
 {
-    internal class MapConverter<TMap, TKey, TValue> : MapConverterBase<TMap, TKey, TValue>
+    internal class MapTokenConverter<TMap, TKey, TValue> : MapTokenConverterBase<TMap, TKey, TValue>
         where TMap : IDictionary<TKey, TValue>
     {
-        public override MsgPackToken Write(TMap map)
+        public override MsgPackToken ConvertFrom(TMap map)
         {
             if (map == null)
             {
@@ -16,8 +16,8 @@ namespace ProGaudi.MsgPack.Light.Converters
             var index = 0;
             foreach (var element in map)
             {
-                var key = KeyConverter.Write(element.Key);
-                var value = ValueConverter.Write(element.Value);
+                var key = KeyTokenConverter.ConvertFrom(element.Key);
+                var value = ValueTokenConverter.ConvertFrom(element.Value);
 
                 result[index++] = new KeyValuePair<MsgPackToken, MsgPackToken>(key, value);
             }
@@ -25,7 +25,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             return (MsgPackToken) result;
         }
 
-        public override TMap Read(MsgPackToken token)
+        public override TMap ConvertTo(MsgPackToken token)
         {
             var mapElements = (KeyValuePair<MsgPackToken, MsgPackToken>[]) token;
             if (mapElements == null)
@@ -38,8 +38,8 @@ namespace ProGaudi.MsgPack.Light.Converters
 
             for (var i = 0u; i < length; i++)
             {
-                var key = KeyConverter.Read(mapElements[i].Key);
-                var value = ValueConverter.Read(mapElements[i].Value);
+                var key = KeyTokenConverter.ConvertTo(mapElements[i].Key);
+                var value = ValueTokenConverter.ConvertTo(mapElements[i].Value);
 
                 result[key] = value;
             }
