@@ -37,97 +37,97 @@ namespace ProGaudi.MsgPack.Light.Tests
 
         public object ConvertTo(MsgPackToken token)
         {
-            var msgPackType = token.DataType;
+            var msgPackType = token.DataTypeInternal;
 
             Type type;
             switch (msgPackType)
             {
-                case DataTypes.Null:
+                case DataTypeInternal.Null:
                     return null;
 
-                case DataTypes.False:
+                case DataTypeInternal.False:
                     return false;
 
-                case DataTypes.True:
+                case DataTypeInternal.True:
                     return true;
 
-                case DataTypes.Single:
+                case DataTypeInternal.Single:
                     type = typeof(float);
                     break;
 
-                case DataTypes.Double:
+                case DataTypeInternal.Double:
                     type = typeof(double);
                     break;
 
-                case DataTypes.UInt8:
+                case DataTypeInternal.UInt8:
                     type = typeof(byte);
                     break;
 
-                case DataTypes.UInt16:
+                case DataTypeInternal.UInt16:
                     type = typeof(ushort);
                     break;
 
-                case DataTypes.UInt32:
+                case DataTypeInternal.UInt32:
                     type = typeof(uint);
                     break;
 
-                case DataTypes.UInt64:
+                case DataTypeInternal.UInt64:
                     type = typeof(ulong);
                     break;
 
-                case DataTypes.Int8:
+                case DataTypeInternal.Int8:
                     type = typeof(sbyte);
                     break;
 
-                case DataTypes.Int16:
+                case DataTypeInternal.Int16:
                     type = typeof(short);
                     break;
 
-                case DataTypes.Int32:
+                case DataTypeInternal.Int32:
                     type = typeof(int);
                     break;
 
-                case DataTypes.Int64:
+                case DataTypeInternal.Int64:
                     type = typeof(long);
                     break;
 
-                case DataTypes.Array16:
+                case DataTypeInternal.Array16:
                     type = typeof(object[]);
                     break;
 
-                case DataTypes.Array32:
+                case DataTypeInternal.Array32:
                     type = typeof(object[]);
                     break;
 
-                case DataTypes.Map16:
+                case DataTypeInternal.Map16:
                     type = typeof(Dictionary<object, object>);
                     break;
 
-                case DataTypes.Map32:
+                case DataTypeInternal.Map32:
                     type = typeof(Dictionary<object, object>);
                     break;
 
-                case DataTypes.Str8:
+                case DataTypeInternal.Str8:
                     type = typeof(string);
                     break;
 
-                case DataTypes.Str16:
+                case DataTypeInternal.Str16:
                     type = typeof(string);
                     break;
 
-                case DataTypes.Str32:
+                case DataTypeInternal.Str32:
                     type = typeof(string);
                     break;
 
-                case DataTypes.Bin8:
+                case DataTypeInternal.Bin8:
                     type = typeof(byte[]);
                     break;
 
-                case DataTypes.Bin16:
+                case DataTypeInternal.Bin16:
                     type = typeof(byte[]);
                     break;
 
-                case DataTypes.Bin32:
+                case DataTypeInternal.Bin32:
                     type = typeof(byte[]);
                     break;
 
@@ -144,24 +144,24 @@ namespace ProGaudi.MsgPack.Light.Tests
             return methodDefinition.Invoke(converter, new object[] { token });
         }
 
-        private Type TryInferFromFixedLength(DataTypes msgPackType)
+        private Type TryInferFromFixedLength(DataTypeInternal msgPackTypeInternal)
         {
-            if (msgPackType.GetHighBits(1) == DataTypes.PositiveFixNum.GetHighBits(1))
+            if (msgPackTypeInternal.GetHighBits(1) == DataTypeInternal.PositiveFixNum.GetHighBits(1))
                 return typeof(byte);
 
-            if (msgPackType.GetHighBits(3) == DataTypes.NegativeFixNum.GetHighBits(3))
+            if (msgPackTypeInternal.GetHighBits(3) == DataTypeInternal.NegativeFixNum.GetHighBits(3))
                 return typeof(sbyte);
 
-            if (msgPackType.GetHighBits(4) == DataTypes.FixArray.GetHighBits(4))
+            if (msgPackTypeInternal.GetHighBits(4) == DataTypeInternal.FixArray.GetHighBits(4))
                 return typeof(object[]);
 
-            if (msgPackType.GetHighBits(3) == DataTypes.FixStr.GetHighBits(3))
+            if (msgPackTypeInternal.GetHighBits(3) == DataTypeInternal.FixStr.GetHighBits(3))
                 return typeof(string);
 
-            if (msgPackType.GetHighBits(4) == DataTypes.FixMap.GetHighBits(4))
+            if (msgPackTypeInternal.GetHighBits(4) == DataTypeInternal.FixMap.GetHighBits(4))
                 return typeof(Dictionary<object, object>);
 
-            throw new SerializationException($"Can't infer type for msgpack type: {msgPackType:G} (0x{msgPackType:X})");
+            throw new SerializationException($"Can't infer typeInternal for msgpack typeInternal: {msgPackTypeInternal:G} (0x{msgPackTypeInternal:X})");
         }
 
         [NotNull]

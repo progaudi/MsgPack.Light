@@ -1,6 +1,6 @@
 namespace ProGaudi.MsgPack.Light
 {
-    public enum DataTypes : byte
+    internal enum DataTypeInternal : byte
     {
         Null = 0xc0,
 

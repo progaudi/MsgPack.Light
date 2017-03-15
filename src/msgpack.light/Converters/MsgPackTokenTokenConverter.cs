@@ -154,9 +154,9 @@
 
         float IMsgPackTokenConverter<float>.ConvertTo(MsgPackToken token)
         {
-            if (_strictParseOfFloat && token.DataType != DataTypes.Single)
+            if (_strictParseOfFloat && token.DataTypeInternal != DataTypeInternal.Single)
             {
-                throw ExceptionUtils.BadTypeException(token.DataType, DataTypes.Single);
+                throw ExceptionUtils.BadTypeException(token.DataTypeInternal, DataTypeInternal.Single);
             }
 
             return (float)token;
@@ -169,9 +169,9 @@
 
         double IMsgPackTokenConverter<double>.ConvertTo(MsgPackToken token)
         {
-            if (_strictParseOfFloat && token.DataType != DataTypes.Single && token.DataType != DataTypes.Double)
+            if (_strictParseOfFloat && token.DataTypeInternal != DataTypeInternal.Single && token.DataTypeInternal != DataTypeInternal.Double)
             {
-                throw ExceptionUtils.BadTypeException(token.DataType, DataTypes.Single, DataTypes.Double);
+                throw ExceptionUtils.BadTypeException(token.DataTypeInternal, DataTypeInternal.Single, DataTypeInternal.Double);
             }
 
             return (double)token;

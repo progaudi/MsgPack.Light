@@ -15,9 +15,9 @@ namespace ProGaudi.MsgPack.Light
             _disposeStream = disposeStream;
         }
 
-        public DataTypes ReadDataType()
+        public DataTypeInternal ReadDataType()
         {
-            return (DataTypes)ReadByte();
+            return (DataTypeInternal)ReadByte();
         }
 
         public byte ReadByte()

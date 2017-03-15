@@ -22,7 +22,7 @@ namespace ProGaudi.MsgPack.Light.Converters
 
         public T? ConvertTo(MsgPackToken token)
         {
-            if (token.DataType == DataTypes.Null)
+            if (token.DataTypeInternal == DataTypeInternal.Null)
                 return null;
 
             return _tokenConverter.ConvertTo(token);

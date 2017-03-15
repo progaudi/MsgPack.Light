@@ -15,9 +15,9 @@ namespace ProGaudi.MsgPack.Light
             _disposeStream = disposeStream;
         }
 
-        public void Write(DataTypes dataType)
+        public void Write(DataTypeInternal dataTypeInternal)
         {
-            _stream.WriteByte((byte)dataType);
+            _stream.WriteByte((byte)dataTypeInternal);
         }
 
         public void Write(byte value)

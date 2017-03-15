@@ -78,7 +78,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TestDoubleStritctParsing(byte[] bytes)
         {
             var e = Should.Throw<SerializationException>(() => MsgPackSerializer.Deserialize<double>(bytes, new MsgPackContext(true)));
-            e.Message.ShouldBe(ExceptionUtils.BadTypeException((DataTypes)bytes[0], DataTypes.Single, DataTypes.Double).Message);
+            e.Message.ShouldBe(ExceptionUtils.BadTypeException((DataTypeInternal)bytes[0], DataTypeInternal.Single, DataTypeInternal.Double).Message);
         }
 
         [Theory]
@@ -91,7 +91,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TestFloatStritctParsing(byte[] bytes)
         {
             var e = Should.Throw<SerializationException>(() => MsgPackSerializer.Deserialize<float>(bytes, new MsgPackContext(true)));
-            e.Message.ShouldBe(ExceptionUtils.BadTypeException((DataTypes)bytes[0], DataTypes.Single).Message);
+            e.Message.ShouldBe(ExceptionUtils.BadTypeException((DataTypeInternal)bytes[0], DataTypeInternal.Single).Message);
         }
     }
 }

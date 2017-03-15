@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ProGaudi.MsgPack.Light
 {
-    public class TokenReader
+    internal class TokenReader
     {
         private readonly IMsgPackReader _reader;
 
@@ -24,56 +24,56 @@ namespace ProGaudi.MsgPack.Light
 
             switch (dataType)
             {
-                case DataTypes.Null:
-                case DataTypes.False:
-                case DataTypes.True:
+                case DataTypeInternal.Null:
+                case DataTypeInternal.False:
+                case DataTypeInternal.True:
                     return CreateToken(dataType);
-                case DataTypes.UInt8:
-                case DataTypes.Int8:
+                case DataTypeInternal.UInt8:
+                case DataTypeInternal.Int8:
                     return CreateToken(dataType, ReadBytes(reader, 1));
-                case DataTypes.UInt16:
-                case DataTypes.Int16:
+                case DataTypeInternal.UInt16:
+                case DataTypeInternal.Int16:
                     return CreateToken(dataType, ReadBytes(reader, 2));
-                case DataTypes.UInt32:
-                case DataTypes.Int32:
-                case DataTypes.Single:
+                case DataTypeInternal.UInt32:
+                case DataTypeInternal.Int32:
+                case DataTypeInternal.Single:
                     return CreateToken(dataType, ReadBytes(reader, 4));
-                case DataTypes.UInt64:
-                case DataTypes.Int64:
-                case DataTypes.Double:
+                case DataTypeInternal.UInt64:
+                case DataTypeInternal.Int64:
+                case DataTypeInternal.Double:
                     return CreateToken(dataType, ReadBytes(reader, 8));
-                case DataTypes.Array16:
+                case DataTypeInternal.Array16:
                     return CreateToken(
                         dataType,
                         ReadArrayItems(reader, ReadUInt16(reader)));
-                case DataTypes.Array32:
+                case DataTypeInternal.Array32:
                     return CreateToken(
                         dataType,
                         ReadArrayItems(reader, ReadUInt32(reader)));
-                case DataTypes.Map16:
+                case DataTypeInternal.Map16:
                     return CreateToken(
                         dataType,
                         ReadMapItems(reader, ReadUInt16(reader)));
-                case DataTypes.Map32:
+                case DataTypeInternal.Map32:
                     return CreateToken(
                         dataType,
                         ReadMapItems(reader, ReadUInt32(reader)));
-                case DataTypes.Str8:
+                case DataTypeInternal.Str8:
                     return CreateToken(dataType, ReadBytes(reader, ReadUInt8(reader)));
-                case DataTypes.Str16:
+                case DataTypeInternal.Str16:
                     return CreateToken(dataType, ReadBytes(reader, ReadUInt16(reader)));
-                case DataTypes.Str32:
+                case DataTypeInternal.Str32:
                     return CreateToken(dataType, ReadBytes(reader, ReadUInt32(reader)));
-                case DataTypes.Bin8:
+                case DataTypeInternal.Bin8:
                     return CreateToken(dataType, ReadBytes(reader, ReadUInt8(reader)));
-                case DataTypes.Bin16:
+                case DataTypeInternal.Bin16:
                     return CreateToken(dataType, ReadBytes(reader, ReadUInt16(reader)));
-                case DataTypes.Bin32:
+                case DataTypeInternal.Bin32:
                     return CreateToken(dataType, ReadBytes(reader, ReadUInt32(reader)));
             }
 
-            if (dataType.GetHighBits(1) == DataTypes.PositiveFixNum.GetHighBits(1) ||
-                dataType.GetHighBits(3) == DataTypes.NegativeFixNum.GetHighBits(3))
+            if (dataType.GetHighBits(1) == DataTypeInternal.PositiveFixNum.GetHighBits(1) ||
+                dataType.GetHighBits(3) == DataTypeInternal.NegativeFixNum.GetHighBits(3))
             {
                 return CreateToken(dataType);
             }
@@ -129,22 +129,22 @@ namespace ProGaudi.MsgPack.Light
             return reader.ReadBytes(bytesCount).ToArray();
         }
 
-        private static uint? TryGetLengthFromFixStr(DataTypes type)
+        private static uint? TryGetLengthFromFixStr(DataTypeInternal typeInternal)
         {
-            var length = type - DataTypes.FixStr;
-            return type.GetHighBits(3) == DataTypes.FixStr.GetHighBits(3) ? length : (uint?)null;
+            var length = typeInternal - DataTypeInternal.FixStr;
+            return typeInternal.GetHighBits(3) == DataTypeInternal.FixStr.GetHighBits(3) ? length : (uint?)null;
         }
 
-        private static uint? TryGetLengthFromFixArray(DataTypes type)
+        private static uint? TryGetLengthFromFixArray(DataTypeInternal typeInternal)
         {
-            var length = type - DataTypes.FixArray;
-            return type.GetHighBits(4) == DataTypes.FixArray.GetHighBits(4) ? length : (uint?)null;
+            var length = typeInternal - DataTypeInternal.FixArray;
+            return typeInternal.GetHighBits(4) == DataTypeInternal.FixArray.GetHighBits(4) ? length : (uint?)null;
         }
 
-        private static uint? TryGetLengthFromFixMap(DataTypes type)
+        private static uint? TryGetLengthFromFixMap(DataTypeInternal typeInternal)
         {
-            var length = type - DataTypes.FixMap;
-            return type.GetHighBits(4) == DataTypes.FixMap.GetHighBits(4) ? length : (uint?)null;
+            var length = typeInternal - DataTypeInternal.FixMap;
+            return typeInternal.GetHighBits(4) == DataTypeInternal.FixMap.GetHighBits(4) ? length : (uint?)null;
         }
 
         private static byte ReadUInt8(IMsgPackReader reader)
@@ -167,24 +167,24 @@ namespace ProGaudi.MsgPack.Light
             return temp;
         }
 
-        private static MsgPackToken CreateToken(DataTypes dataType)
+        private static MsgPackToken CreateToken(DataTypeInternal dataTypeInternal)
         {
-            return new MsgPackToken(dataType);
+            return new MsgPackToken(dataTypeInternal);
         }
 
-        private static MsgPackToken CreateToken(DataTypes dataType, byte[] valueBytes)
+        private static MsgPackToken CreateToken(DataTypeInternal dataTypeInternal, byte[] valueBytes)
         {
-            return new MsgPackToken(dataType, valueBytes);
+            return new MsgPackToken(dataTypeInternal, valueBytes);
         }
 
-        private static MsgPackToken CreateToken(DataTypes dataType, KeyValuePair<MsgPackToken, MsgPackToken>[] mapItems)
+        private static MsgPackToken CreateToken(DataTypeInternal dataTypeInternal, KeyValuePair<MsgPackToken, MsgPackToken>[] mapItems)
         {
-            return new MsgPackToken(dataType, mapItems);
+            return new MsgPackToken(dataTypeInternal, mapItems);
         }
 
-        private static MsgPackToken CreateToken(DataTypes dataType, MsgPackToken[] arrayElements)
+        private static MsgPackToken CreateToken(DataTypeInternal dataTypeInternal, MsgPackToken[] arrayElements)
         {
-            return new MsgPackToken(dataType, arrayElements);
+            return new MsgPackToken(dataTypeInternal, arrayElements);
         }
     }
 }

@@ -13,12 +13,12 @@ namespace ProGaudi.MsgPack.Light.Converters
 
         public object ConvertTo(MsgPackToken token)
         {
-            if (token.DataType == DataTypes.Null)
+            if (token.DataTypeInternal == DataTypeInternal.Null)
             {
                 return null;
             }
 
-            throw ExceptionUtils.BadTypeException(token.DataType, DataTypes.Null);
+            throw ExceptionUtils.BadTypeException(token.DataTypeInternal, DataTypeInternal.Null);
         }
     }
 }

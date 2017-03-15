@@ -3,9 +3,9 @@ using System.Runtime.Serialization;
 
 namespace ProGaudi.MsgPack.Light
 {
-    public static class ExceptionUtils
+    internal static class ExceptionUtils
     {
-        public static Exception BadTypeException(DataTypes actual, params DataTypes[] expectedCodes)
+        public static Exception BadTypeException(DataTypeInternal actual, params DataTypeInternal[] expectedCodes)
         {
             return new SerializationException($"Got {actual:G} (0x{actual:X}), while expecting one of these: {string.Join(", ", expectedCodes)}");
         }
@@ -40,9 +40,9 @@ namespace ProGaudi.MsgPack.Light
             return new SerializationException($"Provide converter for {elementName}: {type.Name}");
         }
 
-        public static Exception IntDeserializationFailure(DataTypes type)
+        public static Exception IntDeserializationFailure(DataTypeInternal typeInternal)
         {
-            return new SerializationException($"Waited for an int, got {type:G} (0x{type:X})");
+            return new SerializationException($"Waited for an int, got {typeInternal:G} (0x{typeInternal:X})");
         }
 
         public static Exception IntSerializationFailure(long value)

@@ -15,9 +15,9 @@ namespace ProGaudi.MsgPack.Light
             _offset = 0;
         }
 
-        public DataTypes ReadDataType()
+        public DataTypeInternal ReadDataType()
         {
-            return (DataTypes)ReadByte();
+            return (DataTypeInternal)ReadByte();
         }
 
         public byte ReadByte()

@@ -2,9 +2,9 @@ using System;
 
 namespace ProGaudi.MsgPack.Light
 {
-    public interface IMsgPackReader
+    internal interface IMsgPackReader
     {
-        DataTypes ReadDataType();
+        DataTypeInternal ReadDataType();
 
         byte ReadByte();
 

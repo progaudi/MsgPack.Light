@@ -1,6 +1,6 @@
 namespace ProGaudi.MsgPack.Light
 {
-    public class TokenWriter
+    internal class TokenWriter
     {
         private readonly IMsgPackWriter _writer;
 
@@ -13,18 +13,18 @@ namespace ProGaudi.MsgPack.Light
         {
             if (token == null)
             {
-                _writer.Write(DataTypes.Null);
+                _writer.Write(DataTypeInternal.Null);
                 return;
             }
 
-            _writer.Write(token.DataType);
+            _writer.Write(token.DataTypeInternal);
 
-            if (token.DataType == DataTypes.Bin8 ||
-                token.DataType == DataTypes.Bin16 ||
-                token.DataType == DataTypes.Bin32 ||
-                token.DataType == DataTypes.Str8 ||
-                token.DataType == DataTypes.Str16 ||
-                token.DataType == DataTypes.Str32)
+            if (token.DataTypeInternal == DataTypeInternal.Bin8 ||
+                token.DataTypeInternal == DataTypeInternal.Bin16 ||
+                token.DataTypeInternal == DataTypeInternal.Bin32 ||
+                token.DataTypeInternal == DataTypeInternal.Str8 ||
+                token.DataTypeInternal == DataTypeInternal.Str16 ||
+                token.DataTypeInternal == DataTypeInternal.Str32)
             {
                 var dataLength = token.ValueBytes.Length;
                 if (dataLength <= byte.MaxValue)
@@ -53,12 +53,12 @@ namespace ProGaudi.MsgPack.Light
                 }
                 else if (length <= ushort.MaxValue)
                 {
-                    _writer.Write(DataTypes.Array16);
+                    _writer.Write(DataTypeInternal.Array16);
                     WriteUShortValue((ushort)length, _writer);
                 }
                 else
                 {
-                    _writer.Write(DataTypes.Array32);
+                    _writer.Write(DataTypeInternal.Array32);
                     WriteUIntValue(length, _writer);
                 }
 
@@ -75,12 +75,12 @@ namespace ProGaudi.MsgPack.Light
                 }
                 else if (length <= ushort.MaxValue)
                 {
-                    _writer.Write(DataTypes.Map16);
+                    _writer.Write(DataTypeInternal.Map16);
                     WriteUShortValue((ushort)length, _writer);
                 }
                 else
                 {
-                    _writer.Write(DataTypes.Map16);
+                    _writer.Write(DataTypeInternal.Map16);
                     WriteUIntValue(length, _writer);
                 }
 

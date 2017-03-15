@@ -7,7 +7,7 @@ namespace ProGaudi.MsgPack.Light
 {
     public class MsgPackToken
     {
-        internal DataTypes DataType { get; }
+        internal DataTypeInternal DataTypeInternal { get; }
 
         internal byte[] ValueBytes { get; }
 
@@ -15,31 +15,33 @@ namespace ProGaudi.MsgPack.Light
 
         internal KeyValuePair<MsgPackToken, MsgPackToken>[] MapElements{ get; }
 
-        internal MsgPackToken(DataTypes dataType)
+        internal MsgPackToken(DataTypeInternal dataTypeInternal)
         {
-            this.DataType = dataType;
+            this.DataTypeInternal = dataTypeInternal;
         }
 
-        internal MsgPackToken(DataTypes dataType, byte[] valueBytes) : this(dataType)
+        internal MsgPackToken(DataTypeInternal dataTypeInternal, byte[] valueBytes) : this(dataTypeInternal)
         {
             this.ValueBytes = valueBytes;
         }
 
-        internal MsgPackToken(DataTypes dataType, KeyValuePair<MsgPackToken, MsgPackToken>[] mapElements) : this(dataType)
+        internal MsgPackToken(DataTypeInternal dataTypeInternal, KeyValuePair<MsgPackToken, MsgPackToken>[] mapElements) : this(dataTypeInternal)
         {
             this.MapElements = mapElements;
         }
 
-        internal MsgPackToken(DataTypes dataType, MsgPackToken[] arrayElements) : this(dataType)
+        internal MsgPackToken(DataTypeInternal dataTypeInternal, MsgPackToken[] arrayElements) : this(dataTypeInternal)
         {
             this.ArrayElements = arrayElements;
         }
 
-        #region Bool type conversion
+        public DataType DataType => DataTypeInternal.GetDataType();
+
+        #region Bool typeInternal conversion
 
         public static explicit operator MsgPackToken(bool b)
         {
-            return new MsgPackToken(b ? DataTypes.True : DataTypes.False);
+            return new MsgPackToken(b ? DataTypeInternal.True : DataTypeInternal.False);
         }
 
         public static explicit operator bool(MsgPackToken token)
@@ -49,20 +51,20 @@ namespace ProGaudi.MsgPack.Light
                 throw ExceptionUtils.NullTokenExpection("bool");
             }
 
-            switch (token.DataType)
+            switch (token.DataTypeInternal)
             {
-                case DataTypes.True:
+                case DataTypeInternal.True:
                     return true;
-                case DataTypes.False:
+                case DataTypeInternal.False:
                     return false;
                 default:
-                    throw ExceptionUtils.BadTypeException(token.DataType, DataTypes.True, DataTypes.False);
+                    throw ExceptionUtils.BadTypeException(token.DataTypeInternal, DataTypeInternal.True, DataTypeInternal.False);
             }
         }
 
         #endregion
 
-        #region String type conversion
+        #region String typeInternal conversion
 
         public static explicit operator MsgPackToken(string str)
         {
@@ -75,25 +77,25 @@ namespace ProGaudi.MsgPack.Light
 
             var length = (uint)data.Length;
 
-            DataTypes dataType;
+            DataTypeInternal dataTypeInternal;
             if (length <= 31)
             {
-                dataType = (DataTypes)(((byte)DataTypes.FixStr + length) % 256);
+                dataTypeInternal = (DataTypeInternal)(((byte)DataTypeInternal.FixStr + length) % 256);
             }
             else if (length <= byte.MaxValue)
             {
-                dataType = DataTypes.Str8;
+                dataTypeInternal = DataTypeInternal.Str8;
             }
             else if (length <= ushort.MaxValue)
             {
-                dataType = DataTypes.Str16;
+                dataTypeInternal = DataTypeInternal.Str16;
             }
             else
             {
-                dataType = DataTypes.Str32;
+                dataTypeInternal = DataTypeInternal.Str32;
             }
 
-            return new MsgPackToken(dataType, data);
+            return new MsgPackToken(dataTypeInternal, data);
         }
 
         public static explicit operator string(MsgPackToken token)
@@ -103,27 +105,27 @@ namespace ProGaudi.MsgPack.Light
                 return null;
             }
 
-            switch (token.DataType)
+            switch (token.DataTypeInternal)
             {
-                case DataTypes.Null:
+                case DataTypeInternal.Null:
                     return null;
-                case DataTypes.Str8:
-                case DataTypes.Str16:
-                case DataTypes.Str32:
+                case DataTypeInternal.Str8:
+                case DataTypeInternal.Str16:
+                case DataTypeInternal.Str32:
                     return Encoding.UTF8.GetString(token.ValueBytes, 0, token.ValueBytes.Length);
             }
 
-            if (TryGetFixstrLength(token.DataType, out uint length))
+            if (TryGetFixstrLength(token.DataTypeInternal, out uint length))
             {
                 return Encoding.UTF8.GetString(token.ValueBytes, 0, token.ValueBytes.Length);
             }
 
-            throw ExceptionUtils.BadTypeException(token.DataType, DataTypes.FixStr, DataTypes.Str8, DataTypes.Str16, DataTypes.Str32);
+            throw ExceptionUtils.BadTypeException(token.DataTypeInternal, DataTypeInternal.FixStr, DataTypeInternal.Str8, DataTypeInternal.Str16, DataTypeInternal.Str32);
         }
 
         #endregion
 
-        #region byte[] type conversion
+        #region byte[] typeInternal conversion
 
         public static explicit operator MsgPackToken(byte[] data)
         {
@@ -134,21 +136,21 @@ namespace ProGaudi.MsgPack.Light
 
             var length = (uint)data.Length;
 
-            DataTypes dataType;
+            DataTypeInternal dataTypeInternal;
             if (length <= byte.MaxValue)
             {
-                dataType = DataTypes.Bin8;
+                dataTypeInternal = DataTypeInternal.Bin8;
             }
             else if (length <= ushort.MaxValue)
             {
-                dataType = DataTypes.Bin16;
+                dataTypeInternal = DataTypeInternal.Bin16;
             }
             else
             {
-                dataType = DataTypes.Bin32;
+                dataTypeInternal = DataTypeInternal.Bin32;
             }
 
-            return new MsgPackToken(dataType, data);
+            return new MsgPackToken(dataTypeInternal, data);
         }
 
         public static explicit operator byte[] (MsgPackToken token)
@@ -158,24 +160,24 @@ namespace ProGaudi.MsgPack.Light
                 return null;
             }
 
-            switch (token.DataType)
+            switch (token.DataTypeInternal)
             {
-                case DataTypes.Null:
+                case DataTypeInternal.Null:
                     return null;
-                case DataTypes.Bin8:
-                case DataTypes.Bin16:
-                case DataTypes.Bin32:
+                case DataTypeInternal.Bin8:
+                case DataTypeInternal.Bin16:
+                case DataTypeInternal.Bin32:
                     var array = new byte[token.ValueBytes.Length];
                     Array.Copy(token.ValueBytes, 0, array, 0, token.ValueBytes.Length);
                     return array;
             }
 
-            throw ExceptionUtils.BadTypeException(token.DataType, DataTypes.Bin8, DataTypes.Bin16, DataTypes.Bin32, DataTypes.Null);
+            throw ExceptionUtils.BadTypeException(token.DataTypeInternal, DataTypeInternal.Bin8, DataTypeInternal.Bin16, DataTypeInternal.Bin32, DataTypeInternal.Null);
         }
 
         #endregion
 
-        #region ulong type conversion
+        #region ulong typeInternal conversion
 
         public static explicit operator MsgPackToken(ulong value)
         {
@@ -184,50 +186,50 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator ulong(MsgPackToken token)
         {
-            if (TryGetFixPositiveNumber(token.DataType, out byte temp))
+            if (TryGetFixPositiveNumber(token.DataTypeInternal, out byte temp))
             {
                 return temp;
             }
 
-            if (TryGetNegativeNumber(token.DataType, out sbyte tempInt8))
+            if (TryGetNegativeNumber(token.DataTypeInternal, out sbyte tempInt8))
             {
                 return (ulong)tempInt8;
             }
 
-            switch (token.DataType)
+            switch (token.DataTypeInternal)
             {
-                case DataTypes.UInt8:
+                case DataTypeInternal.UInt8:
                     return ReadUInt8(token.ValueBytes);
 
-                case DataTypes.UInt16:
+                case DataTypeInternal.UInt16:
                     return ReadUInt16(token.ValueBytes);
 
-                case DataTypes.UInt32:
+                case DataTypeInternal.UInt32:
                     return ReadUInt32(token.ValueBytes);
 
-                case DataTypes.UInt64:
+                case DataTypeInternal.UInt64:
                     return ReadUInt64(token.ValueBytes);
 
-                case DataTypes.Int8:
+                case DataTypeInternal.Int8:
                     return (ulong)ReadInt8(token.ValueBytes);
 
-                case DataTypes.Int16:
+                case DataTypeInternal.Int16:
                     return (ulong)ReadInt16(token.ValueBytes);
 
-                case DataTypes.Int32:
+                case DataTypeInternal.Int32:
                     return (ulong)ReadInt32(token.ValueBytes);
 
-                case DataTypes.Int64:
+                case DataTypeInternal.Int64:
                     return (ulong)ReadInt64(token.ValueBytes);
 
                 default:
-                    throw ExceptionUtils.IntDeserializationFailure(token.DataType);
+                    throw ExceptionUtils.IntDeserializationFailure(token.DataTypeInternal);
             }
         }
 
         #endregion
 
-        #region uint type conversion
+        #region uint typeInternal conversion
 
         public static explicit operator MsgPackToken(uint value)
         {
@@ -236,44 +238,44 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator uint(MsgPackToken token)
         {
-            if (TryGetFixPositiveNumber(token.DataType, out byte temp))
+            if (TryGetFixPositiveNumber(token.DataTypeInternal, out byte temp))
             {
                 return temp;
             }
 
-            if (TryGetNegativeNumber(token.DataType, out sbyte tempInt8))
+            if (TryGetNegativeNumber(token.DataTypeInternal, out sbyte tempInt8))
             {
                 return (uint)tempInt8;
             }
 
-            switch (token.DataType)
+            switch (token.DataTypeInternal)
             {
-                case DataTypes.UInt8:
+                case DataTypeInternal.UInt8:
                     return ReadUInt8(token.ValueBytes);
 
-                case DataTypes.UInt16:
+                case DataTypeInternal.UInt16:
                     return ReadUInt16(token.ValueBytes);
 
-                case DataTypes.UInt32:
+                case DataTypeInternal.UInt32:
                     return ReadUInt32(token.ValueBytes);
 
-                case DataTypes.Int8:
+                case DataTypeInternal.Int8:
                     return (uint)ReadInt8(token.ValueBytes);
 
-                case DataTypes.Int16:
+                case DataTypeInternal.Int16:
                     return (uint)ReadInt16(token.ValueBytes);
 
-                case DataTypes.Int32:
+                case DataTypeInternal.Int32:
                     return (uint)ReadInt32(token.ValueBytes);
 
                 default:
-                    throw ExceptionUtils.IntDeserializationFailure(token.DataType);
+                    throw ExceptionUtils.IntDeserializationFailure(token.DataTypeInternal);
             }
         }
 
         #endregion
 
-        #region ushort type conversion
+        #region ushort typeInternal conversion
 
         public static explicit operator MsgPackToken(ushort value)
         {
@@ -282,38 +284,38 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator ushort(MsgPackToken token)
         {
-            if (TryGetFixPositiveNumber(token.DataType, out byte temp))
+            if (TryGetFixPositiveNumber(token.DataTypeInternal, out byte temp))
             {
                 return temp;
             }
 
-            if (TryGetNegativeNumber(token.DataType, out sbyte tempInt8))
+            if (TryGetNegativeNumber(token.DataTypeInternal, out sbyte tempInt8))
             {
                 return (ushort)tempInt8;
             }
 
-            switch (token.DataType)
+            switch (token.DataTypeInternal)
             {
-                case DataTypes.UInt8:
+                case DataTypeInternal.UInt8:
                     return ReadUInt8(token.ValueBytes);
 
-                case DataTypes.UInt16:
+                case DataTypeInternal.UInt16:
                     return ReadUInt16(token.ValueBytes);
 
-                case DataTypes.Int8:
+                case DataTypeInternal.Int8:
                     return (ushort)ReadInt8(token.ValueBytes);
 
-                case DataTypes.Int16:
+                case DataTypeInternal.Int16:
                     return (ushort)ReadInt16(token.ValueBytes);
 
                 default:
-                    throw ExceptionUtils.IntDeserializationFailure(token.DataType);
+                    throw ExceptionUtils.IntDeserializationFailure(token.DataTypeInternal);
             }
         }
 
         #endregion
 
-        #region byte type conversion
+        #region byte typeInternal conversion
 
         public static explicit operator MsgPackToken(byte value)
         {
@@ -322,32 +324,32 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator byte(MsgPackToken token)
         {
-            if (TryGetFixPositiveNumber(token.DataType, out byte temp))
+            if (TryGetFixPositiveNumber(token.DataTypeInternal, out byte temp))
             {
                 return temp;
             }
 
-            if (TryGetNegativeNumber(token.DataType, out sbyte tempInt8))
+            if (TryGetNegativeNumber(token.DataTypeInternal, out sbyte tempInt8))
             {
                 return (byte)tempInt8;
             }
 
-            switch (token.DataType)
+            switch (token.DataTypeInternal)
             {
-                case DataTypes.UInt8:
+                case DataTypeInternal.UInt8:
                     return ReadUInt8(token.ValueBytes);
 
-                case DataTypes.Int8:
+                case DataTypeInternal.Int8:
                     return (byte)ReadInt8(token.ValueBytes);
 
                 default:
-                    throw ExceptionUtils.IntDeserializationFailure(token.DataType);
+                    throw ExceptionUtils.IntDeserializationFailure(token.DataTypeInternal);
             }
         }
 
         #endregion
 
-        #region long type conversion
+        #region long typeInternal conversion
 
         public static explicit operator MsgPackToken(long value)
         {
@@ -356,12 +358,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator long(MsgPackToken token)
         {
-            return TryGetInt64(token) ?? throw ExceptionUtils.IntDeserializationFailure(token.DataType);
+            return TryGetInt64(token) ?? throw ExceptionUtils.IntDeserializationFailure(token.DataTypeInternal);
         }
 
         #endregion
 
-        #region int type conversion
+        #region int typeInternal conversion
 
         public static explicit operator MsgPackToken(int value)
         {
@@ -370,12 +372,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator int(MsgPackToken token)
         {
-            return TryGetInt32(token) ?? throw ExceptionUtils.IntDeserializationFailure(token.DataType);
+            return TryGetInt32(token) ?? throw ExceptionUtils.IntDeserializationFailure(token.DataTypeInternal);
         }
 
         #endregion
 
-        #region short type conversion
+        #region short typeInternal conversion
 
         public static explicit operator MsgPackToken(short value)
         {
@@ -384,44 +386,44 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator short(MsgPackToken token)
         {
-            if (TryGetFixPositiveNumber(token.DataType, out byte temp))
+            if (TryGetFixPositiveNumber(token.DataTypeInternal, out byte temp))
             {
                 return temp;
             }
 
-            if (TryGetNegativeNumber(token.DataType, out sbyte tempInt8))
+            if (TryGetNegativeNumber(token.DataTypeInternal, out sbyte tempInt8))
             {
                 return tempInt8;
             }
 
-            switch (token.DataType)
+            switch (token.DataTypeInternal)
             {
-                case DataTypes.UInt8:
+                case DataTypeInternal.UInt8:
                     return ReadUInt8(token.ValueBytes);
 
-                case DataTypes.UInt16:
+                case DataTypeInternal.UInt16:
                     var ushortValue = ReadUInt16(token.ValueBytes);
                     if (ushortValue <= short.MaxValue)
                     {
                         return (short)ushortValue;
                     }
 
-                    throw ExceptionUtils.IntDeserializationFailure(token.DataType);
+                    throw ExceptionUtils.IntDeserializationFailure(token.DataTypeInternal);
 
-                case DataTypes.Int8:
+                case DataTypeInternal.Int8:
                     return ReadInt8(token.ValueBytes);
 
-                case DataTypes.Int16:
+                case DataTypeInternal.Int16:
                     return ReadInt16(token.ValueBytes);
 
                 default:
-                    throw ExceptionUtils.IntDeserializationFailure(token.DataType);
+                    throw ExceptionUtils.IntDeserializationFailure(token.DataTypeInternal);
             }
         }
 
         #endregion
 
-        #region sbyte type conversion
+        #region sbyte typeInternal conversion
 
         public static explicit operator MsgPackToken(sbyte value)
         {
@@ -430,27 +432,27 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator sbyte(MsgPackToken token)
         {
-            if (TryGetFixPositiveNumber(token.DataType, out byte temp))
+            if (TryGetFixPositiveNumber(token.DataTypeInternal, out byte temp))
             {
                 return (sbyte)temp;
             }
 
-            if (TryGetNegativeNumber(token.DataType, out sbyte tempInt8))
+            if (TryGetNegativeNumber(token.DataTypeInternal, out sbyte tempInt8))
             {
                 return tempInt8;
             }
 
-            if (token.DataType == DataTypes.Int8)
+            if (token.DataTypeInternal == DataTypeInternal.Int8)
             {
                 return ReadInt8(token.ValueBytes);
             }
 
-            throw ExceptionUtils.IntDeserializationFailure(token.DataType);
+            throw ExceptionUtils.IntDeserializationFailure(token.DataTypeInternal);
         }
 
         #endregion
 
-        #region float type conversion
+        #region float typeInternal conversion
 
         public static explicit operator MsgPackToken(float value)
         {
@@ -477,22 +479,22 @@ namespace ProGaudi.MsgPack.Light
                 };
             }
 
-            return new MsgPackToken(DataTypes.Single, bytes);
+            return new MsgPackToken(DataTypeInternal.Single, bytes);
         }
 
         public static explicit operator float(MsgPackToken token)
         {
-            if (token.DataType == DataTypes.Single)
+            if (token.DataTypeInternal == DataTypeInternal.Single)
             {
                 return new FloatBinary(token.ValueBytes).value;
             }
 
-            return TryGetInt32(token) ?? throw ExceptionUtils.BadTypeException(token.DataType, DataTypes.Single);
+            return TryGetInt32(token) ?? throw ExceptionUtils.BadTypeException(token.DataTypeInternal, DataTypeInternal.Single);
         }
 
         #endregion
 
-        #region double type conversion
+        #region double typeInternal conversion
 
         public static explicit operator MsgPackToken(double value)
         {
@@ -527,43 +529,43 @@ namespace ProGaudi.MsgPack.Light
                 };
             }
 
-            return new MsgPackToken(DataTypes.Double, bytes);
+            return new MsgPackToken(DataTypeInternal.Double, bytes);
         }
 
         public static explicit operator double(MsgPackToken token)
         {
-            if (token.DataType != DataTypes.Single && token.DataType != DataTypes.Double)
+            if (token.DataTypeInternal != DataTypeInternal.Single && token.DataTypeInternal != DataTypeInternal.Double)
             {
-                return TryGetInt64(token) ?? throw ExceptionUtils.BadTypeException(token.DataType, DataTypes.Single, DataTypes.Double);
+                return TryGetInt64(token) ?? throw ExceptionUtils.BadTypeException(token.DataTypeInternal, DataTypeInternal.Single, DataTypeInternal.Double);
             }
 
-            return token.DataType == DataTypes.Single
+            return token.DataTypeInternal == DataTypeInternal.Single
                 ? new FloatBinary(token.ValueBytes).value
                 : new DoubleBinary(token.ValueBytes).value;
         }
 
         #endregion
 
-        #region MsgPackToken[] type conversion
+        #region MsgPackToken[] typeInternal conversion
 
         public static explicit operator MsgPackToken(MsgPackToken[] elements)
         {
             var length = elements.Length;
-            DataTypes dataType;
+            DataTypeInternal dataTypeInternal;
             if (length <= 15)
             {
-                dataType = (DataTypes) ((byte) DataTypes.FixArray + length);
+                dataTypeInternal = (DataTypeInternal) ((byte) DataTypeInternal.FixArray + length);
             }
             else if (length <= ushort.MaxValue)
             {
-                dataType = DataTypes.Array16;
+                dataTypeInternal = DataTypeInternal.Array16;
             }
             else
             {
-                dataType = DataTypes.Array32;
+                dataTypeInternal = DataTypeInternal.Array32;
             }
 
-            return new MsgPackToken(dataType, elements);
+            return new MsgPackToken(dataTypeInternal, elements);
         }
 
         public static explicit operator MsgPackToken[] (MsgPackToken token)
@@ -573,26 +575,26 @@ namespace ProGaudi.MsgPack.Light
 
         #endregion
 
-        #region KeyValuePair<MsgPackToken, MsgPackToken>[] type conversion
+        #region KeyValuePair<MsgPackToken, MsgPackToken>[] typeInternal conversion
 
         public static explicit operator MsgPackToken(KeyValuePair<MsgPackToken, MsgPackToken>[] elements)
         {
             var length = elements.Length;
-            DataTypes dataType;
+            DataTypeInternal dataTypeInternal;
             if (length <= 15)
             {
-                dataType = (DataTypes)((byte)DataTypes.FixMap + length);
+                dataTypeInternal = (DataTypeInternal)((byte)DataTypeInternal.FixMap + length);
             }
             else if (length <= ushort.MaxValue)
             {
-                dataType = DataTypes.Map16;
+                dataTypeInternal = DataTypeInternal.Map16;
             }
             else
             {
-                dataType = DataTypes.Map16;
+                dataTypeInternal = DataTypeInternal.Map16;
             }
 
-            return new MsgPackToken(dataType, elements);
+            return new MsgPackToken(dataTypeInternal, elements);
         }
 
         public static explicit operator KeyValuePair<MsgPackToken, MsgPackToken>[] (MsgPackToken token)
@@ -622,7 +624,7 @@ namespace ProGaudi.MsgPack.Light
             if ((value >= 0 && value < 128L) // positive fixnum
                 || (value >= -32L && value <= -1L)) // negative fixnum
             {
-                return new MsgPackToken((DataTypes)unchecked((byte)value));
+                return new MsgPackToken((DataTypeInternal)unchecked((byte)value));
             }
 
             return null;
@@ -636,7 +638,7 @@ namespace ProGaudi.MsgPack.Light
             }
 
             return new MsgPackToken(
-                DataTypes.Int8,
+                DataTypeInternal.Int8,
                 new[]
                 {
                     (byte) value
@@ -651,7 +653,7 @@ namespace ProGaudi.MsgPack.Light
             }
 
             return new MsgPackToken(
-                DataTypes.Int16,
+                DataTypeInternal.Int16,
                 new[]
                 {
                     (byte) ((value >> 8) & 0xff),
@@ -667,7 +669,7 @@ namespace ProGaudi.MsgPack.Light
             }
 
             return new MsgPackToken(
-                DataTypes.Int32,
+                DataTypeInternal.Int32,
                 new[]
                 {
                     (byte) ((value >> 24) & 0xff),
@@ -680,7 +682,7 @@ namespace ProGaudi.MsgPack.Light
         private static MsgPackToken TryWriteInt64(long value)
         {
             return new MsgPackToken(
-                DataTypes.Int64,
+                DataTypeInternal.Int64,
                 new[]
                 {
                     (byte) ((value >> 56) & 0xff),
@@ -706,19 +708,19 @@ namespace ProGaudi.MsgPack.Light
         private static MsgPackToken TryWriteUnsignedFixNum(ulong value)
         {
             // positive fixnum
-            return value < 128L ? new MsgPackToken((DataTypes)unchecked((byte)value)) : null;
+            return value < 128L ? new MsgPackToken((DataTypeInternal)unchecked((byte)value)) : null;
         }
 
         private static MsgPackToken TryWriteUInt8(ulong value)
         {
-            return value <= byte.MaxValue ? new MsgPackToken(DataTypes.UInt8, new[] { (byte)value }) : null;
+            return value <= byte.MaxValue ? new MsgPackToken(DataTypeInternal.UInt8, new[] { (byte)value }) : null;
         }
 
         private static MsgPackToken TryWriteUInt16(ulong value)
         {
             return value <= ushort.MaxValue
                 ? new MsgPackToken(
-                    DataTypes.UInt16,
+                    DataTypeInternal.UInt16,
                     new[]
                     {
                         (byte) ((value >> 8) & 0xff),
@@ -731,7 +733,7 @@ namespace ProGaudi.MsgPack.Light
         {
             return value <= uint.MaxValue
                 ? new MsgPackToken(
-                    DataTypes.UInt32,
+                    DataTypeInternal.UInt32,
                     new[]
                     {
                         (byte) ((value >> 24) & 0xff),
@@ -745,7 +747,7 @@ namespace ProGaudi.MsgPack.Light
         private static MsgPackToken TryWriteUInt64(ulong value)
         {
             return new MsgPackToken(
-                DataTypes.UInt64,
+                DataTypeInternal.UInt64,
                 new[]
                 {
                     (byte) ((value >> 56) & 0xff),
@@ -761,36 +763,36 @@ namespace ProGaudi.MsgPack.Light
 
         private static MsgPackToken CreateNullToken()
         {
-            return new MsgPackToken(DataTypes.Null);
+            return new MsgPackToken(DataTypeInternal.Null);
         }
 
-        private static bool TryGetFixstrLength(DataTypes type, out uint length)
+        private static bool TryGetFixstrLength(DataTypeInternal typeInternal, out uint length)
         {
-            length = type - DataTypes.FixStr;
-            return type.GetHighBits(3) == DataTypes.FixStr.GetHighBits(3);
+            length = typeInternal - DataTypeInternal.FixStr;
+            return typeInternal.GetHighBits(3) == DataTypeInternal.FixStr.GetHighBits(3);
         }
 
         private static int? TryGetInt32(MsgPackToken token)
         {
-            if (TryGetFixPositiveNumber(token.DataType, out byte temp))
+            if (TryGetFixPositiveNumber(token.DataTypeInternal, out byte temp))
             {
                 return temp;
             }
 
-            if (TryGetNegativeNumber(token.DataType, out sbyte tempInt8))
+            if (TryGetNegativeNumber(token.DataTypeInternal, out sbyte tempInt8))
             {
                 return tempInt8;
             }
 
-            switch (token.DataType)
+            switch (token.DataTypeInternal)
             {
-                case DataTypes.UInt8:
+                case DataTypeInternal.UInt8:
                     return ReadUInt8(token.ValueBytes);
 
-                case DataTypes.UInt16:
+                case DataTypeInternal.UInt16:
                     return ReadUInt16(token.ValueBytes);
 
-                case DataTypes.UInt32:
+                case DataTypeInternal.UInt32:
                     var uintValue = ReadUInt32(token.ValueBytes);
                     if (uintValue <= int.MaxValue)
                     {
@@ -798,13 +800,13 @@ namespace ProGaudi.MsgPack.Light
                     }
                     return null;
 
-                case DataTypes.Int8:
+                case DataTypeInternal.Int8:
                     return ReadInt8(token.ValueBytes);
 
-                case DataTypes.Int16:
+                case DataTypeInternal.Int16:
                     return ReadInt16(token.ValueBytes);
 
-                case DataTypes.Int32:
+                case DataTypeInternal.Int32:
                     return ReadInt32(token.ValueBytes);
 
                 default:
@@ -814,28 +816,28 @@ namespace ProGaudi.MsgPack.Light
 
         private static long? TryGetInt64(MsgPackToken token)
         {
-            if (TryGetFixPositiveNumber(token.DataType, out byte temp))
+            if (TryGetFixPositiveNumber(token.DataTypeInternal, out byte temp))
             {
                 return temp;
             }
 
-            if (TryGetNegativeNumber(token.DataType, out sbyte tempInt8))
+            if (TryGetNegativeNumber(token.DataTypeInternal, out sbyte tempInt8))
             {
                 return tempInt8;
             }
 
-            switch (token.DataType)
+            switch (token.DataTypeInternal)
             {
-                case DataTypes.UInt8:
+                case DataTypeInternal.UInt8:
                     return ReadUInt8(token.ValueBytes);
 
-                case DataTypes.UInt16:
+                case DataTypeInternal.UInt16:
                     return ReadUInt16(token.ValueBytes);
 
-                case DataTypes.UInt32:
+                case DataTypeInternal.UInt32:
                     return ReadUInt32(token.ValueBytes);
 
-                case DataTypes.UInt64:
+                case DataTypeInternal.UInt64:
                     var ulongValue = ReadUInt64(token.ValueBytes);
                     if (ulongValue <= long.MaxValue)
                     {
@@ -843,16 +845,16 @@ namespace ProGaudi.MsgPack.Light
                     }
                     return null;
 
-                case DataTypes.Int8:
+                case DataTypeInternal.Int8:
                     return ReadInt8(token.ValueBytes);
 
-                case DataTypes.Int16:
+                case DataTypeInternal.Int16:
                     return ReadInt16(token.ValueBytes);
 
-                case DataTypes.Int32:
+                case DataTypeInternal.Int32:
                     return ReadInt32(token.ValueBytes);
 
-                case DataTypes.Int64:
+                case DataTypeInternal.Int64:
                     return ReadInt64(token.ValueBytes);
 
                 default:
@@ -860,17 +862,17 @@ namespace ProGaudi.MsgPack.Light
             }
         }
 
-        private static bool TryGetFixPositiveNumber(DataTypes type, out byte temp)
+        private static bool TryGetFixPositiveNumber(DataTypeInternal typeInternal, out byte temp)
         {
-            temp = (byte)type;
-            return type.GetHighBits(1) == DataTypes.PositiveFixNum.GetHighBits(1);
+            temp = (byte)typeInternal;
+            return typeInternal.GetHighBits(1) == DataTypeInternal.PositiveFixNum.GetHighBits(1);
         }
 
-        private static bool TryGetNegativeNumber(DataTypes type, out sbyte temp)
+        private static bool TryGetNegativeNumber(DataTypeInternal typeInternal, out sbyte temp)
         {
-            temp = (sbyte)((byte)type - 1 - byte.MaxValue);
+            temp = (sbyte)((byte)typeInternal - 1 - byte.MaxValue);
 
-            return type.GetHighBits(3) == DataTypes.NegativeFixNum.GetHighBits(3);
+            return typeInternal.GetHighBits(3) == DataTypeInternal.NegativeFixNum.GetHighBits(3);
         }
 
 
