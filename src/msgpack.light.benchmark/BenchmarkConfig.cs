@@ -1,5 +1,5 @@
 using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Exporters;
+using BenchmarkDotNet.Exporters.Csv;
 
 namespace ProGaudi.MsgPack.Light.benchmark
 {
