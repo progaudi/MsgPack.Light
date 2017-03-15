@@ -24,13 +24,13 @@ Frequency=3234373 Hz, Resolution=309.1789 ns, Timer=TSC
 
 
 ```
- |         Method |        Mean |     StdDev | Scaled | Scaled-StdDev |  Gen 0 | Allocated |
- |--------------- |------------ |----------- |------- |-------------- |------- |---------- |
- |    MPCli_Array | 324.3986 ns |  2.4595 ns |   1.15 |          0.01 | 0.1354 |     464 B |
- |   MPCli_Stream | 282.9804 ns |  1.9713 ns |   1.00 |          0.00 | 0.1199 |     416 B |
- |  MPLight_Array | 713.9852 ns | 13.2507 ns |   2.52 |          0.05 | 0.3858 |   1.29 kB |
- | MPLight_Stream | 690.0378 ns |  6.7355 ns |   2.44 |          0.03 | 0.3724 |   1.25 kB |
-
+ |         Method |        Mean |    StdDev | Scaled | Scaled-StdDev |
+ |--------------- |------------ |---------- |------- |-------------- |
+ |    MPCli_Array | 317.9976 ns | 2.2592 ns |   1.18 |          0.01 |
+ |   MPCli_Stream | 270.1779 ns | 0.6756 ns |   1.00 |          0.00 |
+ |  MPLight_Array | 483.8765 ns | 2.0833 ns |   1.79 |          0.01 |
+ | MPLight_Stream | 457.0131 ns | 5.8785 ns |   1.69 |          0.02 |
+ 
 
 ### Int array deserialize
 
@@ -44,12 +44,12 @@ Frequency=3234373 Hz, Resolution=309.1789 ns, Timer=TSC
 
 
 ```
- |         Method |        Mean |    StdDev | Scaled | Scaled-StdDev |  Gen 0 | Allocated |
- |--------------- |------------ |---------- |------- |-------------- |------- |---------- |
- |    MPCli_Array | 380.0690 ns | 4.1156 ns |   1.17 |          0.02 | 0.0781 |     288 B |
- |   MPCli_Stream | 324.8467 ns | 3.9237 ns |   1.00 |          0.00 | 0.0546 |     208 B |
- |  MPLight_Array | 278.7431 ns | 4.9682 ns |   0.86 |          0.02 | 0.0136 |      80 B |
- | MPLight_Stream | 335.6105 ns | 1.8717 ns |   1.03 |          0.01 | 0.0131 |      80 B |
+ |         Method |        Mean |     StdDev | Scaled | Scaled-StdDev |
+ |--------------- |------------ |----------- |------- |-------------- |
+ |    MPCli_Array | 379.2173 ns |  2.5562 ns |   1.19 |          0.01 |
+ |   MPCli_Stream | 319.7132 ns |  1.6539 ns |   1.00 |          0.00 |
+ |  MPLight_Array | 707.9764 ns |  4.4916 ns |   2.21 |          0.02 |
+ | MPLight_Stream | 826.0472 ns | 20.3832 ns |   2.58 |          0.06 |
 
 
 ### Double array serialize
@@ -64,15 +64,15 @@ Frequency=3234373 Hz, Resolution=309.1789 ns, Timer=TSC
 
 
 ```
- |         Method |        Mean |    StdDev | Scaled | Scaled-StdDev |  Gen 0 | Allocated |
- |--------------- |------------ |---------- |------- |-------------- |------- |---------- |
- |    MPCli_Array | 608.6606 ns | 6.1428 ns |   1.08 |          0.01 | 0.2169 |     760 B |
- |   MPCli_Stream | 565.3792 ns | 3.7022 ns |   1.00 |          0.00 | 0.1940 |     688 B |
- |  MPLight_Array | 584.0085 ns | 8.6239 ns |   1.03 |          0.02 | 0.2928 |     992 B |
- | MPLight_Stream | 557.7645 ns | 5.7787 ns |   0.99 |          0.01 | 0.2689 |     920 B |
+ |         Method |        Mean |    StdDev | Scaled | Scaled-StdDev |
+ |--------------- |------------ |---------- |------- |-------------- |
+ |    MPCli_Array | 597.2335 ns | 4.0136 ns |   1.08 |          0.01 |
+ |   MPCli_Stream | 552.5873 ns | 1.8813 ns |   1.00 |          0.00 |
+ |  MPLight_Array | 704.1176 ns | 3.1067 ns |   1.27 |          0.01 |
+ | MPLight_Stream | 651.5843 ns | 6.7932 ns |   1.18 |          0.01 |
 
 
-### Double array deserialize
+###Double array deserialize
 
 ``` ini
 
@@ -84,12 +84,12 @@ Frequency=3234373 Hz, Resolution=309.1789 ns, Timer=TSC
 
 
 ```
- |         Method |        Mean |    StdDev | Scaled | Scaled-StdDev |  Gen 0 | Allocated |
- |--------------- |------------ |---------- |------- |-------------- |------- |---------- |
- |    MPCli_Array | 430.3499 ns | 6.8997 ns |   1.13 |          0.03 | 0.0720 |     304 B |
- |   MPCli_Stream | 379.5234 ns | 6.6924 ns |   1.00 |          0.00 | 0.0477 |     224 B |
- |  MPLight_Array | 328.7889 ns | 6.2055 ns |   0.87 |          0.02 | 0.0179 |      96 B |
- | MPLight_Stream | 440.2761 ns | 2.4187 ns |   1.16 |          0.02 | 0.0572 |     256 B |
+ |         Method |        Mean |    StdDev | Scaled | Scaled-StdDev |
+ |--------------- |------------ |---------- |------- |-------------- |
+ |    MPCli_Array | 425.8500 ns | 2.9099 ns |   1.14 |          0.01 |
+ |   MPCli_Stream | 374.5874 ns | 1.3184 ns |   1.00 |          0.00 |
+ |  MPLight_Array | 618.4924 ns | 2.8508 ns |   1.65 |          0.01 |
+ | MPLight_Stream | 795.7636 ns | 4.1306 ns |   2.12 |          0.01 |
 
 
 ### Complex object serialize
@@ -104,17 +104,17 @@ Frequency=3234373 Hz, Resolution=309.1789 ns, Timer=TSC
 
 
 ```
- |          Method |          Mean |     StdDev | Scaled | Scaled-StdDev |  Gen 0 | Allocated |
- |---------------- |-------------- |----------- |------- |-------------- |------- |---------- |
- |         JsonNet | 2,943.3977 ns | 28.0940 ns |   2.46 |          0.04 | 1.9587 |   6.48 kB |
- |    MPCli_Stream | 1,199.1435 ns | 18.2798 ns |   1.00 |          0.00 | 0.2108 |     816 B |
- |     MPCli_Array | 1,290.6559 ns | 24.0992 ns |   1.08 |          0.03 | 0.2500 |     936 B |
- |  MPLight_Stream |   791.3383 ns | 10.6041 ns |   0.66 |          0.01 | 0.1897 |     752 B |
- |   MPLight_Array |   837.6572 ns |  5.2336 ns |   0.70 |          0.01 | 0.2299 |     872 B |
- |   MPCliH_Stream | 1,209.6436 ns | 13.8834 ns |   1.01 |          0.02 | 0.2129 |     816 B |
- |    MPCliH_Array | 1,267.6657 ns | 13.2526 ns |   1.06 |          0.02 | 0.2490 |     936 B |
- | MPLightH_Stream |   601.4984 ns |  6.5826 ns |   0.50 |          0.01 | 0.1731 |     624 B |
- |  MPLightH_Array |   636.7675 ns |  6.2320 ns |   0.53 |          0.01 | 0.2107 |     744 B |
+ |          Method |          Mean |     StdDev | Scaled | Scaled-StdDev |
+ |---------------- |-------------- |----------- |------- |-------------- |
+ |         JsonNet | 2,810.9666 ns | 38.5453 ns |   2.36 |          0.04 |
+ |    MPCli_Stream | 1,193.7118 ns | 16.3394 ns |   1.00 |          0.00 |
+ |     MPCli_Array | 1,276.6213 ns | 20.8317 ns |   1.07 |          0.02 |
+ |  MPLight_Stream |   953.0368 ns |  9.4350 ns |   0.80 |          0.01 |
+ |   MPLight_Array | 1,005.2127 ns | 21.1055 ns |   0.84 |          0.02 |
+ |   MPCliH_Stream | 1,224.0906 ns | 10.6578 ns |   1.03 |          0.02 |
+ |    MPCliH_Array | 1,261.7811 ns |  9.6635 ns |   1.06 |          0.02 |
+ | MPLightH_Stream |   794.2807 ns |  4.6535 ns |   0.67 |          0.01 |
+ |  MPLightH_Array |   844.0825 ns |  7.6836 ns |   0.71 |          0.01 |
 
 
 ### Complex object deserialize
@@ -129,17 +129,17 @@ Frequency=3234373 Hz, Resolution=309.1789 ns, Timer=TSC
 
 
 ```
- |          Method |          Mean |     StdDev | Scaled | Scaled-StdDev |  Gen 0 | Allocated |
- |---------------- |-------------- |----------- |------- |-------------- |------- |---------- |
- |         JsonNet | 3,186.7006 ns | 27.9212 ns |   0.88 |          0.01 | 1.7812 |   6.24 kB |
- |    MPCli_Stream | 3,620.5613 ns | 39.9484 ns |   1.00 |          0.00 | 0.3174 |   1.55 kB |
- |     MPCli_Array | 3,705.8617 ns | 30.7222 ns |   1.02 |          0.01 | 0.3408 |   1.63 kB |
- |  MPLight_Stream |   948.1123 ns | 12.5935 ns |   0.26 |          0.00 | 0.2424 |     904 B |
- |   MPLight_Array |   735.1687 ns |  8.0861 ns |   0.20 |          0.00 | 0.1703 |     608 B |
- |   MPCliH_Stream | 3,646.0951 ns | 32.8870 ns |   1.01 |          0.01 | 0.3133 |   1.55 kB |
- |    MPCliH_Array | 3,704.1674 ns | 37.3530 ns |   1.02 |          0.01 | 0.3367 |   1.63 kB |
- | MPLightH_Stream |   935.3351 ns | 11.5240 ns |   0.26 |          0.00 | 0.2424 |     904 B |
- |  MPLightH_Array |   727.2057 ns |  6.5636 ns |   0.20 |          0.00 | 0.1703 |     608 B |
+ |          Method |      Mean |    StdDev | Scaled | Scaled-StdDev |
+ |---------------- |---------- |---------- |------- |-------------- |
+ |         JsonNet | 3.1211 us | 0.0461 us |   0.82 |          0.01 |
+ |    MPCli_Stream | 3.8234 us | 0.0226 us |   1.00 |          0.00 |
+ |     MPCli_Array | 4.0229 us | 0.0353 us |   1.05 |          0.01 |
+ |  MPLight_Stream | 1.8126 us | 0.0220 us |   0.47 |          0.01 |
+ |   MPLight_Array | 1.5828 us | 0.0117 us |   0.41 |          0.00 |
+ |   MPCliH_Stream | 3.5989 us | 0.0525 us |   0.94 |          0.01 |
+ |    MPCliH_Array | 3.7282 us | 0.0280 us |   0.98 |          0.01 |
+ | MPLightH_Stream | 1.8149 us | 0.0149 us |   0.47 |          0.00 |
+ |  MPLightH_Array | 1.5887 us | 0.0146 us |   0.42 |          0.00 |
 
 
 ### List of complex objects serialize
@@ -154,17 +154,17 @@ Frequency=3234373 Hz, Resolution=309.1789 ns, Timer=TSC
 
 
 ```
- |          Method |       Mean |    StdDev | Scaled | Scaled-StdDev |  Gen 0 | Allocated |
- |---------------- |----------- |---------- |------- |-------------- |------- |---------- |
- |         JsonNet | 16.6842 us | 0.1935 us |   2.23 |          0.03 | 1.8840 |   8.04 kB |
- |    MPCli_Stream |  7.4890 us | 0.0663 us |   1.00 |          0.00 | 1.1373 |   4.75 kB |
- |     MPCli_Array |  7.6265 us | 0.0760 us |   1.02 |          0.01 | 1.3590 |   5.43 kB |
- |  MPLight_Stream |  5.4254 us | 0.0768 us |   0.72 |          0.01 | 1.2522 |   4.48 kB |
- |   MPLight_Array |  5.5761 us | 0.1151 us |   0.74 |          0.02 | 1.4496 |   5.16 kB |
- |   MPCliH_Stream |  7.5517 us | 0.1012 us |   1.01 |          0.02 | 1.1617 |   4.75 kB |
- |    MPCliH_Array |  8.6123 us | 0.0715 us |   1.15 |          0.01 | 1.3753 |   5.43 kB |
- | MPLightH_Stream |  3.8995 us | 0.0376 us |   0.52 |          0.01 | 0.9583 |   3.58 kB |
- |  MPLightH_Array |  4.0550 us | 0.0389 us |   0.54 |          0.01 | 1.1597 |   4.26 kB |
+ |          Method |       Mean |    StdDev | Scaled | Scaled-StdDev |
+ |---------------- |----------- |---------- |------- |-------------- |
+ |         JsonNet | 15.9414 us | 0.1109 us |   2.13 |          0.02 |
+ |    MPCli_Stream |  7.4911 us | 0.0448 us |   1.00 |          0.00 |
+ |     MPCli_Array |  7.6036 us | 0.0531 us |   1.02 |          0.01 |
+ |  MPLight_Stream |  6.4354 us | 0.0269 us |   0.86 |          0.01 |
+ |   MPLight_Array |  6.5832 us | 0.0424 us |   0.88 |          0.01 |
+ |   MPCliH_Stream |  7.5702 us | 0.0593 us |   1.01 |          0.01 |
+ |    MPCliH_Array |  7.6189 us | 0.0536 us |   1.02 |          0.01 |
+ | MPLightH_Stream |  5.3471 us | 0.0256 us |   0.71 |          0.01 |
+ |  MPLightH_Array |  5.4473 us | 0.0144 us |   0.73 |          0.00 |
 
 
 ### List of complex objects deserialize
@@ -179,17 +179,17 @@ Frequency=3234373 Hz, Resolution=309.1789 ns, Timer=TSC
 
 
 ```
- |          Method |       Mean |    StdDev | Scaled | Scaled-StdDev |  Gen 0 | Allocated |
- |---------------- |----------- |---------- |------- |-------------- |------- |---------- |
- |         JsonNet | 16.8679 us | 0.1679 us |   0.59 |          0.01 | 2.2339 |   9.07 kB |
- |    MPCli_Stream | 28.3922 us | 0.5130 us |   1.00 |          0.00 | 2.5472 |  12.14 kB |
- |     MPCli_Array | 29.2684 us | 0.3780 us |   1.03 |          0.02 | 2.5798 |  12.22 kB |
- |  MPLight_Stream |  6.9067 us | 0.0467 us |   0.24 |          0.00 | 1.6256 |   6.28 kB |
- |   MPLight_Array |  5.2911 us | 0.0329 us |   0.19 |          0.00 | 1.1220 |   4.11 kB |
- |   MPCliH_Stream | 28.5138 us | 0.2435 us |   1.00 |          0.02 | 2.4821 |  12.14 kB |
- |    MPCliH_Array | 29.0823 us | 0.7092 us |   1.02 |          0.03 | 2.3844 |  12.22 kB |
- | MPLightH_Stream |  7.0071 us | 0.0342 us |   0.25 |          0.00 | 1.6174 |   6.28 kB |
- |  MPLightH_Array |  5.3208 us | 0.0595 us |   0.19 |          0.00 | 1.1302 |   4.11 kB |
+ |          Method |       Mean |    StdDev | Scaled | Scaled-StdDev |
+ |---------------- |----------- |---------- |------- |-------------- |
+ |         JsonNet | 16.4895 us | 0.2246 us |   0.60 |          0.01 |
+ |    MPCli_Stream | 27.4785 us | 0.1346 us |   1.00 |          0.00 |
+ |     MPCli_Array | 27.8853 us | 0.1244 us |   1.01 |          0.01 |
+ |  MPLight_Stream | 12.8042 us | 0.1266 us |   0.47 |          0.00 |
+ |   MPLight_Array | 10.8801 us | 0.1009 us |   0.40 |          0.00 |
+ |   MPCliH_Stream | 28.1459 us | 0.2864 us |   1.02 |          0.01 |
+ |    MPCliH_Array | 27.8820 us | 0.3003 us |   1.01 |          0.01 |
+ | MPLightH_Stream | 13.0098 us | 0.1279 us |   0.47 |          0.01 |
+ |  MPLightH_Array | 11.0571 us | 0.0915 us |   0.40 |          0.00 |
 
 
 ### Object skip
@@ -204,11 +204,11 @@ Frequency=3234373 Hz, Resolution=309.1789 ns, Timer=TSC
 
 
 ```
- |                   Method |        Mean |    StdDev | Scaled | Scaled-StdDev |  Gen 0 | Allocated |
- |------------------------- |------------ |---------- |------- |-------------- |------- |---------- |
- |            MPackCli_Skip | 346.8357 ns | 3.3332 ns |   1.00 |          0.00 | 0.1120 |     392 B |
- | MsgPackLight_Skip_Stream | 385.6519 ns | 3.9323 ns |   1.11 |          0.02 |      - |      32 B |
- |  MsgPackLight_Skip_Array | 351.4116 ns | 2.7263 ns |   1.01 |          0.01 |      - |      32 B |
+ |                   Method |          Mean |    StdDev | Scaled | Scaled-StdDev |
+ |------------------------- |-------------- |---------- |------- |-------------- |
+ |            MPackCli_Skip |   328.5450 ns | 1.2711 ns |   1.00 |          0.00 |
+ | MsgPackLight_Skip_Stream | 1,181.1686 ns | 7.4485 ns |   3.60 |          0.03 |
+ |  MsgPackLight_Skip_Array |   944.9971 ns | 7.9800 ns |   2.88 |          0.03 |
 
 
 ### Objects list skip
@@ -223,8 +223,8 @@ Frequency=3234373 Hz, Resolution=309.1789 ns, Timer=TSC
 
 
 ```
- |                   Method |      Mean |    StdDev | Scaled | Scaled-StdDev |  Gen 0 | Allocated |
- |------------------------- |---------- |---------- |------- |-------------- |------- |---------- |
- |            MPackCli_Skip | 2.5528 us | 0.0317 us |   1.00 |          0.00 | 0.6317 |   2.26 kB |
- | MsgPackLight_Skip_Stream | 2.5117 us | 0.0156 us |   0.98 |          0.01 |      - |      32 B |
- |  MsgPackLight_Skip_Array | 2.2431 us | 0.0141 us |   0.88 |          0.01 |      - |      32 B |
+ |                   Method |      Mean |    StdDev | Scaled | Scaled-StdDev |
+ |------------------------- |---------- |---------- |------- |-------------- |
+ |            MPackCli_Skip | 2.4251 us | 0.0086 us |   1.00 |          0.00 |
+ | MsgPackLight_Skip_Stream | 8.3459 us | 0.0498 us |   3.44 |          0.02 |
+ |  MsgPackLight_Skip_Array | 6.4616 us | 0.0492 us |   2.66 |          0.02 |
