@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.IO;
 
 namespace ProGaudi.MsgPack.Light
 {
-    internal class MsgPackMemoryStreamReader : BaseMsgPackReader, IDisposable
+    internal class MsgPackMemoryStreamReader : IMsgPackReader, IDisposable
     {
         private readonly MemoryStream _stream;
 
@@ -15,7 +15,12 @@ namespace ProGaudi.MsgPack.Light
             _disposeStream = disposeStream;
         }
 
-        public override byte ReadByte()
+        public DataTypeInternal ReadDataType()
+        {
+            return (DataTypeInternal)ReadByte();
+        }
+
+        public byte ReadByte()
         {
             var temp = _stream.ReadByte();
             if (temp == -1)
@@ -24,7 +29,7 @@ namespace ProGaudi.MsgPack.Light
             return (byte)temp;
         }
 
-        public override ArraySegment<byte> ReadBytes(uint length)
+        public ArraySegment<byte> ReadBytes(uint length)
         {
             var buffer = new byte[length];
             var read = _stream.Read(buffer, 0, buffer.Length);
@@ -32,12 +37,7 @@ namespace ProGaudi.MsgPack.Light
                 throw ExceptionUtils.NotEnoughBytes(read, buffer.Length);
             return new ArraySegment<byte>(buffer, 0, buffer.Length);
         }
-
-        public override void Seek(long offset, SeekOrigin origin)
-        {
-            _stream.Seek(offset, origin);
-        }
-
+        
         public void Dispose()
         {
             if (_disposeStream)

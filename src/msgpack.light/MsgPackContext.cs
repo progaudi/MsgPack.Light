@@ -9,9 +9,9 @@ namespace ProGaudi.MsgPack.Light
 {
     public class MsgPackContext
     {
-        private static readonly IMsgPackConverter<object> SharedNullConverter = new NullConverter();
+        private static readonly IMsgPackTokenConverter<object> SharedNullTokenConverter = new NullTokenConverter();
 
-        private readonly Dictionary<Type, IMsgPackConverter> _converters;
+        private readonly Dictionary<Type, IMsgPackTokenConverter> _converters;
 
         private readonly Dictionary<Type, Type> _genericConverters = new Dictionary<Type, Type>();
 
@@ -19,39 +19,40 @@ namespace ProGaudi.MsgPack.Light
 
         public MsgPackContext(bool strictParseOfFloat = false)
         {
-            var numberConverter = new NumberConverter(strictParseOfFloat);
-            _converters = new Dictionary<Type, IMsgPackConverter>
+            var dateTimeConverter = new DateTimeTokenConverter();
+            var tokenConverter = new MsgPackTokenTokenConverter(strictParseOfFloat);
+            _converters = new Dictionary<Type, IMsgPackTokenConverter>
             {
-                {typeof (bool), new BoolConverter()},
-                {typeof (string), new StringConverter()},
-                {typeof (byte[]), new BinaryConverter()},
-                {typeof (float), numberConverter},
-                {typeof (double), numberConverter},
-                {typeof (byte), numberConverter},
-                {typeof (sbyte), numberConverter},
-                {typeof (short), numberConverter},
-                {typeof (ushort), numberConverter},
-                {typeof (int), numberConverter},
-                {typeof (uint), numberConverter},
-                {typeof (long), numberConverter},
-                {typeof (ulong), numberConverter},
-                {typeof (DateTime), new DateTimeConverter()},
-                {typeof (DateTimeOffset), new DateTimeConverter()},
-                {typeof (TimeSpan), new TimeSpanConverter() },
+                {typeof (bool), tokenConverter},
+                {typeof (string), tokenConverter},
+                {typeof (byte[]), tokenConverter},
+                {typeof (float), tokenConverter},
+                {typeof (double), tokenConverter},
+                {typeof (byte), tokenConverter},
+                {typeof (sbyte), tokenConverter},
+                {typeof (short), tokenConverter},
+                {typeof (ushort), tokenConverter},
+                {typeof (int), tokenConverter},
+                {typeof (uint), tokenConverter},
+                {typeof (long), tokenConverter},
+                {typeof (ulong), tokenConverter},
+                {typeof (DateTime), dateTimeConverter},
+                {typeof (DateTimeOffset), dateTimeConverter},
+                {typeof (TimeSpan), new TimeSpanTokenConverter() },
 
-                {typeof (bool?), new NullableConverter<bool>()},
-                {typeof (float?), new NullableConverter<float>()},
-                {typeof (double?), new NullableConverter<double>()},
-                {typeof (byte?), new NullableConverter<byte>()},
-                {typeof (sbyte?), new NullableConverter<sbyte>()},
-                {typeof (short?), new NullableConverter<short>()},
-                {typeof (ushort?), new NullableConverter<ushort>()},
-                {typeof (int?), new NullableConverter<int>()},
-                {typeof (uint?), new NullableConverter<uint>()},
-                {typeof (long?), new NullableConverter<long>()},
-                {typeof (ulong?), new NullableConverter<ulong>()},
-                {typeof (DateTime?), new NullableConverter<DateTime>()},
-                {typeof (DateTimeOffset?), new NullableConverter<DateTimeOffset>()}
+                {typeof (bool?), new NullableTokenConverter<bool>()},
+                {typeof (float?), new NullableTokenConverter<float>()},
+                {typeof (double?), new NullableTokenConverter<double>()},
+                {typeof (byte?), new NullableTokenConverter<byte>()},
+                {typeof (sbyte?), new NullableTokenConverter<sbyte>()},
+                {typeof (short?), new NullableTokenConverter<short>()},
+                {typeof (ushort?), new NullableTokenConverter<ushort>()},
+                {typeof (int?), new NullableTokenConverter<int>()},
+                {typeof (uint?), new NullableTokenConverter<uint>()},
+                {typeof (long?), new NullableTokenConverter<long>()},
+                {typeof (ulong?), new NullableTokenConverter<ulong>()},
+                {typeof (DateTime?), new NullableTokenConverter<DateTime>()},
+                {typeof (DateTimeOffset?), new NullableTokenConverter<DateTimeOffset>()}
             };
 
             foreach (var converter in _converters)
@@ -60,34 +61,34 @@ namespace ProGaudi.MsgPack.Light
             }
         }
 
-        public IMsgPackConverter<object> NullConverter => SharedNullConverter;
+        public IMsgPackTokenConverter<object> NullTokenConverter => SharedNullTokenConverter;
 
-        public void RegisterConverter<T>(IMsgPackConverter<T> converter)
+        public void RegisterConverter<T>(IMsgPackTokenConverter<T> tokenConverter)
         {
-            converter.Initialize(this);
-            _converters[typeof(T)] = converter;
+            tokenConverter.Initialize(this);
+            _converters[typeof(T)] = tokenConverter;
         }
 
         public void RegisterGenericConverter(Type type)
         {
-            var converterType = GetGenericInterface(type, typeof(IMsgPackConverter<>));
+            var converterType = GetGenericInterface(type, typeof(IMsgPackTokenConverter<>));
             if (converterType == null)
             {
-                throw new ArgumentException($"Error registering generic converter. Expected IMsgPackConverter<> implementation, but got {type}");
+                throw new ArgumentException($"Error registering generic tokenConverter. Expected IMsgPackTokenConverter<> implementation, but got {type}");
             }
 
             var convertedType = converterType.GenericTypeArguments.Single().GetGenericTypeDefinition();
             _genericConverters.Add(convertedType, type);
         }
 
-        public IMsgPackConverter<T> GetConverter<T>()
+        public IMsgPackTokenConverter<T> GetConverter<T>()
         {
             var type = typeof(T);
-            var result = (IMsgPackConverter<T>)GetConverterFromCache<T>();
+            var result = (IMsgPackTokenConverter<T>)GetConverterFromCache<T>();
             if (result != null)
                 return result;
 
-            result = (IMsgPackConverter<T>)(TryGenerateConverterFromGenericConverter(type)
+            result = (IMsgPackTokenConverter<T>)(TryGenerateConverterFromGenericConverter(type)
                 ?? TryGenerateArrayConverter(type)
                 ?? TryGenerateMapConverter(type)
                 ?? TryGenerateNullableConverter(type));
@@ -105,14 +106,14 @@ namespace ProGaudi.MsgPack.Light
             return _objectActivators.GetOrAdd(type, CompiledLambdaActivatorFactory.GetActivator);
         }
 
-        private IMsgPackConverter CreateAndInializeConverter(Func<object> converterActivator)
+        private IMsgPackTokenConverter CreateAndInializeConverter(Func<object> converterActivator)
         {
-            var converter = (IMsgPackConverter)converterActivator();
+            var converter = (IMsgPackTokenConverter)converterActivator();
             converter.Initialize(this);
             return converter;
         }
 
-        private IMsgPackConverter TryGenerateConverterFromGenericConverter(Type type)
+        private IMsgPackTokenConverter TryGenerateConverterFromGenericConverter(Type type)
         {
             if (!type.GetTypeInfo().IsGenericType)
             {
@@ -130,12 +131,12 @@ namespace ProGaudi.MsgPack.Light
             return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(converterType)));
         }
 
-        private IMsgPackConverter TryGenerateMapConverter(Type type)
+        private IMsgPackTokenConverter TryGenerateMapConverter(Type type)
         {
             var mapInterface = GetGenericInterface(type, typeof(IDictionary<,>));
             if (mapInterface != null)
             {
-                return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(MapConverter<,,>).MakeGenericType(
+                return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(MapTokenConverter<,,>).MakeGenericType(
                     x,
                     mapInterface.GenericTypeArguments[0],
                     mapInterface.GenericTypeArguments[1]))));
@@ -144,7 +145,7 @@ namespace ProGaudi.MsgPack.Light
             mapInterface = GetGenericInterface(type, typeof(IReadOnlyDictionary<,>));
             if (mapInterface != null)
             {
-                return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(ReadOnlyMapConverter<,,>).MakeGenericType(
+                return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(ReadOnlyMapTokenConverter<,,>).MakeGenericType(
                     x,
                     mapInterface.GenericTypeArguments[0],
                     mapInterface.GenericTypeArguments[1]))));
@@ -153,7 +154,7 @@ namespace ProGaudi.MsgPack.Light
             return null;
         }
 
-        private IMsgPackConverter TryGenerateNullableConverter(Type type)
+        private IMsgPackTokenConverter TryGenerateNullableConverter(Type type)
         {
             var typeInfo = type.GetTypeInfo();
             if (!typeInfo.IsGenericType || typeInfo.GetGenericTypeDefinition() != typeof(Nullable<>))
@@ -161,26 +162,26 @@ namespace ProGaudi.MsgPack.Light
                 return null;
             }
 
-            return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(NullableConverter<>).MakeGenericType(x.GetTypeInfo().GenericTypeArguments[0]))));
+            return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(NullableTokenConverter<>).MakeGenericType(x.GetTypeInfo().GenericTypeArguments[0]))));
         }
 
-        private IMsgPackConverter TryGenerateArrayConverter(Type type)
+        private IMsgPackTokenConverter TryGenerateArrayConverter(Type type)
         {
             var arrayInterface = GetGenericInterface(type, typeof(IList<>));
             if (arrayInterface != null)
             {
-                return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(ArrayConverter<,>).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))));
+                return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(ArrayTokenConverter<,>).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))));
             }
 
             arrayInterface = GetGenericInterface(type, typeof(IReadOnlyList<>));
             return arrayInterface != null
-                ? _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(ReadOnlyListConverter<,>).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))))
+                ? _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(ReadOnlyListTokenConverter<,>).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))))
                 : null;
         }
 
-        private IMsgPackConverter GetConverterFromCache<T>()
+        private IMsgPackTokenConverter GetConverterFromCache<T>()
         {
-            IMsgPackConverter temp;
+            IMsgPackTokenConverter temp;
 
             if (_converters.TryGetValue(typeof(T), out temp))
             {

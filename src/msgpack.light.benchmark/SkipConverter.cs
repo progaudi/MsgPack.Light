@@ -2,22 +2,21 @@
 
 namespace ProGaudi.MsgPack.Light.benchmark
 {
-    public class SkipConverter<T> :IMsgPackConverter<T>
+    public class SkipConverter<T> : IMsgPackTokenConverter<T>
     {
         public void Initialize(MsgPackContext context)
         {
 
         }
 
-        public void Write(T value, IMsgPackWriter writer)
+        public T ConvertTo(MsgPackToken token)
         {
-            throw new System.NotImplementedException();
+            return default(T);
         }
 
-        public T Read(IMsgPackReader reader)
+        public MsgPackToken ConvertFrom(T value)
         {
-            reader.SkipToken();
-            return default(T);
+            throw new System.NotImplementedException();
         }
     }
 }

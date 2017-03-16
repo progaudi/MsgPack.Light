@@ -17,8 +17,10 @@ namespace ProGaudi.MsgPack.Light
             var memoryStream = new MemoryStream();
             using (var writer = new MsgPackMemoryStreamWriter(memoryStream))
             {
+                var tokenWriter = new TokenWriter(writer);
                 var converter = GetConverter<T>(context);
-                converter.Write(data, writer);
+                var token = converter.ConvertFrom(data);
+                tokenWriter.Write(token);
                 return memoryStream.ToArray();
             }
         }
@@ -32,8 +34,9 @@ namespace ProGaudi.MsgPack.Light
         {
             using (var writer = new MsgPackMemoryStreamWriter(stream, false))
             {
+                var tokenWriter = new TokenWriter(writer);
                 var converter = GetConverter<T>(context);
-                converter.Write(data, writer);
+                tokenWriter.Write(converter.ConvertFrom(data));
             }
         }
 
@@ -45,8 +48,7 @@ namespace ProGaudi.MsgPack.Light
         public static T Deserialize<T>(byte[] data, [NotNull]MsgPackContext context)
         {
             var reader = new MsgPackByteArrayReader(data);
-            var converter = GetConverter<T>(context);
-            return converter.Read(reader);
+            return DeserializeInternal<T>(context, reader);
         }
 
         public static T Deserialize<T>(MemoryStream stream)
@@ -58,22 +60,30 @@ namespace ProGaudi.MsgPack.Light
         {
             using (var reader = new MsgPackMemoryStreamReader(stream, false))
             {
-                var converter = GetConverter<T>(context);
-                return converter.Read(reader);
+                return DeserializeInternal<T>(context, reader);
             }
         }
 
         [NotNull]
-        private static IMsgPackConverter<T> GetConverter<T>(MsgPackContext context)
+        private static IMsgPackTokenConverter<T> GetConverter<T>(MsgPackContext context)
         {
             var converter = context.GetConverter<T>();
 
             if (converter == null)
             {
-                throw new SerializationException($"Provide converter for {typeof(T).Name}");
+                throw new SerializationException($"Provide tokenConverter for {typeof(T).Name}");
             }
 
             return converter;
         }
+
+
+        private static T DeserializeInternal<T>(MsgPackContext context, IMsgPackReader reader)
+        {
+            var tokenReader = new TokenReader(reader);
+            var converter = GetConverter<T>(context);
+            return converter.ConvertTo(tokenReader.Read());
+        }
+
     }
 }

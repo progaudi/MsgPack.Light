@@ -11,79 +11,79 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         [Fact]
         public void ReadNullAsNullableBool()
         {
-            MsgPackSerializer.Deserialize<bool?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Deserialize<bool?>(new[] { (byte)DataTypeInternal.Null }).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableFloat()
         {
-            MsgPackSerializer.Deserialize<float?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Deserialize<float?>(new[] { (byte)DataTypeInternal.Null }).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableDouble()
         {
-            MsgPackSerializer.Deserialize<double?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Deserialize<double?>(new[] { (byte)DataTypeInternal.Null }).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableByte()
         {
-            MsgPackSerializer.Deserialize<byte?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Deserialize<byte?>(new[] { (byte)DataTypeInternal.Null }).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableSbyte()
         {
-            MsgPackSerializer.Deserialize<sbyte?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Deserialize<sbyte?>(new[] { (byte)DataTypeInternal.Null }).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableShort()
         {
-            MsgPackSerializer.Deserialize<short?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Deserialize<short?>(new[] { (byte)DataTypeInternal.Null }).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableUshort()
         {
-            MsgPackSerializer.Deserialize<ushort?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Deserialize<ushort?>(new[] { (byte)DataTypeInternal.Null }).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableInt()
         {
-            MsgPackSerializer.Deserialize<int?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Deserialize<int?>(new[] { (byte)DataTypeInternal.Null }).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableUint()
         {
-            MsgPackSerializer.Deserialize<uint?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Deserialize<uint?>(new[] { (byte)DataTypeInternal.Null }).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableLong()
         {
-            MsgPackSerializer.Deserialize<long?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Deserialize<long?>(new[] { (byte)DataTypeInternal.Null }).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableUlong()
         {
-            MsgPackSerializer.Deserialize<ulong?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Deserialize<ulong?>(new[] { (byte)DataTypeInternal.Null }).ShouldBe(null);
         }
 
         [Fact]
         public void False()
         {
-            MsgPackSerializer.Deserialize<bool?>(new[] { (byte)DataTypes.False }).ShouldBe(false);
+            MsgPackSerializer.Deserialize<bool?>(new[] { (byte)DataTypeInternal.False }).ShouldBe(false);
         }
 
         [Fact]
         public void True()
         {
-            MsgPackSerializer.Deserialize<bool?>(new[] { (byte)DataTypes.True }).ShouldBe(true);
+            MsgPackSerializer.Deserialize<bool?>(new[] { (byte)DataTypeInternal.True }).ShouldBe(true);
         }
 
         [Theory]

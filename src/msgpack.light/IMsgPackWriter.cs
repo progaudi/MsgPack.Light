@@ -1,15 +1,11 @@
 namespace ProGaudi.MsgPack.Light
 {
-    public interface IMsgPackWriter
+    internal interface IMsgPackWriter
     {
-        void Write(DataTypes dataType);
+        void Write(DataTypeInternal dataTypeInternal);
 
         void Write(byte value);
 
         void Write(byte[] array);
-
-        void WriteArrayHeader(uint length);
-
-        void WriteMapHeader(uint length);
     }
 }

@@ -9,13 +9,13 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [Fact]
         public void False()
         {
-            MsgPackSerializer.Serialize(false).ShouldBe(new[] {(byte) DataTypes.False});
+            MsgPackSerializer.Serialize(false).ShouldBe(new[] {(byte) DataTypeInternal.False});
         }
 
         [Fact]
         public void True()
         {
-            MsgPackSerializer.Serialize(true).ShouldBe(new[] {(byte) DataTypes.True});
+            MsgPackSerializer.Serialize(true).ShouldBe(new[] {(byte) DataTypeInternal.True});
         }
     }
 }

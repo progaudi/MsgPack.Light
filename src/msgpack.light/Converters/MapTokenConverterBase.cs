@@ -1,6 +1,6 @@
 namespace ProGaudi.MsgPack.Light.Converters
 {
-    public abstract class MapConverterBase<TMap, TKey, TValue> : IMsgPackConverter<TMap>
+    public abstract class MapTokenConverterBase<TMap, TKey, TValue> : IMsgPackTokenConverter<TMap>
     {
         public void Initialize(MsgPackContext context)
         {
@@ -16,19 +16,20 @@ namespace ProGaudi.MsgPack.Light.Converters
                 throw ExceptionUtils.NoConverterForCollectionElement(typeof(TValue), "value");
             }
 
-            KeyConverter = keyConverter;
-            ValueConverter = valueConverter;
+            KeyTokenConverter = keyConverter;
+            ValueTokenConverter = valueConverter;
             Context = context;
         }
 
-        public abstract void Write(TMap value, IMsgPackWriter writer);
-
-        public abstract TMap Read(IMsgPackReader reader);
 
         protected MsgPackContext Context { get; private set; }
 
-        protected IMsgPackConverter<TValue> ValueConverter { get; private set; }
+        protected IMsgPackTokenConverter<TValue> ValueTokenConverter { get; private set; }
 
-        protected IMsgPackConverter<TKey> KeyConverter { get; private set; }
+        protected IMsgPackTokenConverter<TKey> KeyTokenConverter { get; private set; }
+
+        public abstract MsgPackToken ConvertFrom(TMap value);
+
+        public abstract TMap ConvertTo(MsgPackToken token);
     }
 }

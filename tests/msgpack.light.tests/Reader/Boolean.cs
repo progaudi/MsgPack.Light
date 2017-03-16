@@ -9,13 +9,13 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         [Fact]
         public void False()
         {
-            MsgPackSerializer.Deserialize<bool>(new[] {(byte) DataTypes.False}).ShouldBeFalse();
+            MsgPackSerializer.Deserialize<bool>(new[] {(byte) DataTypeInternal.False}).ShouldBeFalse();
         }
 
         [Fact]
         public void True()
         {
-            MsgPackSerializer.Deserialize<bool>(new[] {(byte) DataTypes.True}).ShouldBeTrue();
+            MsgPackSerializer.Deserialize<bool>(new[] {(byte) DataTypeInternal.True}).ShouldBeTrue();
         }
     }
 }

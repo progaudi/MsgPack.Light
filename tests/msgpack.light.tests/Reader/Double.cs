@@ -10,20 +10,20 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
     public class FloatingPoint
     {
         [Theory]
-        [InlineData(0, new byte[] {203, 0, 0, 0, 0, 0, 0, 0, 0})]
-        [InlineData(1, new byte[] {203, 63, 240, 0, 0, 0, 0, 0, 0})]
-        [InlineData(-1, new byte[] {203, 191, 240, 0, 0, 0, 0, 0, 0})]
-        [InlineData(Math.E, new byte[] {203, 64, 5, 191, 10, 139, 20, 87, 105})]
-        [InlineData(Math.PI, new byte[] {203, 64, 9, 33, 251, 84, 68, 45, 24})]
-        [InlineData(224, new byte[] {203, 64, 108, 0, 0, 0, 0, 0, 0})]
-        [InlineData(256, new byte[] {203, 64, 112, 0, 0, 0, 0, 0, 0})]
-        [InlineData(65530, new byte[] {203, 64, 239, 255, 64, 0, 0, 0, 0})]
-        [InlineData(65540, new byte[] {203, 64, 240, 0, 64, 0, 0, 0, 0})]
-        [InlineData(double.NaN, new byte[] {203, 255, 248, 0, 0, 0, 0, 0, 0})]
-        [InlineData(double.MaxValue, new byte[] {203, 127, 239, 255, 255, 255, 255, 255, 255})]
-        [InlineData(double.MinValue, new byte[] {203, 255, 239, 255, 255, 255, 255, 255, 255})]
-        [InlineData(double.PositiveInfinity, new byte[] {203, 127, 240, 0, 0, 0, 0, 0, 0})]
-        [InlineData(double.NegativeInfinity, new byte[] {203, 255, 240, 0, 0, 0, 0, 0, 0})]
+        [InlineData(0, new byte[] { 203, 0, 0, 0, 0, 0, 0, 0, 0 })]
+        [InlineData(1, new byte[] { 203, 63, 240, 0, 0, 0, 0, 0, 0 })]
+        [InlineData(-1, new byte[] { 203, 191, 240, 0, 0, 0, 0, 0, 0 })]
+        [InlineData(Math.E, new byte[] { 203, 64, 5, 191, 10, 139, 20, 87, 105 })]
+        [InlineData(Math.PI, new byte[] { 203, 64, 9, 33, 251, 84, 68, 45, 24 })]
+        [InlineData(224, new byte[] { 203, 64, 108, 0, 0, 0, 0, 0, 0 })]
+        [InlineData(256, new byte[] { 203, 64, 112, 0, 0, 0, 0, 0, 0 })]
+        [InlineData(65530, new byte[] { 203, 64, 239, 255, 64, 0, 0, 0, 0 })]
+        [InlineData(65540, new byte[] { 203, 64, 240, 0, 64, 0, 0, 0, 0 })]
+        [InlineData(double.NaN, new byte[] { 203, 255, 248, 0, 0, 0, 0, 0, 0 })]
+        [InlineData(double.MaxValue, new byte[] { 203, 127, 239, 255, 255, 255, 255, 255, 255 })]
+        [InlineData(double.MinValue, new byte[] { 203, 255, 239, 255, 255, 255, 255, 255, 255 })]
+        [InlineData(double.PositiveInfinity, new byte[] { 203, 127, 240, 0, 0, 0, 0, 0, 0 })]
+        [InlineData(double.NegativeInfinity, new byte[] { 203, 255, 240, 0, 0, 0, 0, 0, 0 })]
         // integers
         [InlineData(sbyte.MinValue, new byte[] { 208, 128 })]
         [InlineData(sbyte.MaxValue, new byte[] { 127 })]
@@ -78,7 +78,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TestDoubleStritctParsing(byte[] bytes)
         {
             var e = Should.Throw<SerializationException>(() => MsgPackSerializer.Deserialize<double>(bytes, new MsgPackContext(true)));
-            e.Message.ShouldBe(ExceptionUtils.BadTypeException((DataTypes)bytes[0], DataTypes.Single, DataTypes.Double).Message);
+            e.Message.ShouldBe(ExceptionUtils.BadTypeException((DataTypeInternal)bytes[0], DataTypeInternal.Single, DataTypeInternal.Double).Message);
         }
 
         [Theory]
@@ -91,7 +91,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TestFloatStritctParsing(byte[] bytes)
         {
             var e = Should.Throw<SerializationException>(() => MsgPackSerializer.Deserialize<float>(bytes, new MsgPackContext(true)));
-            e.Message.ShouldBe(ExceptionUtils.BadTypeException((DataTypes)bytes[0], DataTypes.Single).Message);
+            e.Message.ShouldBe(ExceptionUtils.BadTypeException((DataTypeInternal)bytes[0], DataTypeInternal.Single).Message);
         }
     }
 }

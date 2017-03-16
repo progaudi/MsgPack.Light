@@ -1,22 +1,13 @@
 using System;
-using System.IO;
 
 namespace ProGaudi.MsgPack.Light
 {
-    public interface IMsgPackReader
+    internal interface IMsgPackReader
     {
-        DataTypes ReadDataType();
+        DataTypeInternal ReadDataType();
 
         byte ReadByte();
 
         ArraySegment<byte> ReadBytes(uint length);
-
-        void Seek(long offset, SeekOrigin origin);
-
-        uint? ReadArrayLength();
-
-        uint? ReadMapLength();
-
-        void SkipToken();
     }
 }

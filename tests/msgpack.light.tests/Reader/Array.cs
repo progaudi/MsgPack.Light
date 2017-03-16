@@ -63,7 +63,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
             };
 
             var settings = new MsgPackContext();
-            settings.RegisterConverter(new TestReflectionConverter());
+            settings.RegisterConverter(new TestReflectionTokenConverter());
 
             MsgPackSerializer.Deserialize<object[]>(data, settings).ShouldBe(expected);
         }

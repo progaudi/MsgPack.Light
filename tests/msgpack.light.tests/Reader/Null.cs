@@ -11,25 +11,25 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         [Fact]
         public void ReadNullArray()
         {
-            MsgPackSerializer.Deserialize<int[]>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Deserialize<int[]>(new[] { (byte)DataTypeInternal.Null }).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullByteArray()
         {
-            MsgPackSerializer.Deserialize<byte[]>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Deserialize<byte[]>(new[] { (byte)DataTypeInternal.Null }).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullMap()
         {
-            MsgPackSerializer.Deserialize<Dictionary<int, int>>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Deserialize<Dictionary<int, int>>(new[] { (byte)DataTypeInternal.Null }).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullString()
         {
-            MsgPackSerializer.Deserialize<string>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            MsgPackSerializer.Deserialize<string>(new[] { (byte)DataTypeInternal.Null }).ShouldBe(null);
         }
     }
 }
