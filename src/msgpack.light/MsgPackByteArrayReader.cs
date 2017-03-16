@@ -49,7 +49,7 @@ namespace ProGaudi.MsgPack.Light
 
         protected override IList<byte> StopTokenGathering()
         {
-            return new ArraySegment<byte>(_data, (int) _firstGatheredByte,(int) (_offset - _firstGatheredByte + 1));
+            return new ArraySegment<byte>(_data, (int) _firstGatheredByte,(int) (_offset - _firstGatheredByte));
         }
 
         protected override void StartTokenGathering()
