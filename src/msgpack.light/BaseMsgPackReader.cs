@@ -193,5 +193,10 @@ namespace ProGaudi.MsgPack.Light
             var length = type - DataTypes.FixMap;
             return type.GetHighBits(4) == DataTypes.FixMap.GetHighBits(4) ? length : (uint?)null;
         }
+
+        public byte[] ReadToken()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
