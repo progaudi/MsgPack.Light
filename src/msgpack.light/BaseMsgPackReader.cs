@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 using ProGaudi.MsgPack.Light.Converters;
 
@@ -196,7 +198,14 @@ namespace ProGaudi.MsgPack.Light
 
         public byte[] ReadToken()
         {
-            throw new NotImplementedException();
+            StartTokenGathering();
+            SkipToken();
+            var gatheredBytes = StopTokenGathering();
+            return gatheredBytes.ToArray();
         }
+
+        protected abstract IList<byte> StopTokenGathering();
+
+        protected abstract void StartTokenGathering();
     }
 }

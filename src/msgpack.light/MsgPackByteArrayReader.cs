@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace ProGaudi.MsgPack.Light
 {
     internal class MsgPackByteArrayReader : BaseMsgPackReader
     {
+        private uint _firstGatheredByte;
+
         private readonly byte[] _data;
 
         private uint _offset;
@@ -42,6 +45,16 @@ namespace ProGaudi.MsgPack.Light
                 default:
                     throw new ArgumentOutOfRangeException(nameof(origin), origin, null);
             }
+        }
+
+        protected override IList<byte> StopTokenGathering()
+        {
+            return new ArraySegment<byte>(_data, (int) _firstGatheredByte,(int) (_offset - _firstGatheredByte + 1));
+        }
+
+        protected override void StartTokenGathering()
+        {
+            _firstGatheredByte = _offset;
         }
     }
 }
