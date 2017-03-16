@@ -1,4 +1,5 @@
 using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Exporters.Csv;
 
 namespace ProGaudi.MsgPack.Light.benchmark
@@ -8,6 +9,7 @@ namespace ProGaudi.MsgPack.Light.benchmark
         public BenchmarkConfig()
         {
             Add(CsvMeasurementsExporter.Default);
+            Add(MemoryDiagnoser.Default);
         }
     }
 }
