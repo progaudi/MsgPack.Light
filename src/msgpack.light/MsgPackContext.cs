@@ -22,6 +22,7 @@ namespace ProGaudi.MsgPack.Light
             var numberConverter = new NumberConverter(strictParseOfFloat);
             _converters = new Dictionary<Type, IMsgPackConverter>
             {
+                {typeof(MsgPackToken), new MsgPackTokenConverter()},
                 {typeof (bool), new BoolConverter()},
                 {typeof (string), new StringConverter()},
                 {typeof (byte[]), new BinaryConverter()},

@@ -2,8 +2,11 @@
 {
     public class MsgPackTokenConverter : IMsgPackConverter<MsgPackToken>
     {
+        private MsgPackContext _context;
+
         public void Initialize(MsgPackContext context)
         {
+            _context = context;
         }
 
         public void Write(MsgPackToken value, IMsgPackWriter writer)
@@ -14,7 +17,7 @@
         public MsgPackToken Read(IMsgPackReader reader)
         {
             var rawBytes = reader.ReadToken();
-            return new MsgPackToken(rawBytes);
+            return new MsgPackToken(rawBytes, _context);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 using ProGaudi.MsgPack.Light.Converters;
 
@@ -9,15 +10,32 @@ namespace ProGaudi.MsgPack.Light
         private static readonly IMsgPackConverter<bool> BoolConverter = new BoolConverter();
         private static readonly IMsgPackConverter<string> StringConverter = new StringConverter();
         private static readonly NumberConverter NumberConverter = new NumberConverter(false);
+        private static IMsgPackConverter<MsgPackToken[]> _arrayConverter;
+        private static IMsgPackConverter<Dictionary<MsgPackToken, MsgPackToken>> _dictionaryConverter;
 
-        public MsgPackToken(byte[] rawBytes)
+        public MsgPackToken(byte[] rawBytes, MsgPackContext context = null)
         {
             RawBytes = rawBytes;
+
+            if (context == null)
+            {
+                return;
+            }
+
+            if (_arrayConverter == null)
+            {
+                _arrayConverter = context.GetConverter<MsgPackToken[]>();
+            }
+
+            if (_dictionaryConverter == null)
+            {
+                _dictionaryConverter = context.GetConverter<Dictionary<MsgPackToken, MsgPackToken>>();
+            }
         }
 
         internal byte[] RawBytes { get; }
 
-        #region Bool typeInternal conversion
+        #region Bool type conversion
 
         public static explicit operator MsgPackToken(bool b)
         {
@@ -31,7 +49,7 @@ namespace ProGaudi.MsgPack.Light
 
         #endregion
 
-        #region String typeInternal conversion
+        #region String type conversion
 
         public static explicit operator MsgPackToken(string str)
         {
@@ -45,7 +63,7 @@ namespace ProGaudi.MsgPack.Light
 
         #endregion
 
-        #region byte[] typeInternal conversion
+        #region byte[] type conversion
 
         public static explicit operator MsgPackToken(byte[] data)
         {
@@ -59,7 +77,7 @@ namespace ProGaudi.MsgPack.Light
 
         #endregion
 
-        #region ulong typeInternal conversion
+        #region ulong type conversion
 
         public static explicit operator MsgPackToken(ulong value)
         {
@@ -73,7 +91,7 @@ namespace ProGaudi.MsgPack.Light
 
         #endregion
 
-        #region uint typeInternal conversion
+        #region uint type conversion
 
         public static explicit operator MsgPackToken(uint value)
         {
@@ -87,7 +105,7 @@ namespace ProGaudi.MsgPack.Light
 
         #endregion
 
-        #region ushort typeInternal conversion
+        #region ushort type conversion
 
         public static explicit operator MsgPackToken(ushort value)
         {
@@ -101,7 +119,7 @@ namespace ProGaudi.MsgPack.Light
 
         #endregion
 
-        #region byte typeInternal conversion
+        #region byte type conversion
 
         public static explicit operator MsgPackToken(byte value)
         {
@@ -115,7 +133,7 @@ namespace ProGaudi.MsgPack.Light
 
         #endregion
 
-        #region long typeInternal conversion
+        #region long type conversion
 
         public static explicit operator MsgPackToken(long value)
         {
@@ -129,7 +147,7 @@ namespace ProGaudi.MsgPack.Light
 
         #endregion
 
-        #region int typeInternal conversion
+        #region int type conversion
 
         public static explicit operator MsgPackToken(int value)
         {
@@ -143,7 +161,7 @@ namespace ProGaudi.MsgPack.Light
 
         #endregion
 
-        #region short typeInternal conversion
+        #region short type conversion
 
         public static explicit operator MsgPackToken(short value)
         {
@@ -157,7 +175,7 @@ namespace ProGaudi.MsgPack.Light
 
         #endregion
 
-        #region sbyte typeInternal conversion
+        #region sbyte type conversion
 
         public static explicit operator MsgPackToken(sbyte value)
         {
@@ -171,7 +189,7 @@ namespace ProGaudi.MsgPack.Light
 
         #endregion
 
-        #region float typeInternal conversion
+        #region float type conversion
 
         public static explicit operator MsgPackToken(float value)
         {
@@ -185,7 +203,7 @@ namespace ProGaudi.MsgPack.Light
 
         #endregion
 
-        #region double typeInternal conversion
+        #region double type conversion
 
         public static explicit operator MsgPackToken(double value)
         {
@@ -195,6 +213,34 @@ namespace ProGaudi.MsgPack.Light
         public static explicit operator double(MsgPackToken token)
         {
             return CastTokenToValue<double>(token, NumberConverter);
+        }
+
+        #endregion
+
+        #region MsgPackToken[] type conversion
+
+        public static explicit operator MsgPackToken(MsgPackToken[] value)
+        {
+            return CastValueToToken(value, _arrayConverter);
+        }
+
+        public static explicit operator MsgPackToken[] (MsgPackToken token)
+        {
+            return CastTokenToValue<MsgPackToken[]>(token, _arrayConverter);
+        }
+
+        #endregion
+
+        #region Dictionary<MsgPackToken,MsgPackToken> type conversion
+
+        public static explicit operator MsgPackToken(Dictionary<MsgPackToken, MsgPackToken> value)
+        {
+            return CastValueToToken(value, _dictionaryConverter);
+        }
+
+        public static explicit operator Dictionary<MsgPackToken, MsgPackToken>(MsgPackToken token)
+        {
+            return CastTokenToValue<Dictionary<MsgPackToken, MsgPackToken>>(token, _dictionaryConverter);
         }
 
         #endregion
