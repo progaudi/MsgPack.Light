@@ -10,7 +10,9 @@ namespace ProGaudi.MsgPack.Light
 
         private readonly bool _disposeStream;
 
-        private List<Tuple<byte, byte[]>> _bytesGatheringBuffer;
+        private readonly List<(byte, byte[])> _bytesGatheringBuffer = new List<(byte, byte[])>();
+
+        private bool _bytesGatheringInProgress;
 
         public MsgPackMemoryStreamReader(MemoryStream stream, bool disposeStream = true)
         {
@@ -26,8 +28,11 @@ namespace ProGaudi.MsgPack.Light
                 throw ExceptionUtils.NotEnoughBytes(0, 1);
             }
 
-            var result = (byte)temp;
-            _bytesGatheringBuffer?.Add(Tuple.Create(result, (byte[])null));
+            var result = (byte) temp;
+            if (_bytesGatheringInProgress)
+            {
+                _bytesGatheringBuffer.Add((result, (byte[]) null));
+            }
 
             return result;
         }
@@ -35,16 +40,20 @@ namespace ProGaudi.MsgPack.Light
         public override ArraySegment<byte> ReadBytes(uint length)
         {
             var buffer = ReadBytesInternal(length);
-            _bytesGatheringBuffer?.Add(Tuple.Create((byte)0, buffer));
+            if (_bytesGatheringInProgress)
+            {
+                _bytesGatheringBuffer.Add((0, buffer));
+            }
+            
             return new ArraySegment<byte>(buffer, 0, buffer.Length);
         }
 
         public override void Seek(long offset, SeekOrigin origin)
         {
-            if (_bytesGatheringBuffer != null)
+            if (_bytesGatheringInProgress)
             {
                 var buffer = ReadBytesInternal((uint)offset);
-                _bytesGatheringBuffer.Add(Tuple.Create((byte)0, buffer));
+                _bytesGatheringBuffer.Add((0, buffer));
             }
             else
             {
@@ -73,13 +82,14 @@ namespace ProGaudi.MsgPack.Light
                 }
             }
 
-            _bytesGatheringBuffer = null;
+            _bytesGatheringInProgress = false;
             return result;
         }
 
         protected override void StartTokenGathering()
         {
-            _bytesGatheringBuffer = new List<Tuple<byte, byte[]>>();
+            _bytesGatheringInProgress = true;
+            _bytesGatheringBuffer.Clear();
         }
 
         private byte[] ReadBytesInternal(uint length)
