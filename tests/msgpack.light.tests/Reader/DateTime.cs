@@ -27,6 +27,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
             foreach (var test in tests)
             {
                 MsgPackSerializer.Deserialize<System.DateTime>(test.Key).ShouldBe(test.Value);
+
+                var token = Helpers.CheckTokenDeserialization(test.Key);
+                ((DateTime)token).ShouldBe(test.Value);
             }
         }
 
@@ -52,6 +55,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
             foreach (var test in tests)
             {
                 MsgPackSerializer.Deserialize<System.DateTimeOffset>(test.Key).ShouldBe(test.Value);
+
+                var token = Helpers.CheckTokenDeserialization(test.Key);
+                ((DateTimeOffset)token).ShouldBe(test.Value);
             }
         }
     }

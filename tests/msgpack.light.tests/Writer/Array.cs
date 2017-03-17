@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 using Shouldly;
 
@@ -31,6 +32,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
             };
 
             MsgPackSerializer.Serialize(tests).ShouldBe(bytes);
+
+            new MsgPackToken(tests.Select(e => (MsgPackToken) e).ToArray()).RawBytes.ShouldBe(bytes);
         }
 
         [Fact]

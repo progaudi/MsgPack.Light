@@ -21,6 +21,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         public void TestSignedLong(long number, byte[] data)
         {
             MsgPackSerializer.Serialize(number).ShouldBe(data);
+            ((MsgPackToken)number).RawBytes.ShouldBe(data);
         }
 
         [Theory]
@@ -37,6 +38,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         public void TestSignedInt(int number, byte[] data)
         {
             MsgPackSerializer.Serialize(number).ShouldBe(data);
+            ((MsgPackToken)number).RawBytes.ShouldBe(data);
         }
 
         [Theory]
@@ -50,6 +52,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         public void TestSignedShort(short number, byte[] data)
         {
             MsgPackSerializer.Serialize(number).ShouldBe(data);
+            ((MsgPackToken)number).RawBytes.ShouldBe(data);
         }
 
         [Theory]
@@ -61,6 +64,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         public void TestSignedByte(sbyte number, byte[] data)
         {
             MsgPackSerializer.Serialize(number).ShouldBe(data);
+            ((MsgPackToken)number).RawBytes.ShouldBe(data);
         }
 
         [Theory]
@@ -73,6 +77,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         public void TetsUnsignedLong(ulong number, byte[] data)
         {
             MsgPackSerializer.Serialize(number).ShouldBe(data);
+            ((MsgPackToken)number).RawBytes.ShouldBe(data);
         }
 
         [Theory]
@@ -85,6 +90,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         public void TetsUnsignedInt(uint number, byte[] data)
         {
             MsgPackSerializer.Serialize(number).ShouldBe(data);
+            ((MsgPackToken)number).RawBytes.ShouldBe(data);
         }
 
         [Theory]
@@ -95,6 +101,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         public void TetsUnsignedShort(ushort number, byte[] data)
         {
             MsgPackSerializer.Serialize(number).ShouldBe(data);
+            ((MsgPackToken)number).RawBytes.ShouldBe(data);
         }
 
         [Theory]
@@ -104,6 +111,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         public void TetsUnsignedByte(byte number, byte[] data)
         {
             MsgPackSerializer.Serialize(number).ShouldBe(data);
+            ((MsgPackToken)number).RawBytes.ShouldBe(data);
         }
     }
 }

@@ -23,6 +23,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
             foreach (var test in tests)
             {
                 MsgPackSerializer.Serialize(test.Key).ShouldBe(test.Value);
+                ((MsgPackToken)test.Key).RawBytes.ShouldBe(test.Value);
             }
         }
 
@@ -42,6 +43,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
             foreach (var test in tests)
             {
                 MsgPackSerializer.Serialize(test.Key).ShouldBe(test.Value);
+                ((MsgPackToken)test.Key).RawBytes.ShouldBe(test.Value);
             }
         }
     }

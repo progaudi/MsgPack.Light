@@ -18,5 +18,7 @@ namespace ProGaudi.MsgPack.Light
         uint? ReadMapLength();
 
         void SkipToken();
+
+        byte[] ReadToken();
     }
 }

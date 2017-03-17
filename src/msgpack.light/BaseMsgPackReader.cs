@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 using ProGaudi.MsgPack.Light.Converters;
 
@@ -193,5 +195,17 @@ namespace ProGaudi.MsgPack.Light
             var length = type - DataTypes.FixMap;
             return type.GetHighBits(4) == DataTypes.FixMap.GetHighBits(4) ? length : (uint?)null;
         }
+
+        public byte[] ReadToken()
+        {
+            StartTokenGathering();
+            SkipToken();
+            var gatheredBytes = StopTokenGathering();
+            return gatheredBytes.ToArray();
+        }
+
+        protected abstract IList<byte> StopTokenGathering();
+
+        protected abstract void StartTokenGathering();
     }
 }

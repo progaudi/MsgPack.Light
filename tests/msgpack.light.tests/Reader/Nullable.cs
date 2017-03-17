@@ -11,79 +11,131 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         [Fact]
         public void ReadNullAsNullableBool()
         {
-            MsgPackSerializer.Deserialize<bool?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            var data = new[] { (byte)DataTypes.Null };
+            MsgPackSerializer.Deserialize<bool?>(data).ShouldBe(null);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((bool?)token).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableFloat()
         {
-            MsgPackSerializer.Deserialize<float?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            var data = new[] { (byte)DataTypes.Null };
+            MsgPackSerializer.Deserialize<float?>(data).ShouldBe(null);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((float?)token).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableDouble()
         {
-            MsgPackSerializer.Deserialize<double?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            var data = new[] { (byte)DataTypes.Null };
+            MsgPackSerializer.Deserialize<double?>(data).ShouldBe(null);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((double?)token).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableByte()
         {
-            MsgPackSerializer.Deserialize<byte?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            var data = new[] { (byte)DataTypes.Null };
+            MsgPackSerializer.Deserialize<byte?>(data).ShouldBe(null);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((byte?)token).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableSbyte()
         {
-            MsgPackSerializer.Deserialize<sbyte?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            var data = new[] { (byte)DataTypes.Null };
+            MsgPackSerializer.Deserialize<sbyte?>(data).ShouldBe(null);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((sbyte?)token).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableShort()
         {
-            MsgPackSerializer.Deserialize<short?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            var data = new[] { (byte)DataTypes.Null };
+            MsgPackSerializer.Deserialize<short?>(data).ShouldBe(null);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((short?)token).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableUshort()
         {
-            MsgPackSerializer.Deserialize<ushort?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            var data = new[] { (byte)DataTypes.Null };
+            MsgPackSerializer.Deserialize<ushort?>(data).ShouldBe(null);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((ushort?)token).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableInt()
         {
-            MsgPackSerializer.Deserialize<int?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            var data = new[] { (byte)DataTypes.Null };
+            MsgPackSerializer.Deserialize<int?>(data).ShouldBe(null);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((int?)token).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableUint()
         {
-            MsgPackSerializer.Deserialize<uint?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            var data = new[] { (byte)DataTypes.Null };
+            MsgPackSerializer.Deserialize<uint?>(data).ShouldBe(null);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((uint?)token).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableLong()
         {
-            MsgPackSerializer.Deserialize<long?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            var data = new[] { (byte)DataTypes.Null };
+            MsgPackSerializer.Deserialize<long?>(data).ShouldBe(null);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((long?)token).ShouldBe(null);
         }
 
         [Fact]
         public void ReadNullAsNullableUlong()
         {
-            MsgPackSerializer.Deserialize<ulong?>(new[] { (byte)DataTypes.Null }).ShouldBe(null);
+            var data = new[] { (byte)DataTypes.Null };
+            MsgPackSerializer.Deserialize<ulong?>(data).ShouldBe(null);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((ulong?)token).ShouldBe(null);
         }
 
         [Fact]
         public void False()
         {
-            MsgPackSerializer.Deserialize<bool?>(new[] { (byte)DataTypes.False }).ShouldBe(false);
+            var data = new[] { (byte)DataTypes.False };
+            MsgPackSerializer.Deserialize<bool?>(data).ShouldBe(false);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((bool?)token).ShouldBe(false);
         }
 
         [Fact]
         public void True()
         {
-            MsgPackSerializer.Deserialize<bool?>(new[] { (byte)DataTypes.True }).ShouldBe(true);
+            var data = new[] { (byte)DataTypes.True };
+            MsgPackSerializer.Deserialize<bool?>(data).ShouldBe(true);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((bool?)token).ShouldBe(true);
         }
 
         [Theory]
@@ -104,6 +156,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TestDouble(double value, byte[] bytes)
         {
             MsgPackSerializer.Deserialize<double?>(bytes).ShouldBe(value);
+
+            var token = Helpers.CheckTokenDeserialization(bytes);
+            ((double?)token).ShouldBe(value);
         }
 
         [Theory]
@@ -124,6 +179,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TestFloat(float value, byte[] bytes)
         {
             MsgPackSerializer.Deserialize<float?>(bytes).ShouldBe(value);
+
+            var token = Helpers.CheckTokenDeserialization(bytes);
+            ((float?)token).ShouldBe(value);
         }
 
         [Theory]
@@ -141,6 +199,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TestSignedLong(long number, byte[] data)
         {
             MsgPackSerializer.Deserialize<long?>(data).ShouldBe(number);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((long?)token).ShouldBe(number);
         }
 
         [Theory]
@@ -157,6 +218,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TestSignedInt(int number, byte[] data)
         {
             MsgPackSerializer.Deserialize<int?>(data).ShouldBe(number);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((int?)token).ShouldBe(number);
         }
 
         [Theory]
@@ -170,6 +234,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TestSignedShort(short number, byte[] data)
         {
             MsgPackSerializer.Deserialize<short?>(data).ShouldBe(number);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((short?)token).ShouldBe(number);
         }
 
         [Theory]
@@ -181,6 +248,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TestSignedByte(sbyte number, byte[] data)
         {
             MsgPackSerializer.Deserialize<sbyte?>(data).ShouldBe(number);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((sbyte?)token).ShouldBe(number);
         }
 
         [Theory]
@@ -193,6 +263,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TetsUnsignedLong(ulong number, byte[] data)
         {
             MsgPackSerializer.Deserialize<ulong?>(data).ShouldBe(number);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((ulong?)token).ShouldBe(number);
         }
 
         [Theory]
@@ -204,6 +277,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TetsUnsignedInt(uint number, byte[] data)
         {
             MsgPackSerializer.Deserialize<uint?>(data).ShouldBe(number);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((uint?)token).ShouldBe(number);
         }
 
         [Theory]
@@ -214,6 +290,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TetsUnsignedShort(ushort number, byte[] data)
         {
             MsgPackSerializer.Deserialize<ushort?>(data).ShouldBe(number);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((ushort?)token).ShouldBe(number);
         }
 
         [Theory]
@@ -223,6 +302,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TetsUnsignedByte(byte number, byte[] data)
         {
             MsgPackSerializer.Deserialize<byte?>(data).ShouldBe(number);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((byte?)token).ShouldBe(number);
         }
     }
 }

@@ -84,6 +84,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void Test(byte[] value, byte[] data)
         {
             MsgPackSerializer.Deserialize<byte[]>(data).ShouldBe(value);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((byte[])token).ShouldBe(value);
         }
     }
 }

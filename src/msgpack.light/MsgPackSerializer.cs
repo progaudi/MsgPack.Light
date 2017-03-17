@@ -37,9 +37,29 @@ namespace ProGaudi.MsgPack.Light
             }
         }
 
+        public static MsgPackToken SerializeToToken<T>(T data, [NotNull] MsgPackContext context)
+        {
+            return new MsgPackToken(context, Serialize(data, context));
+        }
+
+        public static MsgPackToken SerializeToToken<T>(T data)
+        {
+            return SerializeToToken(data, new MsgPackContext());
+        }
+
         public static T Deserialize<T>(byte[] data)
         {
             return Deserialize<T>(data, new MsgPackContext());
+        }
+
+        public static T Deserialize<T>(MsgPackToken token)
+        {
+            return Deserialize<T>(token, new MsgPackContext());
+        }
+
+        public static T Deserialize<T>(MsgPackToken token, [NotNull]MsgPackContext context)
+        {
+            return Deserialize<T>(token.RawBytes, context);
         }
 
         public static T Deserialize<T>(byte[] data, [NotNull]MsgPackContext context)

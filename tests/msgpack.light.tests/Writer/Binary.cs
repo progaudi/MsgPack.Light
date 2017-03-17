@@ -84,6 +84,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         public void Test(byte[] value, byte[] data)
         {
             MsgPackSerializer.Serialize(value).ShouldBe(data);
+
+            ((MsgPackToken)value).RawBytes.ShouldBe(data);
         }
     }
 }

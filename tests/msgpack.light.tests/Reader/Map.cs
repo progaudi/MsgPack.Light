@@ -1,5 +1,6 @@
 using Shouldly;
 using System.Collections.Generic;
+using System.Linq;
 
 using Xunit;
 
@@ -54,6 +55,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
             var settings = new MsgPackContext();
             settings.RegisterConverter(new TestReflectionConverter());
             MsgPackSerializer.Serialize(tests, settings).ShouldBe(data);
+
+            Helpers.CheckTokenDeserialization(data);
         }
 
         [Fact]
@@ -79,6 +82,11 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
             };
 
             MsgPackSerializer.Deserialize<Dictionary<int, string>>(bytes).ShouldBe(test);
+
+            var token = Helpers.CheckTokenDeserialization(bytes);
+            ((Dictionary<MsgPackToken, MsgPackToken>) token)
+                .ToDictionary(kvp => (int) kvp.Key, kvp => (string) kvp.Value)
+                .ShouldBe(test);
         }
 
         [Fact]
@@ -143,6 +151,11 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
             };
 
             MsgPackSerializer.Deserialize<Dictionary<int, string>>(bytes).ShouldBe(test);
+
+            var token = Helpers.CheckTokenDeserialization(bytes);
+            ((Dictionary<MsgPackToken, MsgPackToken>)token)
+                .ToDictionary(kvp => (int)kvp.Key, kvp => (string)kvp.Value)
+                .ShouldBe(test);
         }
     }
 }
