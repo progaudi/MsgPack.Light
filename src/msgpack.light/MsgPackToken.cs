@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 using ProGaudi.MsgPack.Light.Converters;
@@ -10,8 +11,13 @@ namespace ProGaudi.MsgPack.Light
         private static readonly IMsgPackConverter<bool> BoolConverter = new BoolConverter();
         private static readonly IMsgPackConverter<string> StringConverter = new StringConverter();
         private static readonly NumberConverter NumberConverter = new NumberConverter(false);
+
+        private static IMsgPackConverter<byte[]> _binaryConverter;
         private static IMsgPackConverter<MsgPackToken[]> _arrayConverter;
         private static IMsgPackConverter<Dictionary<MsgPackToken, MsgPackToken>> _dictionaryConverter;
+        private static IMsgPackConverter<DateTime> _dateTimeConverter;
+        private static IMsgPackConverter<DateTimeOffset> _dateTimeOffsetConverter;
+        private static IMsgPackConverter<TimeSpan> _timeSpanConverter;
 
         public MsgPackToken(byte[] rawBytes, MsgPackContext context = null)
         {
@@ -31,9 +37,29 @@ namespace ProGaudi.MsgPack.Light
             {
                 _dictionaryConverter = context.GetConverter<Dictionary<MsgPackToken, MsgPackToken>>();
             }
+
+            if (_binaryConverter == null)
+            {
+                _binaryConverter = context.GetConverter<byte[]>();
+            }
+
+            if (_dateTimeConverter == null)
+            {
+                _dateTimeConverter = context.GetConverter<DateTime>();
+            }
+
+            if (_dateTimeOffsetConverter== null)
+            {
+                _dateTimeOffsetConverter = context.GetConverter<DateTimeOffset>();
+            }
+
+            if (_timeSpanConverter == null)
+            {
+                _timeSpanConverter = context.GetConverter<TimeSpan>();
+            }
         }
 
-        internal byte[] RawBytes { get; }
+        public byte[] RawBytes { get; }
 
         #region Bool type conversion
 
@@ -67,12 +93,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(byte[] data)
         {
-            return new MsgPackToken(data);
+            return CastValueToToken(data, _binaryConverter);
         }
 
         public static explicit operator byte[] (MsgPackToken token)
         {
-            return token.RawBytes;
+            return CastTokenToValue<byte[]>(token, _binaryConverter);
         }
 
         #endregion
@@ -213,6 +239,48 @@ namespace ProGaudi.MsgPack.Light
         public static explicit operator double(MsgPackToken token)
         {
             return CastTokenToValue<double>(token, NumberConverter);
+        }
+
+        #endregion
+
+        #region DateTime type conversion
+
+        public static explicit operator MsgPackToken(DateTime value)
+        {
+            return CastValueToToken(value, _dateTimeConverter);
+        }
+
+        public static explicit operator DateTime(MsgPackToken token)
+        {
+            return CastTokenToValue<DateTime>(token, _dateTimeConverter);
+        }
+
+        #endregion
+
+        #region DateTimeOffset type conversion
+
+        public static explicit operator MsgPackToken(DateTimeOffset value)
+        {
+            return CastValueToToken(value, _dateTimeOffsetConverter);
+        }
+
+        public static explicit operator DateTimeOffset(MsgPackToken token)
+        {
+            return CastTokenToValue<DateTimeOffset>(token, _dateTimeOffsetConverter);
+        }
+
+        #endregion
+
+        #region DateTimeOffset type conversion
+
+        public static explicit operator MsgPackToken(TimeSpan value)
+        {
+            return CastValueToToken(value, _timeSpanConverter);
+        }
+
+        public static explicit operator TimeSpan(MsgPackToken token)
+        {
+            return CastTokenToValue<TimeSpan>(token, _timeSpanConverter);
         }
 
         #endregion

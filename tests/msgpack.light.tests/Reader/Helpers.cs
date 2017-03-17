@@ -1,6 +1,8 @@
 using System;
 using System.Text;
 
+using Shouldly;
+
 namespace ProGaudi.MsgPack.Light.Tests.Reader
 {
     public class Helpers
@@ -23,6 +25,13 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
             var crypto = new Random();
             crypto.NextBytes(data);
             return data;
+        }
+
+        public static MsgPackToken CheckTokenDeserialization(byte[] data)
+        {
+            var token = MsgPackSerializer.Deserialize<MsgPackToken>(data);
+            token.RawBytes.ShouldBe(data);
+            return token;
         }
     }
 }

@@ -37,6 +37,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         {
             var d = MsgPackSerializer.Deserialize<double>(bytes);
             d.ShouldBe(value);
+
+            var token = Helpers.CheckTokenDeserialization(bytes);
+            ((double)token).ShouldBe(value);
         }
 
         [Theory]
@@ -64,6 +67,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TestFloat(float value, byte[] bytes)
         {
             MsgPackSerializer.Deserialize<float>(bytes).ShouldBe(value);
+
+            var token = Helpers.CheckTokenDeserialization(bytes);
+            ((float)token).ShouldBe(value);
         }
 
         [Theory]

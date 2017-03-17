@@ -24,6 +24,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
             {
                 var value = MsgPackSerializer.Deserialize<TimeSpan>(test.Value);
                 value.ShouldBe(test.Key);
+
+                var token = Helpers.CheckTokenDeserialization(test.Value);
+                ((TimeSpan)token).ShouldBe(test.Key);
             }
         }
     }

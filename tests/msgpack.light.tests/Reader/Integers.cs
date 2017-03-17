@@ -22,6 +22,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TestSignedLong(long number, byte[] data)
         {
             MsgPackSerializer.Deserialize<long>(data).ShouldBe(number);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((long)token).ShouldBe(number);
         }
 
         [Theory]
@@ -39,6 +42,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TestSignedInt(int number, byte[] data)
         {
             MsgPackSerializer.Deserialize<int>(data).ShouldBe(number);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((int)token).ShouldBe(number);
         }
 
         [Theory]
@@ -52,6 +58,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TestSignedShort(short number, byte[] data)
         {
             MsgPackSerializer.Deserialize<short>(data).ShouldBe(number);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((short)token).ShouldBe(number);
         }
 
         [Theory]
@@ -63,19 +72,27 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void TestSignedByte(sbyte number, byte[] data)
         {
             MsgPackSerializer.Deserialize<sbyte>(data).ShouldBe(number);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((sbyte)token).ShouldBe(number);
         }
 
         [Theory]
-        //[InlineData(0, new byte[] {0x00})]
+        [InlineData(0, new byte[] {0x00})]
         [InlineData(1, new byte[] {1})]
-        //[InlineData(byte.MaxValue, new byte[] {0xcc, 0xff})]
-        //[InlineData(ushort.MaxValue, new byte[] {0xcd, 0xff, 0xff})]
-        //[InlineData(uint.MaxValue, new byte[] {0xce, 0xff, 0xff, 0xff, 0xff})]
-        //[InlineData(ulong.MaxValue, new byte[] {0xcf, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff})]
+        [InlineData(byte.MaxValue, new byte[] { 0xcc, 0xff })]
+        [InlineData(ushort.MaxValue, new byte[] { 0xcd, 0xff, 0xff })]
+        [InlineData(uint.MaxValue, new byte[] { 0xce, 0xff, 0xff, 0xff, 0xff })]
+        [InlineData(ulong.MaxValue, new byte[] { 0xcf, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff })]
         public void TetsUnsignedLong(ulong number, byte[] data)
         {
             MsgPackSerializer.Deserialize<ulong>(data).ShouldBe(number);
+
+            var token = Helpers.CheckTokenDeserialization(data);
+            ((ulong)token).ShouldBe(number);
         }
+
+        
 
         [Theory]
         [InlineData(0, new byte[] {0x00})]
