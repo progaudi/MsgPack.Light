@@ -1,5 +1,6 @@
 using Shouldly;
 using System.Collections.Generic;
+using System.Linq;
 
 using Xunit;
 
@@ -79,6 +80,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
             };
 
             MsgPackSerializer.Serialize(test).ShouldBe(bytes);
+
+            new MsgPackToken(test.ToDictionary(e => (MsgPackToken)e.Key, e => (MsgPackToken)e.Value)).RawBytes.ShouldBe(bytes);
         }
     }
 }

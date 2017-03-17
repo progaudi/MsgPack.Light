@@ -18,6 +18,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         public void WriteNullByteArray()
         {
             MsgPackSerializer.Serialize((byte[]) null).ShouldBe(new[] {(byte) DataTypes.Null});
+            ((MsgPackToken)(byte[])null).RawBytes.ShouldBe(new[] { (byte)DataTypes.Null });
         }
 
         [Fact]
@@ -30,6 +31,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         public void WriteNullString()
         {
             MsgPackSerializer.Serialize((string) null).ShouldBe(new[] {(byte) DataTypes.Null});
+            ((MsgPackToken)(string)null).RawBytes.ShouldBe(new[] { (byte)DataTypes.Null });
         }
     }
 }

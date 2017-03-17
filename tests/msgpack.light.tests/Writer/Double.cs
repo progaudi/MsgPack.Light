@@ -26,6 +26,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         public void TestDouble(double value, byte[] bytes)
         {
             MsgPackSerializer.Serialize(value).ShouldBe(bytes);
+            ((MsgPackToken)value).RawBytes.ShouldBe(bytes);
         }
 
         [Theory]
@@ -46,6 +47,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         public void TestFloat(float value, byte[] bytes)
         {
             MsgPackSerializer.Serialize(value).ShouldBe(bytes);
+            ((MsgPackToken)value).RawBytes.ShouldBe(bytes);
         }
     }
 }

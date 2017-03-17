@@ -17,7 +17,7 @@
         public MsgPackToken Read(IMsgPackReader reader)
         {
             var rawBytes = reader.ReadToken();
-            return new MsgPackToken(rawBytes, _context);
+            return new MsgPackToken(_context, rawBytes);
         }
     }
 }

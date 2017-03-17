@@ -9,130 +9,142 @@ namespace ProGaudi.MsgPack.Light
 
         private readonly MsgPackContext _context;
 
-        public MsgPackToken(byte[] rawBytes, MsgPackContext context = null)
+        public MsgPackToken(MsgPackContext context, byte[] rawBytes)
         {
             RawBytes = rawBytes;
             _context = context;
         }
 
-        public MsgPackToken(bool rawBytes, MsgPackContext context = null)
+        public MsgPackToken(byte[] value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        public MsgPackToken(string rawBytes, MsgPackContext context = null)
+        public MsgPackToken(bool value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        public MsgPackToken(ulong rawBytes, MsgPackContext context = null)
+        public MsgPackToken(string value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        public MsgPackToken(long rawBytes, MsgPackContext context = null)
+        public MsgPackToken(ulong value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        public MsgPackToken(double rawBytes, MsgPackContext context = null)
+        public MsgPackToken(long value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        public MsgPackToken(DateTime rawBytes, MsgPackContext context = null)
+        public MsgPackToken(float value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        public MsgPackToken(DateTimeOffset rawBytes, MsgPackContext context = null)
+        public MsgPackToken(double value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        public MsgPackToken(TimeSpan rawBytes, MsgPackContext context = null)
+        public MsgPackToken(DateTime value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        public MsgPackToken(MsgPackToken[] rawBytes, MsgPackContext context = null)
+        public MsgPackToken(DateTimeOffset value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        public MsgPackToken(Dictionary<MsgPackToken, MsgPackToken> rawBytes, MsgPackContext context = null)
+        public MsgPackToken(TimeSpan value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        private MsgPackToken(bool? rawBytes, MsgPackContext context = null)
+        public MsgPackToken(MsgPackToken[] value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        private MsgPackToken(ulong? rawBytes, MsgPackContext context = null)
+        public MsgPackToken(Dictionary<MsgPackToken, MsgPackToken> value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        private MsgPackToken(uint rawBytes, MsgPackContext context = null)
+        private MsgPackToken(bool? value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        private MsgPackToken(long? rawBytes, MsgPackContext context = null)
+        private MsgPackToken(ulong? value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        private MsgPackToken(uint? rawBytes, MsgPackContext context = null)
+        private MsgPackToken(uint value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        private MsgPackToken(float? rawBytes, MsgPackContext context = null)
+        private MsgPackToken(long? value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        private MsgPackToken(double? rawBytes, MsgPackContext context = null)
+        private MsgPackToken(uint? value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        private MsgPackToken(DateTime? rawBytes, MsgPackContext context = null)
+        private MsgPackToken(float? value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        private MsgPackToken(DateTimeOffset? rawBytes, MsgPackContext context = null)
+        private MsgPackToken(double? value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        private MsgPackToken(TimeSpan? rawBytes, MsgPackContext context = null)
+        private MsgPackToken(DateTime? value, MsgPackContext context = null)
         {
             _context = context;
-            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
+        }
+
+        private MsgPackToken(DateTimeOffset? value, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
+        }
+
+        private MsgPackToken(TimeSpan? value, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
         public byte[] RawBytes { get; }
@@ -295,7 +307,7 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(float value)
         {
-            return new MsgPackToken((double)value);
+            return new MsgPackToken(value);
         }
 
         public static explicit operator float(MsgPackToken token)

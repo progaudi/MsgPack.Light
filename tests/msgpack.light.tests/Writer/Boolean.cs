@@ -6,16 +6,14 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
 {
     public class Boolean
     {
-        [Fact]
-        public void False()
+        [Theory]
+        [InlineData(true, new byte[] { (byte)DataTypes.True })]
+        [InlineData(false, new byte[] { (byte)DataTypes.False })]
+        public void Test(bool value, byte[] data)
         {
-            MsgPackSerializer.Serialize(false).ShouldBe(new[] {(byte) DataTypes.False});
-        }
+            MsgPackSerializer.Serialize(value).ShouldBe(data);
 
-        [Fact]
-        public void True()
-        {
-            MsgPackSerializer.Serialize(true).ShouldBe(new[] {(byte) DataTypes.True});
+            ((MsgPackToken)value).RawBytes.ShouldBe(data);
         }
     }
 }
