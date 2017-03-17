@@ -147,7 +147,7 @@ namespace ProGaudi.MsgPack.Light
             RawBytes = MsgPackSerializer.Serialize(value, _context ?? DefaultContext);
         }
 
-        public byte[] RawBytes { get; }
+        internal byte[] RawBytes { get; }
 
         #region Bool type conversion
 
