@@ -1,62 +1,138 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-
-using ProGaudi.MsgPack.Light.Converters;
 
 namespace ProGaudi.MsgPack.Light
 {
     public class MsgPackToken
     {
-        private static readonly IMsgPackConverter<bool> BoolConverter = new BoolConverter();
-        private static readonly IMsgPackConverter<string> StringConverter = new StringConverter();
-        private static readonly NumberConverter NumberConverter = new NumberConverter(false);
+        private static readonly MsgPackContext DefaultContext = new MsgPackContext();
 
-        private static IMsgPackConverter<byte[]> _binaryConverter;
-        private static IMsgPackConverter<MsgPackToken[]> _arrayConverter;
-        private static IMsgPackConverter<Dictionary<MsgPackToken, MsgPackToken>> _dictionaryConverter;
-        private static IMsgPackConverter<DateTime> _dateTimeConverter;
-        private static IMsgPackConverter<DateTimeOffset> _dateTimeOffsetConverter;
-        private static IMsgPackConverter<TimeSpan> _timeSpanConverter;
+        private readonly MsgPackContext _context;
 
         public MsgPackToken(byte[] rawBytes, MsgPackContext context = null)
         {
             RawBytes = rawBytes;
+            _context = context;
+        }
 
-            if (context == null)
-            {
-                return;
-            }
+        public MsgPackToken(bool rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
 
-            if (_arrayConverter == null)
-            {
-                _arrayConverter = context.GetConverter<MsgPackToken[]>();
-            }
+        public MsgPackToken(string rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
 
-            if (_dictionaryConverter == null)
-            {
-                _dictionaryConverter = context.GetConverter<Dictionary<MsgPackToken, MsgPackToken>>();
-            }
+        public MsgPackToken(ulong rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
 
-            if (_binaryConverter == null)
-            {
-                _binaryConverter = context.GetConverter<byte[]>();
-            }
+        public MsgPackToken(long rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
 
-            if (_dateTimeConverter == null)
-            {
-                _dateTimeConverter = context.GetConverter<DateTime>();
-            }
+        public MsgPackToken(double rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
 
-            if (_dateTimeOffsetConverter== null)
-            {
-                _dateTimeOffsetConverter = context.GetConverter<DateTimeOffset>();
-            }
+        public MsgPackToken(DateTime rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
 
-            if (_timeSpanConverter == null)
-            {
-                _timeSpanConverter = context.GetConverter<TimeSpan>();
-            }
+        public MsgPackToken(DateTimeOffset rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
+
+        public MsgPackToken(TimeSpan rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
+
+        public MsgPackToken(MsgPackToken[] rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
+
+        public MsgPackToken(Dictionary<MsgPackToken, MsgPackToken> rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
+
+        private MsgPackToken(bool? rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
+
+        private MsgPackToken(ulong? rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
+
+        private MsgPackToken(uint rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
+
+        private MsgPackToken(long? rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
+
+        private MsgPackToken(uint? rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
+
+        private MsgPackToken(float? rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
+
+        private MsgPackToken(double? rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
+
+        private MsgPackToken(DateTime? rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
+
+        private MsgPackToken(DateTimeOffset? rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
+        }
+
+        private MsgPackToken(TimeSpan? rawBytes, MsgPackContext context = null)
+        {
+            _context = context;
+            RawBytes = MsgPackSerializer.Serialize(rawBytes, _context ?? DefaultContext);
         }
 
         public byte[] RawBytes { get; }
@@ -65,12 +141,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(bool b)
         {
-            return CastValueToToken(b, BoolConverter);
+            return new MsgPackToken(b);
         }
 
         public static explicit operator bool(MsgPackToken token)
         {
-            return CastTokenToValue(token, BoolConverter);
+            return token.CastTokenToValue<bool>();
         }
 
         #endregion
@@ -79,12 +155,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(string str)
         {
-            return CastValueToToken(str, StringConverter);
+            return new MsgPackToken(str);
         }
 
         public static explicit operator string(MsgPackToken token)
         {
-            return CastTokenToValue(token, StringConverter);
+            return token.CastTokenToValue<string>();
         }
 
         #endregion
@@ -93,12 +169,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(byte[] data)
         {
-            return CastValueToToken(data, _binaryConverter);
+            return new MsgPackToken(data);
         }
 
         public static explicit operator byte[] (MsgPackToken token)
         {
-            return CastTokenToValue<byte[]>(token, _binaryConverter);
+            return token.CastTokenToValue<byte[]>();
         }
 
         #endregion
@@ -107,12 +183,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(ulong value)
         {
-            return CastValueToToken(value, NumberConverter);
+            return new MsgPackToken(value);
         }
 
         public static explicit operator ulong(MsgPackToken token)
         {
-            return CastTokenToValue<ulong>(token, NumberConverter);
+            return token.CastTokenToValue<ulong>();
         }
 
         #endregion
@@ -121,12 +197,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(uint value)
         {
-            return CastValueToToken(value, NumberConverter);
+            return new MsgPackToken(value);
         }
 
         public static explicit operator uint(MsgPackToken token)
         {
-            return CastTokenToValue<uint>(token, NumberConverter);
+            return token.CastTokenToValue<uint>();
         }
 
         #endregion
@@ -135,12 +211,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(ushort value)
         {
-            return CastValueToToken(value, NumberConverter);
+            return new MsgPackToken(value);
         }
 
         public static explicit operator ushort(MsgPackToken token)
         {
-            return CastTokenToValue<ushort>(token, NumberConverter);
+            return token.CastTokenToValue<ushort>();
         }
 
         #endregion
@@ -149,12 +225,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(byte value)
         {
-            return CastValueToToken(value, NumberConverter);
+            return new MsgPackToken(value);
         }
 
         public static explicit operator byte(MsgPackToken token)
         {
-            return CastTokenToValue<byte>(token, NumberConverter);
+            return token.CastTokenToValue<byte>();
         }
 
         #endregion
@@ -163,12 +239,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(long value)
         {
-            return CastValueToToken(value, NumberConverter);
+            return new MsgPackToken(value);
         }
 
         public static explicit operator long(MsgPackToken token)
         {
-            return CastTokenToValue<long>(token, NumberConverter);
+            return token.CastTokenToValue<long>();
         }
 
         #endregion
@@ -177,12 +253,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(int value)
         {
-            return CastValueToToken(value, NumberConverter);
+            return new MsgPackToken(value);
         }
 
         public static explicit operator int(MsgPackToken token)
         {
-            return CastTokenToValue<int>(token, NumberConverter);
+            return token.CastTokenToValue<int>();
         }
 
         #endregion
@@ -191,12 +267,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(short value)
         {
-            return CastValueToToken(value, NumberConverter);
+            return new MsgPackToken(value);
         }
 
         public static explicit operator short(MsgPackToken token)
         {
-            return CastTokenToValue<short>(token, NumberConverter);
+            return token.CastTokenToValue<short>();
         }
 
         #endregion
@@ -205,12 +281,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(sbyte value)
         {
-            return CastValueToToken(value, NumberConverter);
+            return new MsgPackToken(value);
         }
 
         public static explicit operator sbyte(MsgPackToken token)
         {
-            return CastTokenToValue<sbyte>(token, NumberConverter);
+            return token.CastTokenToValue<sbyte>();
         }
 
         #endregion
@@ -219,12 +295,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(float value)
         {
-            return CastValueToToken(value, NumberConverter);
+            return new MsgPackToken((double)value);
         }
 
         public static explicit operator float(MsgPackToken token)
         {
-            return CastTokenToValue<float>(token, NumberConverter);
+            return token.CastTokenToValue<float>();
         }
 
         #endregion
@@ -233,12 +309,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(double value)
         {
-            return CastValueToToken(value, NumberConverter);
+            return new MsgPackToken(value);
         }
 
         public static explicit operator double(MsgPackToken token)
         {
-            return CastTokenToValue<double>(token, NumberConverter);
+            return token.CastTokenToValue<double>();
         }
 
         #endregion
@@ -247,12 +323,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(DateTime value)
         {
-            return CastValueToToken(value, _dateTimeConverter);
+            return new MsgPackToken(value);
         }
 
         public static explicit operator DateTime(MsgPackToken token)
         {
-            return CastTokenToValue<DateTime>(token, _dateTimeConverter);
+            return token.CastTokenToValue<DateTime>();
         }
 
         #endregion
@@ -261,12 +337,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(DateTimeOffset value)
         {
-            return CastValueToToken(value, _dateTimeOffsetConverter);
+            return new MsgPackToken(value);
         }
 
         public static explicit operator DateTimeOffset(MsgPackToken token)
         {
-            return CastTokenToValue<DateTimeOffset>(token, _dateTimeOffsetConverter);
+            return token.CastTokenToValue<DateTimeOffset>();
         }
 
         #endregion
@@ -275,12 +351,208 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(TimeSpan value)
         {
-            return CastValueToToken(value, _timeSpanConverter);
+            return new MsgPackToken(value);
         }
 
         public static explicit operator TimeSpan(MsgPackToken token)
         {
-            return CastTokenToValue<TimeSpan>(token, _timeSpanConverter);
+            return token.CastTokenToValue<TimeSpan>();
+        }
+
+        #endregion
+
+        #region Nullable<Bool> type conversion
+
+        public static explicit operator MsgPackToken(bool? b)
+        {
+            return new MsgPackToken(b);
+        }
+
+        public static explicit operator bool? (MsgPackToken token)
+        {
+            return token.CastTokenToValue<bool?>();
+        }
+
+        #endregion
+
+        #region Nullable<ulong> type conversion
+
+        public static explicit operator MsgPackToken(ulong? value)
+        {
+            return new MsgPackToken(value);
+        }
+
+        public static explicit operator ulong? (MsgPackToken token)
+        {
+            return token.CastTokenToValue<ulong?>();
+        }
+
+        #endregion
+
+        #region Nullable<uint> type conversion
+
+        public static explicit operator MsgPackToken(uint? value)
+        {
+            return new MsgPackToken(value);
+        }
+
+        public static explicit operator uint? (MsgPackToken token)
+        {
+            return token.CastTokenToValue<uint?>();
+        }
+
+        #endregion
+
+        #region Nullable<ushort> type conversion
+
+        public static explicit operator MsgPackToken(ushort? value)
+        {
+            return new MsgPackToken(value);
+        }
+
+        public static explicit operator ushort? (MsgPackToken token)
+        {
+            return token.CastTokenToValue<ushort?>();
+        }
+
+        #endregion
+
+        #region Nullable<byte> type conversion
+
+        public static explicit operator MsgPackToken(byte? value)
+        {
+            return new MsgPackToken(value);
+        }
+
+        public static explicit operator byte? (MsgPackToken token)
+        {
+            return token.CastTokenToValue<byte?>();
+        }
+
+        #endregion
+
+        #region Nullable<long> type conversion
+
+        public static explicit operator MsgPackToken(long? value)
+        {
+            return new MsgPackToken(value);
+        }
+
+        public static explicit operator long? (MsgPackToken token)
+        {
+            return token.CastTokenToValue<long?>();
+        }
+
+        #endregion
+
+        #region Nullable<int> type conversion
+
+        public static explicit operator MsgPackToken(int? value)
+        {
+            return new MsgPackToken(value);
+        }
+
+        public static explicit operator int? (MsgPackToken token)
+        {
+            return token.CastTokenToValue<int?>();
+        }
+
+        #endregion
+
+        #region Nullable<short> type conversion
+
+        public static explicit operator MsgPackToken(short? value)
+        {
+            return new MsgPackToken(value);
+        }
+
+        public static explicit operator short? (MsgPackToken token)
+        {
+            return token.CastTokenToValue<short?>();
+        }
+
+        #endregion
+
+        #region Nullable<sbyte> type conversion
+
+        public static explicit operator MsgPackToken(sbyte? value)
+        {
+            return new MsgPackToken(value);
+        }
+
+        public static explicit operator sbyte? (MsgPackToken token)
+        {
+            return token.CastTokenToValue<sbyte?>();
+        }
+
+        #endregion
+
+        #region Nullable<float> type conversion
+
+        public static explicit operator MsgPackToken(float? value)
+        {
+            return new MsgPackToken(value);
+        }
+
+        public static explicit operator float? (MsgPackToken token)
+        {
+            return token.CastTokenToValue<float?>();
+        }
+
+        #endregion
+
+        #region Nullable<double> type conversion
+
+        public static explicit operator MsgPackToken(double? value)
+        {
+            return new MsgPackToken(value);
+        }
+
+        public static explicit operator double? (MsgPackToken token)
+        {
+            return token.CastTokenToValue<double?>();
+        }
+
+        #endregion
+
+        #region Nullable<DateTime> type conversion
+
+        public static explicit operator MsgPackToken(DateTime? value)
+        {
+            return new MsgPackToken(value);
+        }
+
+        public static explicit operator DateTime? (MsgPackToken token)
+        {
+            return token.CastTokenToValue<DateTime?>();
+        }
+
+        #endregion
+
+        #region Nullable<DateTimeOffset> type conversion
+
+        public static explicit operator MsgPackToken(DateTimeOffset? value)
+        {
+            return new MsgPackToken(value);
+        }
+
+        public static explicit operator DateTimeOffset? (MsgPackToken token)
+        {
+            return token.CastTokenToValue<DateTimeOffset?>();
+        }
+
+        #endregion
+
+        #region Nullable<DateTimeOffset> type conversion
+
+        public static explicit operator MsgPackToken(TimeSpan? value)
+        {
+            return new MsgPackToken(value);
+        }
+
+        public static explicit operator TimeSpan? (MsgPackToken token)
+        {
+            return token.CastTokenToValue<TimeSpan?>();
         }
 
         #endregion
@@ -289,12 +561,12 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(MsgPackToken[] value)
         {
-            return CastValueToToken(value, _arrayConverter);
+            return new MsgPackToken(value);
         }
 
         public static explicit operator MsgPackToken[] (MsgPackToken token)
         {
-            return CastTokenToValue<MsgPackToken[]>(token, _arrayConverter);
+            return token.CastTokenToValue<MsgPackToken[]>();
         }
 
         #endregion
@@ -303,29 +575,19 @@ namespace ProGaudi.MsgPack.Light
 
         public static explicit operator MsgPackToken(Dictionary<MsgPackToken, MsgPackToken> value)
         {
-            return CastValueToToken(value, _dictionaryConverter);
+            return new MsgPackToken(value);
         }
 
         public static explicit operator Dictionary<MsgPackToken, MsgPackToken>(MsgPackToken token)
         {
-            return CastTokenToValue<Dictionary<MsgPackToken, MsgPackToken>>(token, _dictionaryConverter);
+            return token.CastTokenToValue<Dictionary<MsgPackToken, MsgPackToken>>();
         }
 
         #endregion
 
-        private static MsgPackToken CastValueToToken<T>(T value, IMsgPackConverter<T> converter)
+        private T CastTokenToValue<T>()
         {
-            var memoryStream = new MemoryStream();
-            var writer = new MsgPackMemoryStreamWriter(memoryStream);
-            converter.Write(value, writer);
-
-            return new MsgPackToken(memoryStream.ToArray());
-        }
-
-        private static T CastTokenToValue<T>(MsgPackToken token, IMsgPackConverter<T> converter)
-        {
-            var reader = new MsgPackByteArrayReader(token.RawBytes);
-            return converter.Read(reader);
+            return MsgPackSerializer.Deserialize<T>(RawBytes, _context ?? DefaultContext);
         }
     }
 }
