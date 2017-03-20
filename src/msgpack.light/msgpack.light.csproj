@@ -14,6 +14,9 @@
     <GenerateAssemblyProductAttribute>true</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCopyrightAttribute>true</GenerateAssemblyCopyrightAttribute>
     <ProjectGuid>{04D4E761-F756-43D8-B31C-79B1B0671243}</ProjectGuid>
+    <Version>1.2.0</Version>
+    <Authors>roman-kozachenko;aensidhe</Authors>
+    <Company>progaudi</Company>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="10.3.0" />
