@@ -7,7 +7,7 @@ namespace ProGaudi.MsgPack.Light
         public ConverterNotFoundException(Type type)
             : base($"Converter not found for type {type.FullName}")
         {
-            this.ObjectType = type;
+            ObjectType = type;
         }
 
         public Type ObjectType { get; }

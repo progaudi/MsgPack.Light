@@ -4,12 +4,15 @@ using System.Linq;
 using System.Reflection;
 
 using ProGaudi.MsgPack.Light.Converters;
+using ProGaudi.MsgPack.Light.Converters.Generation;
 
 namespace ProGaudi.MsgPack.Light
 {
     public class MsgPackContext
     {
         private static readonly IMsgPackConverter<object> SharedNullConverter = new NullConverter();
+
+        private static readonly ConverterGenerationContext GeneratorContext = new ConverterGenerationContext();
 
         private readonly Dictionary<Type, IMsgPackConverter> _converters;
 
@@ -62,6 +65,19 @@ namespace ProGaudi.MsgPack.Light
         }
 
         public IMsgPackConverter<object> NullConverter => SharedNullConverter;
+
+        public void GenerateAndRegisterConverter<T>()
+        {
+            var generator = GeneratorContext.GenerateConverter(typeof(T));
+            RegisterConverter((IMsgPackConverter<T>) generator);
+        }
+
+        public void GenerateAndRegisterConverter<TInterface, TImplementation>()
+            where TImplementation : TInterface
+        {
+            var generator = GeneratorContext.GenerateConverter(typeof(TInterface), typeof(TImplementation));
+            RegisterConverter((IMsgPackConverter<TInterface>)generator);
+        }
 
         public void RegisterConverter<T>(IMsgPackConverter<T> converter)
         {
@@ -120,9 +136,8 @@ namespace ProGaudi.MsgPack.Light
                 return null;
             }
             var genericType = type.GetGenericTypeDefinition();
-            Type genericConverterType;
 
-            if (!_genericConverters.TryGetValue(genericType, out genericConverterType))
+            if (!_genericConverters.TryGetValue(genericType, out var genericConverterType))
             {
                 return null;
             }
@@ -181,14 +196,7 @@ namespace ProGaudi.MsgPack.Light
 
         private IMsgPackConverter GetConverterFromCache<T>()
         {
-            IMsgPackConverter temp;
-
-            if (_converters.TryGetValue(typeof(T), out temp))
-            {
-                return temp;
-            }
-
-            return null;
+            return _converters.TryGetValue(typeof(T), out var temp) ? temp : null;
         }
 
         private static TypeInfo GetGenericInterface(Type type, Type genericInterfaceType)

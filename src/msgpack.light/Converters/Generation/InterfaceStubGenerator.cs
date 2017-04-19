@@ -8,10 +8,32 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 {
     public class InterfaceStubGenerator
     {
-        public Type GenerateTypeToInstantinate(ModuleBuilder moduleBuilder, Type typeToWrap, string namespaceToPlace, Func<string, string> nameMangler)
+        private readonly ModuleBuilder _moduleBuilder;
+
+        private readonly string _namespaceToPlace;
+
+        public InterfaceStubGenerator(ModuleBuilder moduleBuilder, string namespaceToPlace)
         {
-            var typeBuilder = moduleBuilder.DefineType(
-                $"{namespaceToPlace}.{nameMangler(typeToWrap.GetNormalizedName())}",
+            _moduleBuilder = moduleBuilder;
+            _namespaceToPlace = namespaceToPlace;
+        }
+
+        public Type GenerateTypeToInstantinate(Type typeToWrap, Func<string, string> nameMangler)
+        {
+            var typeInfo = typeToWrap.GetTypeInfo();
+            var isInterface = typeInfo.IsInterface;
+            if (!isInterface)
+            {
+                throw new ArgumentException($"{typeToWrap.Name} should be interface", nameof(typeToWrap));
+            }
+
+            if (typeInfo.IsGenericTypeDefinition)
+            {
+                throw new NotImplementedException("Can't generate generic implementors.");
+            }
+
+            var typeBuilder = _moduleBuilder.DefineType(
+                $"{_namespaceToPlace}.{nameMangler(typeToWrap.GetNormalizedName())}",
                 TypeAttributes.Public,
                 typeof(object));
 

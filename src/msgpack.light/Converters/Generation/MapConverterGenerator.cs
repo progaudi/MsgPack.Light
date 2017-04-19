@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Runtime.Serialization;
 
 namespace ProGaudi.MsgPack.Light.Converters.Generation
 {
@@ -12,57 +11,20 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
     {
         private readonly ModuleBuilder _moduleBuilder;
         private readonly string _namespaceToPlace;
-        private readonly InterfaceStubGenerator _generator;
 
-        public MapConverterGenerator(ModuleBuilder moduleBuilder, string namespaceToPlace, InterfaceStubGenerator generator)
+        public MapConverterGenerator(ModuleBuilder moduleBuilder, string namespaceToPlace)
         {
             _moduleBuilder = moduleBuilder;
             _namespaceToPlace = namespaceToPlace;
-            _generator = generator;
         }
 
-        public Type Generate(Type typeToWrap, Func<string, string> nameGenerator)
+        public Type Generate(Type typeToWrap, Type typeToInstantinate)
         {
-            var typeInfo = typeToWrap.GetTypeInfo();
-            var defaultCtor = typeInfo.GetConstructor(new Type[0]);
-            var isInterface = typeInfo.IsInterface;
-            if (!isInterface)
-            {
-                if (!typeInfo.IsAbstract)
-                {
-                    throw new NotImplementedException("Can't generate child type for abstract class");
-                }
-
-                if (defaultCtor == null)
-                {
-                    throw new NotImplementedException("Can't generate child type for type without default ctor");
-                }
-            }
-
-            if (typeInfo.IsGenericTypeDefinition)
-            {
-                throw new NotImplementedException("Can't generate generic implementors.");
-            }
-
-            var typeToInstantinate = isInterface
-                ? _generator.GenerateTypeToInstantinate(_moduleBuilder, typeToWrap, _namespaceToPlace, nameGenerator)
-                : typeToWrap;
-
             var propsToWrap = typeToWrap
                 .GetMembersFromInterface(x => x.GetTypeInfo().DeclaredProperties)
-                .Where(x => x.GetCustomAttribute<DataMemberAttribute>() != null)
+                .Where(x => x.GetCustomAttribute<MsgPackMapElementAttribute>() != null)
                 .ToImmutableArray();
 
-            return GenerateConverter(this._moduleBuilder, this._namespaceToPlace, propsToWrap, typeToWrap, typeToInstantinate);
-        }
-
-        private static Type GenerateConverter(
-            ModuleBuilder moduleBuilder,
-            string namespaceToPlace,
-            ImmutableArray<PropertyInfo> propsToWrap,
-            Type typeToWrap,
-            Type typeToInstantinate)
-        {
             var interfaces = typeToInstantinate == typeToWrap
                 ? new[] {typeof(IMsgPackConverter<>).MakeGenericType(typeToWrap)}
                 : new[]
@@ -71,8 +33,8 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
                     typeof(IMsgPackConverter<>).MakeGenericType(typeToInstantinate)
                 };
 
-            var typeBuilder = moduleBuilder.DefineType(
-                $"{namespaceToPlace}.{typeToWrap.GetNormalizedName()}Converter",
+            var typeBuilder = _moduleBuilder.DefineType(
+                $"{_namespaceToPlace}.{typeToWrap.GetNormalizedName()}_{typeToInstantinate.GetNormalizedName()}_Converter",
                 TypeAttributes.Public,
                 typeof(object),
                 interfaces);
@@ -207,7 +169,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
                 next = generator.DefineLabel();
                 generator.Emit(OpCodes.Ldloc, propertyName);
-                generator.Emit(OpCodes.Ldstr, info.GetCustomAttribute<DataMemberAttribute>().Name);
+                generator.Emit(OpCodes.Ldstr, info.GetCustomAttribute<MsgPackMapElementAttribute>().Name);
                 generator.Emit(OpCodes.Ldc_I4, (int) StringComparison.OrdinalIgnoreCase);
                 generator.Emit(
                     OpCodes.Call,
@@ -303,7 +265,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             {
                 EmitWrite(
                     typeof(string),
-                    x => x.Emit(OpCodes.Ldstr, property.GetCustomAttribute<DataMemberAttribute>().Name));
+                    x => x.Emit(OpCodes.Ldstr, property.GetCustomAttribute<MsgPackMapElementAttribute>().Name));
                 EmitWrite(
                     property.PropertyType,
                     x =>
