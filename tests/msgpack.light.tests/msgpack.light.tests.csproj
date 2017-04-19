@@ -20,7 +20,6 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
-    <PackageReference Include="JetBrains.Annotations" Version="10.3.0" />
     <PackageReference Include="Shouldly" Version="2.8.2" />
     <ProjectReference Include="..\..\src\msgpack.light\msgpack.light.csproj" />
   </ItemGroup>
