@@ -1,12 +1,10 @@
 ﻿using System.IO;
-using System.Linq;
 
 using BenchmarkDotNet.Attributes;
 
-using ProGaudi.MsgPack.Light;
 using MsgPack.Serialization;
 
-namespace ProGaudi.MsgPack.Light.benchmark
+namespace ProGaudi.MsgPack.Light.Benchmark
 {
     [Config(typeof(BenchmarkConfig))]
     public abstract class NumberDeserialize<T>
@@ -54,15 +52,5 @@ namespace ProGaudi.MsgPack.Light.benchmark
             _stream.Seek(0, SeekOrigin.Begin);
             var data = MsgPackSerializer.Deserialize<T[]>(_stream, _mplightContext);
         }
-    }
-
-    public class IntDeserialize : NumberDeserialize<int>
-    {
-        protected override int[] Numbers => Data.Integers;
-    }
-
-    public class DoubleDeserialize : NumberDeserialize<double>
-    {
-        protected override double[] Numbers => Data.Doubles;
     }
 }

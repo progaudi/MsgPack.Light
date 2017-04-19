@@ -3,9 +3,9 @@ using System.Text;
 
 using BenchmarkDotNet.Attributes;
 
-using ProGaudi.MsgPack.Light;
+using ProGaudi.MsgPack.Light.Benchmark.Data;
 
-namespace ProGaudi.MsgPack.Light.benchmark
+namespace ProGaudi.MsgPack.Light.Benchmark
 {
     [Config(typeof(BenchmarkConfig))]
     public class BeerListSerializeBenchmark
@@ -21,7 +21,7 @@ namespace ProGaudi.MsgPack.Light.benchmark
         {
             using (var writer = new StreamWriter(memoryStream, Encoding.UTF8, 1024, true))
             {
-                Serializers<Beer[]>.Newtonsoft.Serialize(writer, Data.Belgium);
+                Serializers.Newtonsoft.Serialize(writer, BenchmarkData.Belgium);
                 writer.Flush();
             }
         }
@@ -35,13 +35,13 @@ namespace ProGaudi.MsgPack.Light.benchmark
 
         internal void MsgPackSerialize(MemoryStream memoryStream)
         {
-            Serializers<Beer[]>.MsgPack.GetSerializer<Beer[]>().Pack(memoryStream, Data.Belgium);
+            Serializers.MsgPack.GetSerializer<Beer[]>().Pack(memoryStream, BenchmarkData.Belgium);
         }
 
         [Benchmark]
         public void MPCli_Array()
         {
-            var bytes = Serializers<Beer[]>.MsgPack.GetSerializer<Beer[]>().PackSingleObject(Data.Belgium);
+            var bytes = Serializers.MsgPack.GetSerializer<Beer[]>().PackSingleObject(BenchmarkData.Belgium);
         }
 
         [Benchmark]
@@ -53,39 +53,52 @@ namespace ProGaudi.MsgPack.Light.benchmark
 
         internal void MsgPackLightSerialize(MemoryStream memoryStream)
         {
-            MsgPackSerializer.Serialize(Data.Belgium, memoryStream, Serializers<Beer[]>.MsgPackLight);
+            MsgPackSerializer.Serialize(BenchmarkData.Belgium, memoryStream, Serializers.MsgPackLight);
         }
 
         [Benchmark]
         public void MPLight_Array()
         {
-            var bytes = MsgPackSerializer.Serialize(Data.Belgium, Serializers<Beer[]>.MsgPackLight);
+            var bytes = MsgPackSerializer.Serialize(BenchmarkData.Belgium, Serializers.MsgPackLight);
         }
 
         [Benchmark]
         public void MPCliH_Stream()
         {
             var memoryStream = new MemoryStream();
-            Serializers<Beer[]>.MsgPackHardcore.GetSerializer<Beer[]>().Pack(memoryStream, Data.Belgium);
+            Serializers.MsgPackHardcore.GetSerializer<Beer[]>().Pack(memoryStream, BenchmarkData.Belgium);
         }
 
         [Benchmark]
         public void MPCliH_Array()
         {
-            var bytes = Serializers<Beer[]>.MsgPackHardcore.GetSerializer<Beer[]>().PackSingleObject(Data.Belgium);
+            var bytes = Serializers.MsgPackHardcore.GetSerializer<Beer[]>().PackSingleObject(BenchmarkData.Belgium);
         }
 
         [Benchmark]
         public void MPLightH_Stream()
         {
             var memoryStream = new MemoryStream();
-            MsgPackSerializer.Serialize(Data.Belgium, memoryStream, Serializers<Beer[]>.MsgPackLightHardcore);
+            MsgPackSerializer.Serialize(BenchmarkData.Belgium, memoryStream, Serializers.MsgPackLightHardcore);
         }
 
         [Benchmark]
         public void MPLightH_Array()
         {
-            var bytes = MsgPackSerializer.Serialize(Data.Belgium, Serializers<Beer[]>.MsgPackLightHardcore);
+            var bytes = MsgPackSerializer.Serialize(BenchmarkData.Belgium, Serializers.MsgPackLightHardcore);
+        }
+
+        [Benchmark]
+        public void MPLightH_Stream_AutoMap()
+        {
+            var memoryStream = new MemoryStream();
+            MsgPackSerializer.Serialize(BenchmarkData.Belgium, memoryStream, Serializers.MsgPackLightAutoGeneration);
+        }
+
+        [Benchmark]
+        public void MPLightH_Array_AutoMap()
+        {
+            var bytes = MsgPackSerializer.Serialize(BenchmarkData.Belgium, Serializers.MsgPackLightAutoGeneration);
         }
     }
 }

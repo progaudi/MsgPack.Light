@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Running;
 
-namespace ProGaudi.MsgPack.Light.benchmark
+namespace ProGaudi.MsgPack.Light.Benchmark
 {
     public class Program
     {

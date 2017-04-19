@@ -2,10 +2,9 @@
 
 using BenchmarkDotNet.Attributes;
 
-using ProGaudi.MsgPack.Light;
 using MsgPack.Serialization;
 
-namespace ProGaudi.MsgPack.Light.benchmark
+namespace ProGaudi.MsgPack.Light.Benchmark
 {
     [Config(typeof(BenchmarkConfig))]
     public abstract class NumberSerialize<T>
@@ -47,15 +46,5 @@ namespace ProGaudi.MsgPack.Light.benchmark
             var stream = new MemoryStream();
             MsgPackSerializer.Serialize(Numbers, stream, _mplightContext);
         }
-    }
-
-    public class IntSerialize : NumberSerialize<int>
-    {
-        protected override int[] Numbers => Data.Integers;
-    }
-
-    public class DoubleSerialize: NumberSerialize<double>
-    {
-        protected override double[] Numbers => Data.Doubles;
     }
 }
