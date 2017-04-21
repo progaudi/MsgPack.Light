@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -20,10 +21,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
         public Type Generate(Type typeToWrap, Type typeToInstantinate)
         {
-            var propsToWrap = typeToWrap
-                .GetMembersFromInterface(x => x.GetTypeInfo().DeclaredProperties)
-                .Where(x => x.GetCustomAttribute<MsgPackMapElementAttribute>() != null)
-                .ToImmutableArray();
+            var propsToWrap = GetDistinctProperties(typeToWrap).ToImmutableArray();
 
             var interfaces = typeToInstantinate == typeToWrap
                 ? new[] {typeof(IMsgPackConverter<>).MakeGenericType(typeToWrap)}
@@ -64,6 +62,27 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             }
 
             return typeBuilder.ToType();
+        }
+
+        private static IEnumerable<PropertyInfo> GetDistinctProperties(Type typeToWrap)
+        {
+            var properties = typeToWrap
+                .GetMembersFromInterface(x => x.GetTypeInfo().DeclaredProperties)
+                // DeclaredProperties contains properties from implemented interfaces too.
+                .Where(x => x.DeclaringType.GetTypeInfo().IsInterface == typeToWrap.GetTypeInfo().IsInterface)
+                .Where(x => x.GetCustomAttribute<MsgPackMapElementAttribute>() != null)
+                .GroupBy(x => x.GetMapElementName())
+                .ToDictionary(x => x.Key, x => x.ToArray());
+
+            foreach (var pair in properties)
+            {
+                if (pair.Value.Length > 1)
+                {
+                    throw new DuplicateMapElementException(typeToWrap, pair.Key, pair.Value);
+                }
+
+                yield return pair.Value[0];
+            }
         }
 
         private static void EmitReadMethod(TypeBuilder typeBuilder, Type @interface, MethodBuilder readImpl)
@@ -133,7 +152,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             generator.Emit(OpCodes.Ret);
 
             generator.MarkLabel(nonNullLabel);
-            generator.Emit(OpCodes.Newobj, typeToWrap.GetTypeInfo().GetConstructor());
+            generator.Emit(OpCodes.Newobj, typeToWrap.GetTypeInfo().GetDefaultConstructor());
             generator.Emit(OpCodes.Stloc, instance);
 
             var beginOfIteration = generator.DefineLabel();
@@ -169,7 +188,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
                 next = generator.DefineLabel();
                 generator.Emit(OpCodes.Ldloc, propertyName);
-                generator.Emit(OpCodes.Ldstr, info.GetCustomAttribute<MsgPackMapElementAttribute>().Name);
+                generator.Emit(OpCodes.Ldstr, info.GetMapElementName());
                 generator.Emit(OpCodes.Ldc_I4, (int) StringComparison.OrdinalIgnoreCase);
                 generator.Emit(
                     OpCodes.Call,
@@ -265,7 +284,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             {
                 EmitWrite(
                     typeof(string),
-                    x => x.Emit(OpCodes.Ldstr, property.GetCustomAttribute<MsgPackMapElementAttribute>().Name));
+                    x => x.Emit(OpCodes.Ldstr, property.GetMapElementName()));
                 EmitWrite(
                     property.PropertyType,
                     x =>

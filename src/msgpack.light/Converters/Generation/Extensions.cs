@@ -40,9 +40,14 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             }
         }
 
-        public static ConstructorInfo GetConstructor(this TypeInfo type)
+        public static ConstructorInfo GetDefaultConstructor(this TypeInfo type)
         {
             return type.GetConstructor(new Type[0]);
+        }
+
+        public static string GetMapElementName(this PropertyInfo info)
+        {
+            return info.GetCustomAttribute<MsgPackMapElementAttribute>().Name;
         }
 
 #if NETSTANDARD1_1
@@ -65,7 +70,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
         public static MethodInfo GetMethod(this TypeInfo type, string name)
         {
-            return type.GetMethod(name, new Type[0]);
+            return type.DeclaredMethods.SingleOrDefault(x => x.Name == name);
         }
 
         public static MethodInfo GetMethod(this TypeInfo type, string name, Type[] parameters)

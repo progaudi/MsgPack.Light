@@ -48,34 +48,34 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
         private Type DetectImplementation(Type @interface)
         {
-            return _implementationCaches.GetOrAdd(
-                @interface,
-                type =>
+            return _implementationCaches.GetOrAdd(@interface, GenerateInterfaceImplementation);
+        }
+
+        private Type GenerateInterfaceImplementation(Type type)
+        {
+            var typeInfo = type.GetTypeInfo();
+            var isInterface = typeInfo.IsInterface;
+            if (!isInterface)
+            {
+                if (typeInfo.IsAbstract)
                 {
-                    var typeInfo = type.GetTypeInfo();
-                    var isInterface = typeInfo.IsInterface;
-                    if (!isInterface)
-                    {
-                        if (!typeInfo.IsAbstract)
-                        {
-                            throw new NotImplementedException("Can't generate child type for abstract class");
-                        }
+                    throw new NotImplementedException("Can't generate child type for abstract class");
+                }
 
-                        if (typeInfo.GetConstructor() == null)
-                        {
-                            throw new NotImplementedException("Can't generate child type for type without default ctor");
-                        }
-                    }
+                if (typeInfo.GetDefaultConstructor() == null)
+                {
+                    throw new NotImplementedException("Can't generate child type for type without default ctor");
+                }
+            }
 
-                    if (typeInfo.IsGenericTypeDefinition)
-                    {
-                        throw new NotImplementedException("Can't generate generic implementors.");
-                    }
+            if (typeInfo.IsGenericTypeDefinition)
+            {
+                throw new NotImplementedException("Can't generate generic implementors.");
+            }
 
-                    return typeInfo.IsInterface
-                        ? _interfaceStubGenerator.GenerateTypeToInstantinate(type, x => $"{x}Implementation")
-                        : type;
-                });
+            return typeInfo.IsInterface
+                ? _interfaceStubGenerator.GenerateTypeToInstantinate(type, x => $"{x}Implementation")
+                : type;
         }
 
         public void Dump()

@@ -16,7 +16,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
         [Fact]
         public void WriteSmoke()
         {
-            IImageInfo testObject = CreateTestObject();
+            var testObject = CreateTestObject();
 
             MsgPackSerializer.Serialize(testObject, _fixture.NewContext).ShouldBe(MsgPackSerializer.Serialize(testObject, _fixture.OldContext));
         }
@@ -24,18 +24,18 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
         [Fact]
         public void ReadSmoke()
         {
-            IImageInfo expected = CreateTestObject();
+            var expected = CreateTestObject();
 
-            var actual = MsgPackSerializer.Deserialize<IImageInfo>(MsgPackSerializer.Serialize(expected, _fixture.NewContext), _fixture.NewContext);
+            var actual = MsgPackSerializer.Deserialize<ImageInfo>(MsgPackSerializer.Serialize(expected, _fixture.NewContext), _fixture.NewContext);
             AssertEqual(actual, expected);
         }
 
         [Fact]
         public void WriteNewReadOld()
         {
-            IImageInfo expected = CreateTestObject();
+            var expected = CreateTestObject();
 
-            var actual = MsgPackSerializer.Deserialize<IImageInfo>(MsgPackSerializer.Serialize(expected, _fixture.NewContext), _fixture.OldContext);
+            var actual = MsgPackSerializer.Deserialize<ImageInfo>(MsgPackSerializer.Serialize(expected, _fixture.NewContext), _fixture.OldContext);
 
             AssertEqual(actual, expected);
         }
@@ -43,9 +43,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
         [Fact]
         public void WriteOldReadNew()
         {
-            IImageInfo expected = CreateTestObject();
+            var expected = CreateTestObject();
 
-            var actual = MsgPackSerializer.Deserialize<IImageInfo>(MsgPackSerializer.Serialize(expected, _fixture.OldContext), _fixture.NewContext);
+            var actual = MsgPackSerializer.Deserialize<ImageInfo>(MsgPackSerializer.Serialize(expected, _fixture.OldContext), _fixture.NewContext);
             AssertEqual(actual, expected);
         }
     }
