@@ -38,6 +38,25 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             }
         }
 
+        public static IEnumerable<T> GetMembersFromClass<T>(this Type typeToWrap, Func<Type, IEnumerable<T>> getter)
+        {
+            foreach (var member in getter(typeToWrap))
+            {
+                yield return member;
+            }
+
+            var baseType = typeToWrap.GetTypeInfo().BaseType;
+            if (baseType == null)
+            {
+                yield break;
+            }
+
+            foreach (var member in GetMembersFromClass(baseType, getter))
+            {
+                yield return member;
+            }
+        }
+
         public static ConstructorInfo GetDefaultConstructor(this TypeInfo type)
         {
             return type.GetConstructor(new Type[0]);

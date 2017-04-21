@@ -7,11 +7,11 @@ using Xunit;
 namespace ProGaudi.MsgPack.Light.Tests.Generators
 {
     [Collection(nameof(MapConverterGenerator))]
-    public class FullTest : MapGeneratorTestBase, IClassFixture<FullFixture>
+    public class FullTest : MapGeneratorTestBase, IClassFixture<FullTest.Fixture>
     {
-        private readonly FullFixture _fixture;
+        private readonly Fixture _fixture;
 
-        public FullTest(FullFixture fixture)
+        public FullTest(Fixture fixture)
         {
             _fixture = fixture;
         }
@@ -50,6 +50,14 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
 
             var actual = MsgPackSerializer.Deserialize<IImageInfo>(MsgPackSerializer.Serialize(expected, _fixture.OldContext), _fixture.NewContext);
             AssertEqual(actual, expected);
+        }
+
+        public class Fixture : ContextFixture
+        {
+            public Fixture()
+            {
+                NewContext.GenerateAndRegisterConverter<IImageInfo, ImageInfo>();
+            }
         }
     }
 }

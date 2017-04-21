@@ -66,10 +66,11 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
         private static IEnumerable<PropertyInfo> GetDistinctProperties(Type typeToWrap)
         {
-            var properties = typeToWrap
-                .GetMembersFromInterface(x => x.GetTypeInfo().DeclaredProperties)
-                // DeclaredProperties contains properties from implemented interfaces too.
-                .Where(x => x.DeclaringType.GetTypeInfo().IsInterface == typeToWrap.GetTypeInfo().IsInterface)
+            var allProperties = typeToWrap.GetTypeInfo().IsInterface
+                ? typeToWrap.GetMembersFromInterface(x => x.GetTypeInfo().DeclaredProperties)
+                : typeToWrap.GetMembersFromClass(x => x.GetTypeInfo().DeclaredProperties);
+
+            var properties = allProperties
                 .Where(x => x.GetCustomAttribute<MsgPackMapElementAttribute>() != null)
                 .GroupBy(x => x.GetMapElementName())
                 .ToDictionary(x => x.Key, x => x.ToArray());
@@ -122,7 +123,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
         private static MethodBuilder EmitReadImplMethod(
             TypeBuilder typeBuilder,
-            Type typeToWrap,
+            Type typeToInstantinate,
             ImmutableArray<PropertyInfo> propsToWrap,
             ImmutableDictionary<Type, FieldBuilder> converters)
         {
@@ -130,12 +131,12 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
                 $"{nameof(IMsgPackConverter<object>.Read)}Impl",
                 MethodAttributes.Family | MethodAttributes.Virtual | MethodAttributes.HideBySig,
                 CallingConventions.HasThis);
-            mb.SetReturnType(typeToWrap);
+            mb.SetReturnType(typeToInstantinate);
             mb.SetParameters(typeof(IMsgPackReader));
 
             var generator = mb.GetILGenerator();
 
-            var instance = generator.DeclareLocal(typeToWrap);
+            var instance = generator.DeclareLocal(typeToInstantinate);
             var length = generator.DeclareLocal(typeof(uint?));
             var propertyName = generator.DeclareLocal(typeof(string));
             var index = generator.DeclareLocal(typeof(int));
@@ -152,7 +153,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             generator.Emit(OpCodes.Ret);
 
             generator.MarkLabel(nonNullLabel);
-            generator.Emit(OpCodes.Newobj, typeToWrap.GetTypeInfo().GetDefaultConstructor());
+            generator.Emit(OpCodes.Newobj, typeToInstantinate.GetTypeInfo().GetDefaultConstructor());
             generator.Emit(OpCodes.Stloc, instance);
 
             var beginOfIteration = generator.DefineLabel();
@@ -179,7 +180,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             generator.Emit(OpCodes.Stloc, propertyName);
 
             var next = default(Label?);
-            foreach (var info in propsToWrap)
+            foreach (var property in propsToWrap)
             {
                 if (next.HasValue)
                 {
@@ -188,7 +189,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
                 next = generator.DefineLabel();
                 generator.Emit(OpCodes.Ldloc, propertyName);
-                generator.Emit(OpCodes.Ldstr, info.GetMapElementName());
+                generator.Emit(OpCodes.Ldstr, property.GetMapElementName());
                 generator.Emit(OpCodes.Ldc_I4, (int) StringComparison.OrdinalIgnoreCase);
                 generator.Emit(
                     OpCodes.Call,
@@ -198,8 +199,9 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
                 generator.Emit(OpCodes.Brfalse, next.Value);
 
                 generator.Emit(OpCodes.Ldloc, instance);
-                EmitRead(info.PropertyType);
-                generator.Emit(OpCodes.Callvirt, typeToWrap.GetTypeInfo().GetProperty(info.Name).SetMethod);
+                EmitRead(property.PropertyType);
+                // if property has setter, we will call it. Otherwise we'll try to find it on implementation.
+                generator.Emit(OpCodes.Callvirt, property.SetMethod ?? typeToInstantinate.GetTypeInfo().GetProperty(property.Name).SetMethod);
 
                 generator.Emit(OpCodes.Br, incrementLabel);
             }
