@@ -2,6 +2,7 @@ using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Exporters.Csv;
+using BenchmarkDotNet.Jobs;
 
 namespace ProGaudi.MsgPack.Light.Benchmark
 {
@@ -12,6 +13,8 @@ namespace ProGaudi.MsgPack.Light.Benchmark
             Add(MarkdownExporter.GitHub);
             Add(CsvMeasurementsExporter.Default);
             Add(MemoryDiagnoser.Default);
+
+            Add(Job.Clr, Job.Core);
         }
     }
 }

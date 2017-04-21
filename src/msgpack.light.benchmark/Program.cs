@@ -9,6 +9,8 @@ namespace ProGaudi.MsgPack.Light.Benchmark
             var switcher = new BenchmarkSwitcher(
                 new[]
                 {
+                    typeof (MapGeneratedSerializeBenchmark),
+                    typeof (MapGeneratedDeserializeBenchmark),
                     typeof (BeerSerializeBenchmark),
                     typeof (BeerDeserializeBenchmark),
                     typeof (BeerListSerializeBenchmark),
