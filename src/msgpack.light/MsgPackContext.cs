@@ -77,6 +77,7 @@ namespace ProGaudi.MsgPack.Light
         {
             var generator = GeneratorContext.GenerateConverter(typeof(TInterface), typeof(TImplementation));
             RegisterConverter((IMsgPackConverter<TInterface>)generator);
+            RegisterConverter((IMsgPackConverter<TImplementation>)generator);
         }
 
         public void RegisterConverter<T>(IMsgPackConverter<T> converter)
