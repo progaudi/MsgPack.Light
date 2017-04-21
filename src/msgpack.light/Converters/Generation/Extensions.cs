@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-#if NETSTANDARD1_1
-using System.Linq;
-#endif
 
 namespace ProGaudi.MsgPack.Light.Converters.Generation
 {
@@ -48,6 +46,11 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
         public static string GetMapElementName(this PropertyInfo info)
         {
             return info.GetCustomAttribute<MsgPackMapElementAttribute>().Name;
+        }
+
+        public static MethodInfo GetGenericMethod(this TypeInfo type, string name, byte number)
+        {
+            return type.DeclaredMethods.SingleOrDefault(x => x.Name == name && x.GetGenericArguments().Length == number);
         }
 
 #if NETSTANDARD1_1
