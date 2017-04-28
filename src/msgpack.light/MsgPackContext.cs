@@ -1,15 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 
 using ProGaudi.MsgPack.Light.Converters;
+using ProGaudi.MsgPack.Light.Converters.Generation;
 
 namespace ProGaudi.MsgPack.Light
 {
     public class MsgPackContext
     {
         private static readonly IMsgPackConverter<object> SharedNullConverter = new NullConverter();
+
+        private readonly ConverterGenerationContext _generatorContext = new ConverterGenerationContext();
 
         private readonly Dictionary<Type, IMsgPackConverter> _converters;
 
@@ -63,6 +67,44 @@ namespace ProGaudi.MsgPack.Light
 
         public IMsgPackConverter<object> NullConverter => SharedNullConverter;
 
+#if !NETSTANDARD1_1
+        public void DiscoverConverters()
+        {
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                DiscoverConverters(assembly);
+            }
+        }
+#endif
+
+        public void DiscoverConverters<T>()
+        {
+            DiscoverConverters(typeof(T).GetTypeInfo().Assembly);
+        }
+
+        public void DiscoverConverters(Assembly assembly)
+        {
+            var t = GetType().GetTypeInfo().GetGenericMethod(nameof(GenerateAndRegisterConverter), 1);
+            foreach (var type in assembly.ExportedTypes.Where(x => x.GetTypeInfo().GetCustomAttribute<MsgPackMapAttribute>() != null))
+            {
+                t.MakeGenericMethod(type).Invoke(this, null);
+            }
+        }
+
+        public void GenerateAndRegisterConverter<T>()
+        {
+            var generator = _generatorContext.GenerateConverter(typeof(T));
+            RegisterConverter((IMsgPackConverter<T>) generator);
+        }
+
+        public void GenerateAndRegisterConverter<TInterface, TImplementation>()
+            where TImplementation : TInterface
+        {
+            var generator = _generatorContext.GenerateConverter(typeof(TInterface), typeof(TImplementation));
+            RegisterConverter((IMsgPackConverter<TInterface>)generator);
+            RegisterConverter((IMsgPackConverter<TImplementation>)generator);
+        }
+
         public void RegisterConverter<T>(IMsgPackConverter<T> converter)
         {
             converter.Initialize(this);
@@ -101,10 +143,9 @@ namespace ProGaudi.MsgPack.Light
             return result;
         }
 
-        public Func<object> GetObjectActivator(Type type)
-        {
-            return _objectActivators.GetOrAdd(type, CompiledLambdaActivatorFactory.GetActivator);
-        }
+        public Func<object> GetObjectActivator(Type type) => _objectActivators.GetOrAdd(type, CompiledLambdaActivatorFactory.GetActivator);
+
+        public ImmutableDictionary<Type, IMsgPackConverter> DumpConvertersCache() => _converters.ToImmutableDictionary(x => x.Key, x => x.Value);
 
         private IMsgPackConverter CreateAndInializeConverter(Func<object> converterActivator)
         {
@@ -120,9 +161,8 @@ namespace ProGaudi.MsgPack.Light
                 return null;
             }
             var genericType = type.GetGenericTypeDefinition();
-            Type genericConverterType;
 
-            if (!_genericConverters.TryGetValue(genericType, out genericConverterType))
+            if (!_genericConverters.TryGetValue(genericType, out var genericConverterType))
             {
                 return null;
             }
@@ -181,14 +221,7 @@ namespace ProGaudi.MsgPack.Light
 
         private IMsgPackConverter GetConverterFromCache<T>()
         {
-            IMsgPackConverter temp;
-
-            if (_converters.TryGetValue(typeof(T), out temp))
-            {
-                return temp;
-            }
-
-            return null;
+            return _converters.TryGetValue(typeof(T), out var temp) ? temp : null;
         }
 
         private static TypeInfo GetGenericInterface(Type type, Type genericInterfaceType)

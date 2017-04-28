@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-using ProGaudi.MsgPack.Light;
-
-namespace ProGaudi.MsgPack.Light.benchmark
+namespace ProGaudi.MsgPack.Light.Benchmark.Data
 {
-    internal class BeerConverterHardCore : IMsgPackConverter<Beer>
+    internal class BeerConverter : IMsgPackConverter<Beer>
     {
         private IMsgPackConverter<string> _stringConverter;
 
@@ -14,14 +12,6 @@ namespace ProGaudi.MsgPack.Light.benchmark
         private IMsgPackConverter<float> _floatConverter;
 
         private MsgPackContext _context;
-
-        private byte[] _brand;
-
-        private byte[] _alcohol;
-
-        private byte[] _sort;
-
-        private byte[] _brewery;
 
         public void Write(Beer value, IMsgPackWriter writer)
         {
@@ -32,16 +22,16 @@ namespace ProGaudi.MsgPack.Light.benchmark
             }
 
             writer.WriteMapHeader(4);
-            writer.Write(_brand);
+            _stringConverter.Write(nameof(value.Brand), writer);
             _stringConverter.Write(value.Brand, writer);
 
-            writer.Write(_sort);
+            _stringConverter.Write(nameof(value.Sort), writer);
             _listStringConverter.Write(value.Sort, writer);
 
-            writer.Write(_alcohol);
+            _stringConverter.Write(nameof(value.Alcohol), writer);
             _floatConverter.Write(value.Alcohol, writer);
 
-            writer.Write(_brewery);
+            _stringConverter.Write(nameof(value.Brewery), writer);
             _stringConverter.Write(value.Brewery, writer);
         }
 
@@ -89,10 +79,6 @@ namespace ProGaudi.MsgPack.Light.benchmark
             _stringConverter = context.GetConverter<string>();
             _listStringConverter = context.GetConverter<List<string>>();
             _floatConverter = context.GetConverter<float>();
-            _brand = MsgPackSerializer.Serialize(nameof(Beer.Brand));
-            _alcohol = MsgPackSerializer.Serialize(nameof(Beer.Alcohol));
-            _sort = MsgPackSerializer.Serialize(nameof(Beer.Sort));
-            _brewery = MsgPackSerializer.Serialize(nameof(Beer.Brewery));
             _context = context;
         }
     }

@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Running;
 
-namespace ProGaudi.MsgPack.Light.benchmark
+namespace ProGaudi.MsgPack.Light.Benchmark
 {
     public class Program
     {
@@ -9,6 +9,8 @@ namespace ProGaudi.MsgPack.Light.benchmark
             var switcher = new BenchmarkSwitcher(
                 new[]
                 {
+                    typeof (MapGeneratedSerializeBenchmark),
+                    typeof (MapGeneratedDeserializeBenchmark),
                     typeof (BeerSerializeBenchmark),
                     typeof (BeerDeserializeBenchmark),
                     typeof (BeerListSerializeBenchmark),

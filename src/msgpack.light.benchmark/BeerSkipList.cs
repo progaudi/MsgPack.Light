@@ -3,9 +3,10 @@
 using BenchmarkDotNet.Attributes;
 
 using MsgPack;
-using ProGaudi.MsgPack.Light;
 
-namespace ProGaudi.MsgPack.Light.benchmark
+using ProGaudi.MsgPack.Light.Benchmark.Data;
+
+namespace ProGaudi.MsgPack.Light.Benchmark
 {
     [Config(typeof(BenchmarkConfig))]
     public class BeerSkipList

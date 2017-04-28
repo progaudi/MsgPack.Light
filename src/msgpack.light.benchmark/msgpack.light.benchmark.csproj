@@ -5,6 +5,7 @@
     <Authors>aensidhe</Authors>
     <TargetFrameworks>net45;netcoreapp1.1</TargetFrameworks>
     <AssemblyName>msgpack.light.benchmark</AssemblyName>
+    <RootNamespace>ProGaudi.MsgPack.Light.Benchmark</RootNamespace>
     <OutputType>Exe</OutputType>
     <PackageId>msgpack.light.benchmark</PackageId>
     <PackageTags>benchmark;BenchmarkDotNet;MsgPack.Cli;MsgPack.Light;MsgPack</PackageTags>
@@ -20,7 +21,7 @@
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.10.3" />
     <PackageReference Include="MsgPack.Cli" Version="0.8.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
   </ItemGroup>
 
   <ItemGroup>

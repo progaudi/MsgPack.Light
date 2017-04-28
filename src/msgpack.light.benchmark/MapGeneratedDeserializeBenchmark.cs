@@ -8,7 +8,7 @@ using ProGaudi.MsgPack.Light.Benchmark.Data;
 namespace ProGaudi.MsgPack.Light.Benchmark
 {
     [Config(typeof(BenchmarkConfig))]
-    public class BeerDeserializeBenchmark
+    public class MapGeneratedDeserializeBenchmark
     {
         private readonly MemoryStream _json;
 
@@ -16,7 +16,7 @@ namespace ProGaudi.MsgPack.Light.Benchmark
 
         private readonly byte[] _msgPackArray;
 
-        public BeerDeserializeBenchmark()
+        public MapGeneratedDeserializeBenchmark()
         {
             var serializer = new BeerSerializeBenchmark();
             _json = PrepareJson(serializer);
@@ -47,25 +47,11 @@ namespace ProGaudi.MsgPack.Light.Benchmark
                 var beer = Serializers.Newtonsoft.Deserialize(reader, typeof(Beer));
             }
         }
-        
-        [Benchmark(Baseline = true)]
-        public void MPCli_Stream()
-        {
-            _msgPack.Seek(0, SeekOrigin.Begin);
-            var beer = Serializers.MsgPack.GetSerializer<Beer>().Unpack(_msgPack);
-        }
 
-        [Benchmark]
+        [Benchmark(Baseline = true)]
         public void MPCli_Array()
         {
             var beer = Serializers.MsgPack.GetSerializer<Beer>().UnpackSingleObject(_msgPackArray);
-        }
-
-        [Benchmark]
-        public void MPLight_Stream()
-        {
-            _msgPack.Seek(0, SeekOrigin.Begin);
-            var beer = MsgPackSerializer.Deserialize<Beer>(_msgPack, Serializers.MsgPackLight);
         }
 
         [Benchmark]
@@ -75,40 +61,7 @@ namespace ProGaudi.MsgPack.Light.Benchmark
         }
 
         [Benchmark]
-        public void MPCliH_Stream()
-        {
-            _msgPack.Seek(0, SeekOrigin.Begin);
-            var beer = Serializers.MsgPackHardcore.GetSerializer<Beer>().Unpack(_msgPack);
-        }
-
-        [Benchmark]
-        public void MPCliH_Array()
-        {
-            var beer = Serializers.MsgPackHardcore.GetSerializer<Beer>().UnpackSingleObject(_msgPackArray);
-        }
-
-        [Benchmark]
-        public void MPLightH_Stream()
-        {
-            _msgPack.Seek(0, SeekOrigin.Begin);
-            var beer = MsgPackSerializer.Deserialize<Beer>(_msgPack, Serializers.MsgPackLightHardcore);
-        }
-
-        [Benchmark]
-        public void MPLightH_Array()
-        {
-            var beer = MsgPackSerializer.Deserialize<Beer>(_msgPackArray, Serializers.MsgPackLightHardcore);
-        }
-
-        [Benchmark]
-        public void MPLightH_Stream_AutoMap()
-        {
-            _msgPack.Seek(0, SeekOrigin.Begin);
-            var beer = MsgPackSerializer.Deserialize<Beer>(_msgPack, Serializers.MsgPackLightAutoGeneration);
-        }
-
-        [Benchmark]
-        public void MPLightH_Array_AutoMap()
+        public void MPLight_Array_AutoMap()
         {
             var beer = MsgPackSerializer.Deserialize<Beer>(_msgPackArray, Serializers.MsgPackLightAutoGeneration);
         }

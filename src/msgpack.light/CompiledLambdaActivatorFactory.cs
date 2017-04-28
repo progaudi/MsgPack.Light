@@ -1,14 +1,13 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-// ReSharper disable once RedundantUsingDirective
 using System.Reflection;
 
 namespace ProGaudi.MsgPack.Light
 {
-    public class CompiledLambdaActivatorFactory
+    public static class CompiledLambdaActivatorFactory
     {
-        public static Func<object> GetActivator(Type type)
+        public static Func<object> GetActivator(this Type type)
         {
             var ctor = type.GetTypeInfo().DeclaredConstructors.First(x => x.GetParameters().Length == 0 && !x.IsStatic);
 

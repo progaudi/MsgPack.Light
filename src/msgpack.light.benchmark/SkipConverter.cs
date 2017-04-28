@@ -1,6 +1,4 @@
-﻿using ProGaudi.MsgPack.Light;
-
-namespace ProGaudi.MsgPack.Light.benchmark
+﻿namespace ProGaudi.MsgPack.Light.Benchmark
 {
     public class SkipConverter<T> :IMsgPackConverter<T>
     {

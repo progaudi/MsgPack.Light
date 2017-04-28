@@ -5,7 +5,7 @@ using System.Text;
 using MsgPack;
 using MsgPack.Serialization;
 
-namespace ProGaudi.MsgPack.Light.benchmark
+namespace ProGaudi.MsgPack.Light.Benchmark.Data
 {
     internal class BeerSerializerHardcore : MessagePackSerializer<Beer>
     {
