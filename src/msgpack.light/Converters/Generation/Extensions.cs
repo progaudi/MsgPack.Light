@@ -67,6 +67,11 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             return info.GetCustomAttribute<MsgPackMapElementAttribute>().Name;
         }
 
+        public static int GetArrayElementOrder(this PropertyInfo info)
+        {
+            return info.GetCustomAttribute<MsgPackArrayElementAttribute>().Order;
+        }
+
         public static MethodInfo GetGenericMethod(this TypeInfo type, string name, byte number)
         {
             return type.DeclaredMethods.SingleOrDefault(x => x.Name == name && x.GetGenericArguments().Length == number);
