@@ -101,13 +101,26 @@ namespace ProGaudi.MsgPack.Light.Benchmark
         public void MPLightH_Stream_AutoMap()
         {
             var memoryStream = new MemoryStream();
-            MsgPackSerializer.Serialize(_testBeer, memoryStream, Serializers.MsgPackLightAutoGeneration);
+            MsgPackSerializer.Serialize(_testBeer, memoryStream, Serializers.MsgPackLightMapAutoGeneration);
         }
 
         [Benchmark]
         public void MPLightH_Array_AutoMap()
         {
-            var bytes = MsgPackSerializer.Serialize(_testBeer, Serializers.MsgPackLightAutoGeneration);
+            var bytes = MsgPackSerializer.Serialize(_testBeer, Serializers.MsgPackLightMapAutoGeneration);
+        }
+
+        [Benchmark]
+        public void MPLightH_Stream_AutoArray()
+        {
+            var memoryStream = new MemoryStream();
+            MsgPackSerializer.Serialize(_testBeer, memoryStream, Serializers.MsgPackLightArrayAutoGeneration);
+        }
+
+        [Benchmark]
+        public void MPLightH_Array_AutoArray()
+        {
+            var bytes = MsgPackSerializer.Serialize(_testBeer, Serializers.MsgPackLightArrayAutoGeneration);
         }
     }
 }
