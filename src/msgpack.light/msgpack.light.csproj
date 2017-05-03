@@ -14,7 +14,7 @@
     <GenerateAssemblyProductAttribute>true</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCopyrightAttribute>true</GenerateAssemblyCopyrightAttribute>
     <ProjectGuid>{04D4E761-F756-43D8-B31C-79B1B0671243}</ProjectGuid>
-    <Version>1.2.0</Version>
+    <Version>1.2.1</Version>
     <Authors>roman-kozachenko;aensidhe</Authors>
     <Company>progaudi</Company>
   </PropertyGroup>
@@ -24,5 +24,6 @@
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
     <PackageReference Include="System.ValueTuple" Version="4.3.0" />
+    <PackageReference Include="gitlink" Version="2.4.1" />
   </ItemGroup>
 </Project>
