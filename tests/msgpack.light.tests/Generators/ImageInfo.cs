@@ -19,7 +19,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
         public string Link { get; set; }
 
         [MsgPackMapElement("Credits")]
-        [MsgPackArrayElement(3)]
+        [MsgPackArrayElement(4)]
         public string Credits { get; set; }
+
+        public string NotSerializedProperty { get; set; }
     }
 }

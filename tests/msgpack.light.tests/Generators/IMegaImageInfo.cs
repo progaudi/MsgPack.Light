@@ -9,7 +9,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
     public interface IMegaImageInfo : IImageInfo
     {
         [MsgPackMapElement("CreationDate")]
-        [MsgPackArrayElement(4)]
+        [MsgPackArrayElement(5)]
         DateTime SomeDate { get; }
     }
 }

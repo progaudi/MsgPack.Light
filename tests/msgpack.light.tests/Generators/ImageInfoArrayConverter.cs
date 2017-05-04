@@ -1,5 +1,7 @@
 using System;
 
+using Moq;
+
 namespace ProGaudi.MsgPack.Light.Tests.Generators
 {
     internal class ImageInfoArrayConverter : IMsgPackConverter<IImageInfo>, IMsgPackConverter<ImageInfo>, IMsgPackConverter<BigImageInfo>, IMsgPackConverter<IMegaImageInfo>
@@ -21,17 +23,35 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
             var nullable = reader.ReadArrayLength();
             if (!nullable.HasValue)
                 return null;
-
-            ReadImageInfoBody(reader, imageInfo);
+            for (var index = 0; index < nullable.Value; ++index)
+            {
+                if (!ReadImageInfoBody(index, imageInfo, reader))
+                {
+                    reader.SkipToken();
+                }
+            }
             return imageInfo;
         }
 
-        private void ReadImageInfoBody(IMsgPackReader reader, ImageInfo imageInfo)
+        private bool ReadImageInfoBody(int propertyIndex, ImageInfo imageInfo, IMsgPackReader reader)
         {
-            imageInfo.Width = _intConverter.Value.Read(reader);
-            imageInfo.Height = _intConverter.Value.Read(reader);
-            imageInfo.Link = _stringConverter.Value.Read(reader);
-            imageInfo.Credits = _stringConverter.Value.Read(reader);
+            switch (propertyIndex)
+            {
+                case 0:
+                    imageInfo.Width = _intConverter.Value.Read(reader);
+                    return true;
+                case 1:
+                    imageInfo.Height = _intConverter.Value.Read(reader);
+                    return true;
+                case 2:
+                    imageInfo.Link = _stringConverter.Value.Read(reader);
+                    return true;
+                case 4:
+                    imageInfo.Credits = _stringConverter.Value.Read(reader);
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         private void WriteImplementation(IImageInfo value, IMsgPackWriter writer)
@@ -42,7 +62,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
             }
             else
             {
-                writer.WriteArrayHeader(4U);
+                writer.WriteArrayHeader(5U);
                 WriteImageInfoBody(value, writer);
             }
         }
@@ -52,6 +72,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
             _intConverter.Value.Write(value.Width, writer);
             _intConverter.Value.Write(value.Height, writer);
             _stringConverter.Value.Write(value.Link, writer);
+            writer.Write(DataTypes.Null);
             _stringConverter.Value.Write(value.Credits, writer);
         }
 
@@ -73,7 +94,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
             }
             else
             {
-                writer.WriteArrayHeader(5U);
+                writer.WriteArrayHeader(6U);
 
                 WriteImageInfoBody(value, writer);
                 _intConverter.Value.Write(value.Size, writer);
@@ -88,7 +109,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
             }
             else
             {
-                writer.WriteArrayHeader(5U);
+                writer.WriteMapHeader(6U);
 
                 WriteImageInfoBody(value, writer);
                 _dateTimeConverter.Value.Write(value.SomeDate, writer);
@@ -98,12 +119,25 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
         IMegaImageInfo IMsgPackConverter<IMegaImageInfo>.Read(IMsgPackReader reader)
         {
             var imageInfo = new MegaImageInfo();
-            var nullable = reader.ReadArrayLength();
+            var nullable = reader.ReadMapLength();
             if (!nullable.HasValue)
                 return null;
+            for (var index = 0; index < nullable.Value; ++index)
+            {
+                if (ReadImageInfoBody(index, imageInfo, reader))
+                {
+                    continue;
+                }
 
-            ReadImageInfoBody(reader, imageInfo);
-            imageInfo.SomeDate = _dateTimeConverter.Value.Read(reader);
+                if (index == 5)
+                {
+                    imageInfo.SomeDate = _dateTimeConverter.Value.Read(reader);
+                }
+                else
+                {
+                    reader.SkipToken();
+                }
+            }
 
             return imageInfo;
         }
@@ -111,11 +145,25 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
         public BigImageInfo Read(IMsgPackReader reader)
         {
             var imageInfo = new BigImageInfo();
-            var nullable = reader.ReadArrayLength();
+            var nullable = reader.ReadMapLength();
             if (!nullable.HasValue)
                 return null;
-            ReadImageInfoBody(reader, imageInfo);
-            imageInfo.Size = _intConverter.Value.Read(reader);
+            for (var index = 0; index < nullable.Value; ++index)
+            {
+                if (ReadImageInfoBody(index, imageInfo, reader))
+                {
+                    continue;
+                }
+
+                if (index == 5)
+                {
+                    imageInfo.Size = _intConverter.Value.Read(reader);
+                }
+                else
+                {
+                    reader.SkipToken();
+                }
+            }
 
             return imageInfo;
         }
