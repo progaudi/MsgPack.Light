@@ -185,9 +185,9 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
                 }
 
                 next = generator.DefineLabel();
-                generator.Emit(OpCodes.Ldloc, index);
-                generator.Emit(OpCodes.Ldloc, property.GetArrayElementOrder());
 
+                generator.Emit(OpCodes.Ldloc, index);
+                generator.Emit(OpCodes.Ldc_I4, property.GetArrayElementOrder());
                 generator.Emit(OpCodes.Ceq);
                 generator.Emit(OpCodes.Brfalse, next.Value);
 
