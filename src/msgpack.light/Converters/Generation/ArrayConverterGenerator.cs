@@ -72,6 +72,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             var properties = allProperties
                 .Where(x => x.GetCustomAttribute<MsgPackArrayElementAttribute>() != null)
                 .GroupBy(x => x.GetArrayElementOrder())
+                .OrderBy(x => x.Key)
                 .ToDictionary(x => x.Key, x => x.ToArray());
 
             foreach (var pair in properties)
@@ -185,12 +186,9 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
                 next = generator.DefineLabel();
                 generator.Emit(OpCodes.Ldloc, index);
-                generator.Emit(OpCodes.Ldstr, property.GetArrayElementOrder());
-                generator.Emit(
-                    OpCodes.Call,
-                    typeof(int).GetTypeInfo().GetMethod(
-                        nameof(int.Equals),
-                        new[] { typeof(int), typeof(int) }));
+                generator.Emit(OpCodes.Ldloc, property.GetArrayElementOrder());
+
+                generator.Emit(OpCodes.Ceq);
                 generator.Emit(OpCodes.Brfalse, next.Value);
 
                 generator.Emit(OpCodes.Ldloc, instance);
@@ -261,7 +259,14 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             // emit not-null version
             generator.MarkLabel(notNullCode);
             generator.Emit(writer);
-            generator.Emit(OpCodes.Ldc_I4, propsToWrap.Length);
+
+            var propsWithIndex = propsToWrap
+                .GroupBy(p => p.GetArrayElementOrder())
+                .ToDictionary(x => x.Key, x => x.Single());
+
+            var maxIndex = propsWithIndex.Max(t => t.Key);
+
+            generator.Emit(OpCodes.Ldc_I4, maxIndex + 1);
             generator.Emit(OpCodes.Callvirt, typeof(IMsgPackWriter).GetTypeInfo().GetMethod(nameof(IMsgPackWriter.WriteArrayHeader)));
 
             void EmitWrite(Type type, Action<ILGenerator> valueLoader)
@@ -277,9 +282,9 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
                     converter.FieldType.GenericTypeArguments[0].GetTypeInfo().GetMethod(nameof(IMsgPackConverter<object>.Write), new[] { type, typeof(IMsgPackWriter) }));
             }
 
-            foreach (var property in propsToWrap)
+            for (var index = 0; index < maxIndex + 1; index++)
             {
-                if (property.GetCustomAttribute<MsgPackArrayElementAttribute>() != null)
+                if (propsWithIndex.TryGetValue(index, out var property))
                 {
                     EmitWrite(
                         property.PropertyType,
