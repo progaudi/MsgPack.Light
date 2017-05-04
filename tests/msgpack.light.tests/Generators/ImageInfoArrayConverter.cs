@@ -109,7 +109,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
             }
             else
             {
-                writer.WriteMapHeader(6U);
+                writer.WriteArrayHeader(6U);
 
                 WriteImageInfoBody(value, writer);
                 _dateTimeConverter.Value.Write(value.SomeDate, writer);
@@ -119,7 +119,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
         IMegaImageInfo IMsgPackConverter<IMegaImageInfo>.Read(IMsgPackReader reader)
         {
             var imageInfo = new MegaImageInfo();
-            var nullable = reader.ReadMapLength();
+            var nullable = reader.ReadArrayLength();
             if (!nullable.HasValue)
                 return null;
             for (var index = 0; index < nullable.Value; ++index)
@@ -145,7 +145,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
         public BigImageInfo Read(IMsgPackReader reader)
         {
             var imageInfo = new BigImageInfo();
-            var nullable = reader.ReadMapLength();
+            var nullable = reader.ReadArrayLength();
             if (!nullable.HasValue)
                 return null;
             for (var index = 0; index < nullable.Value; ++index)

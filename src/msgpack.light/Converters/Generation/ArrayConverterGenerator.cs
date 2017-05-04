@@ -21,7 +21,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
         public Type Generate(Type typeToWrap, Type typeToInstantinate)
         {
-            var propsToWrap = GetDistinctPropertiesOrdered(typeToWrap).ToImmutableArray();
+            var propsToWrap = GetDistinctProperties(typeToWrap).ToImmutableArray();
 
             var interfaces = typeToInstantinate == typeToWrap
                 ? new[] { typeof(IMsgPackConverter<>).MakeGenericType(typeToWrap) }
@@ -63,7 +63,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             return typeBuilder.ToType();
         }
 
-        private static IEnumerable<PropertyInfo> GetDistinctPropertiesOrdered(Type typeToWrap)
+        private static IEnumerable<PropertyInfo> GetDistinctProperties(Type typeToWrap)
         {
             var allProperties = typeToWrap.GetTypeInfo().IsInterface
                 ? typeToWrap.GetMembersFromInterface(x => x.GetTypeInfo().DeclaredProperties)
@@ -72,7 +72,6 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             var properties = allProperties
                 .Where(x => x.GetCustomAttribute<MsgPackArrayElementAttribute>() != null)
                 .GroupBy(x => x.GetArrayElementOrder())
-                .OrderBy(x => x.Key)
                 .ToDictionary(x => x.Key, x => x.ToArray());
 
             foreach (var pair in properties)
@@ -136,6 +135,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
             var generator = mb.GetILGenerator();
 
+            var instance = generator.DeclareLocal(typeToInstantinate);
             var length = generator.DeclareLocal(typeof(uint?));
             var index = generator.DeclareLocal(typeof(int));
 
@@ -151,10 +151,15 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             generator.Emit(OpCodes.Ret);
 
             generator.MarkLabel(nonNullLabel);
-
-            var instance = generator.DeclareLocal(typeToInstantinate);
             generator.Emit(OpCodes.Newobj, typeToInstantinate.GetTypeInfo().GetDefaultConstructor());
             generator.Emit(OpCodes.Stloc, instance);
+
+            var beginOfIteration = generator.DefineLabel();
+            var conditionLabel = generator.DefineLabel();
+            var incrementLabel = generator.DefineLabel();
+            generator.Emit(OpCodes.Ldc_I4_0);
+            generator.Emit(OpCodes.Stloc, index);
+            generator.Emit(OpCodes.Br, conditionLabel);
 
             void EmitRead(Type type)
             {
@@ -168,14 +173,56 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
                     converter.FieldType.GenericTypeArguments[0].GetTypeInfo().GetMethod(nameof(IMsgPackConverter<object>.Read), new[] { typeof(IMsgPackReader) }));
             }
 
+            generator.MarkLabel(beginOfIteration);
+
+            var next = default(Label?);
             foreach (var property in propsToWrap)
             {
+                if (next.HasValue)
+                {
+                    generator.MarkLabel(next.Value);
+                }
+
+                next = generator.DefineLabel();
+                generator.Emit(OpCodes.Ldloc, index);
+                generator.Emit(OpCodes.Ldstr, property.GetArrayElementOrder());
+                generator.Emit(
+                    OpCodes.Call,
+                    typeof(int).GetTypeInfo().GetMethod(
+                        nameof(int.Equals),
+                        new[] { typeof(int), typeof(int) }));
+                generator.Emit(OpCodes.Brfalse, next.Value);
+
                 generator.Emit(OpCodes.Ldloc, instance);
                 EmitRead(property.PropertyType);
                 // if property has setter, we will call it. Otherwise we'll try to find it on implementation.
                 generator.Emit(OpCodes.Callvirt, property.SetMethod ?? typeToInstantinate.GetTypeInfo().GetProperty(property.Name).SetMethod);
+
+                generator.Emit(OpCodes.Br, incrementLabel);
             }
-            
+
+            if (next.HasValue)
+            {
+                generator.MarkLabel(next.Value);
+            }
+
+            generator.Emit(OpCodes.Ldarg_1);
+            generator.Emit(OpCodes.Callvirt, typeof(IMsgPackReader).GetTypeInfo().GetMethod(nameof(IMsgPackReader.SkipToken)));
+
+            generator.MarkLabel(incrementLabel);
+            generator.Emit(OpCodes.Ldloc, index);
+            generator.Emit(OpCodes.Ldc_I4_1);
+            generator.Emit(OpCodes.Add);
+            generator.Emit(OpCodes.Stloc, index);
+
+            generator.MarkLabel(conditionLabel);
+            generator.Emit(OpCodes.Ldloc, index);
+            generator.Emit(OpCodes.Conv_I8);
+            generator.Emit(OpCodes.Ldloca, length);
+            generator.Emit(OpCodes.Call, length.LocalType.GetTypeInfo().GetProperty(nameof(Nullable<int>.Value)).GetMethod);
+            generator.Emit(OpCodes.Conv_U8);
+            generator.Emit(OpCodes.Blt, beginOfIteration);
+
             generator.Emit(OpCodes.Ldloc, instance);
             generator.Emit(OpCodes.Ret);
 
@@ -232,13 +279,24 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
             foreach (var property in propsToWrap)
             {
-                EmitWrite(
-                    property.PropertyType,
-                    x =>
-                    {
-                        x.Emit(OpCodes.Ldarg_1);
-                        x.Emit(OpCodes.Callvirt, property.GetMethod);
-                    });
+                if (property.GetCustomAttribute<MsgPackArrayElementAttribute>() != null)
+                {
+                    EmitWrite(
+                        property.PropertyType,
+                        x =>
+                        {
+                            x.Emit(OpCodes.Ldarg_1);
+                            x.Emit(OpCodes.Callvirt, property.GetMethod);
+                        });
+                }
+                else
+                {
+                    generator.Emit(writer);
+                    generator.Emit(OpCodes.Ldc_I4, (int)DataTypes.Null);
+                    generator.Emit(
+                        OpCodes.Callvirt,
+                        typeof(IMsgPackWriter).GetTypeInfo().GetMethod(nameof(IMsgPackWriter.Write), new[] { typeof(DataTypes) }));
+                }
             }
 
             generator.Emit(OpCodes.Ret);
