@@ -11,8 +11,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
     public class ClassInheritanceTest : MapGeneratorTestBase
     {
         [Theory]
-        [ClassData(typeof(MapFixtureProvider))]
-        public void WriteSmoke1(ContextFixtureBase fixture)
+        [ClassData(typeof(FixtureProvider))]
+        public void WriteSmoke(ContextFixtureBase fixture)
         {
             var testObject = new BigImageInfo
             {
@@ -26,7 +26,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
             MsgPackSerializer.Serialize(testObject, fixture.NewContext).ShouldBe(MsgPackSerializer.Serialize(testObject, fixture.OldContext));
         }
 
-        public class MapFixtureProvider : IEnumerable<object[]>
+        public class FixtureProvider : IEnumerable<object[]>
         {
             public IEnumerator<object[]> GetEnumerator()
             {

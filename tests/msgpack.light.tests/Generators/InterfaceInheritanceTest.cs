@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 using Shouldly;
 
@@ -6,27 +8,22 @@ using Xunit;
 
 namespace ProGaudi.MsgPack.Light.Tests.Generators
 {
-    public class InterfaceInheritanceTest : MapGeneratorTestBase, IClassFixture<InterfaceInheritanceTest.Fixture>
+    public class InterfaceInheritanceTest : MapGeneratorTestBase
     {
-        private readonly Fixture _testFixture;
-
-        public InterfaceInheritanceTest(Fixture testFixture)
-        {
-            _testFixture = testFixture;
-        }
-
-        [Fact]
-        public void DescendantConverterCanUseAscendant()
+        [Theory]
+        [ClassData(typeof(FixtureProvider))]
+        public void DescendantConverterCanUseAscendant(ContextFixtureBase fixture)
         {
             IImageInfo expected = CreateTestObject();
 
-            var actual = MsgPackSerializer.Deserialize<IMegaImageInfo>(MsgPackSerializer.Serialize(expected, _testFixture.OldContext), _testFixture.NewContext);
+            var actual = MsgPackSerializer.Deserialize<IMegaImageInfo>(MsgPackSerializer.Serialize(expected, fixture.OldContext), fixture.NewContext);
             actual.ShouldBeAssignableTo<IMegaImageInfo>();
             AssertEqual(actual, expected);
         }
 
-        [Fact]
-        public void InterfaceInheritance()
+        [Theory]
+        [ClassData(typeof(FixtureProvider))]
+        public void InterfaceInheritance(ContextFixtureBase fixture)
         {
             IMegaImageInfo expected = new MegaImageInfo
             {
@@ -37,17 +34,40 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
                 Width = 345
             };
 
-            var actual = MsgPackSerializer.Deserialize<IMegaImageInfo>(MsgPackSerializer.Serialize(expected, _testFixture.OldContext), _testFixture.NewContext);
+            var actual = MsgPackSerializer.Deserialize<IMegaImageInfo>(MsgPackSerializer.Serialize(expected, fixture.OldContext), fixture.NewContext);
             actual.ShouldBeAssignableTo<IMegaImageInfo>();
             AssertEqual(actual, expected);
         }
 
-        public class Fixture : MapContextFixture
+        public class FixtureProvider : IEnumerable<object[]>
         {
-            public Fixture()
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                yield return new object[] { new MapFixture() };
+                yield return new object[] { new ArrayFixture() };
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+        }
+
+        public class MapFixture : MapContextFixture
+        {
+            public MapFixture()
             {
                 NewContext.GenerateAndRegisterMapConverter<IImageInfo>();
                 NewContext.GenerateAndRegisterMapConverter<IMegaImageInfo>();
+            }
+        }
+
+        public class ArrayFixture : ArrayContextFixture
+        {
+            public ArrayFixture()
+            {
+                NewContext.GenerateAndRegisterArrayConverter<IImageInfo>();
+                NewContext.GenerateAndRegisterArrayConverter<IMegaImageInfo>();
             }
         }
     }
