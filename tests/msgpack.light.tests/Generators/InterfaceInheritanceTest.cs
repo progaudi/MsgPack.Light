@@ -42,12 +42,12 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
             AssertEqual(actual, expected);
         }
 
-        public class Fixture : ContextFixture
+        public class Fixture : MapContextFixture
         {
             public Fixture()
             {
-                NewContext.GenerateAndRegisterConverter<IImageInfo>();
-                NewContext.GenerateAndRegisterConverter<IMegaImageInfo>();
+                NewContext.GenerateAndRegisterMapConverter<IImageInfo>();
+                NewContext.GenerateAndRegisterMapConverter<IMegaImageInfo>();
             }
         }
     }

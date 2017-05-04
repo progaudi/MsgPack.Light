@@ -4,7 +4,7 @@ using Moq;
 
 namespace ProGaudi.MsgPack.Light.Tests.Generators
 {
-    internal class ImageInfoConverter : IMsgPackConverter<IImageInfo>, IMsgPackConverter<ImageInfo>, IMsgPackConverter<BigImageInfo>, IMsgPackConverter<IMegaImageInfo>
+    internal class ImageInfoMapConverter : IMsgPackConverter<IImageInfo>, IMsgPackConverter<ImageInfo>, IMsgPackConverter<BigImageInfo>, IMsgPackConverter<IMegaImageInfo>
     {
         private Lazy<IMsgPackConverter<int>> _intConverter;
         private Lazy<IMsgPackConverter<DateTime>> _dateTimeConverter;
