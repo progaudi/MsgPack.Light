@@ -77,7 +77,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             return type.DeclaredMethods.SingleOrDefault(x => x.Name == name && x.GetGenericArguments().Length == number);
         }
 
-#if NETSTANDARD1_2
+#if NETSTANDARD1_3
         public static ConstructorInfo GetConstructor(this TypeInfo type, Type[] parameters)
         {
             foreach (var constructor in type.DeclaredConstructors)
