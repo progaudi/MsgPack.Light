@@ -67,7 +67,7 @@ namespace ProGaudi.MsgPack.Light
 
         public IMsgPackConverter<object> NullConverter => SharedNullConverter;
 
-#if !NETSTANDARD1_1
+#if !NETSTANDARD1_2
         public void DiscoverConverters()
         {
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
