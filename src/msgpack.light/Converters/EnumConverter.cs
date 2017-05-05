@@ -6,7 +6,6 @@ using System.Reflection;
 namespace ProGaudi.MsgPack.Light.Converters
 {
     internal class EnumConverter<T> : IMsgPackConverter<T>
-        where T : struct, IConvertible
     {
         private IMsgPackConverter<sbyte> _sbyteConverter;
         private IMsgPackConverter<byte> _byteConverter;
@@ -17,7 +16,7 @@ namespace ProGaudi.MsgPack.Light.Converters
         private IMsgPackConverter<long> _longConverter;
         private IMsgPackConverter<ulong> _ulongConverter;
 
-        private readonly Dictionary<Type, Action<T, IMsgPackWriter>> _writeMethodsCache = new Dictionary<Type, Action<T, IMsgPackWriter>>();
+        private readonly Dictionary<Type, Action<IConvertible, IMsgPackWriter>> _writeMethodsCache = new Dictionary<Type, Action<IConvertible, IMsgPackWriter>>();
         private readonly Dictionary<Type, Func<IMsgPackReader, T>> _readMethodsCache = new Dictionary<Type, Func<IMsgPackReader, T>>();
 
         public void Initialize(MsgPackContext context)
@@ -66,16 +65,22 @@ namespace ProGaudi.MsgPack.Light.Converters
             {
                 throw ExceptionUtils.EnumExpected(enumTypeInfo);
             }
+
+            var iconvertible = typeof(IConvertible).GetTypeInfo();
+            if (!iconvertible.IsAssignableFrom(enumTypeInfo))
+            {
+                throw ExceptionUtils.IConvertibleExpected(enumTypeInfo);
+            }
         }
 
         public void Write(T value, IMsgPackWriter writer)
         {
             var enumUnderlyingType = Enum.GetUnderlyingType(typeof(T));
 
-            Action<T, IMsgPackWriter> writeMethod;
+            Action<IConvertible, IMsgPackWriter> writeMethod;
             if (_writeMethodsCache.TryGetValue(enumUnderlyingType, out writeMethod))
             {
-                writeMethod(value, writer);
+                writeMethod(value as IConvertible, writer);
             }
             else
             {

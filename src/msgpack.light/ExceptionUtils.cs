@@ -83,5 +83,10 @@ namespace ProGaudi.MsgPack.Light
         {
             return new DuplicateMapElementException(typeToWrap, pair.Key, pair.Value);
         }
+
+        public static Exception IConvertibleExpected(TypeInfo type)
+        {
+            return new InvalidOperationException($"IConvertible expected, but got {type}.");
+        }
     }
 }
