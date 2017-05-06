@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Reflection;
 
-namespace ProGaudi.MsgPack.Light.Converters.Generation
+namespace ProGaudi.MsgPack.Light.Converters.Generation.Exceptions
 {
-    public class DuplicateArrayElementException : Exception
+    public class DuplicateArrayElementException : GeneratorException
     {
         public DuplicateArrayElementException(Type type, int order, PropertyInfo[] properties)
             : base($"Duplicate order '{order}' in type '{type}'. Properties: {string.Join(", ", properties.Select(x => $"{x.DeclaringType.Name}.{x.Name}"))}.")

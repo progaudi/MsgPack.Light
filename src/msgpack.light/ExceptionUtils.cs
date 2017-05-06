@@ -1,5 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.Serialization;
+
+using ProGaudi.MsgPack.Light.Converters.Generation.Exceptions;
 
 namespace ProGaudi.MsgPack.Light
 {
@@ -7,7 +11,7 @@ namespace ProGaudi.MsgPack.Light
     {
         public static Exception BadTypeException(DataTypes actual, params DataTypes[] expectedCodes)
         {
-            return new SerializationException($"Got {actual:G} (0x{actual:X}), while expecting one of these: {string.Join(", ", expectedCodes)}");
+            return new SerializationException($"Got {actual:G} (0x{actual:X}), while expecting one of these: {String.Join(", ", expectedCodes)}");
         }
 
         public static Exception NotEnoughBytes(uint actual, uint expected)
@@ -58,6 +62,16 @@ namespace ProGaudi.MsgPack.Light
         public static Exception ConverterNotFound(Type type)
         {
             return new ConverterNotFoundException(type);
+        }
+
+        public static Exception DuplicateArrayElement(Type typeToWrap, KeyValuePair<int, PropertyInfo[]> pair)
+        {
+            return new DuplicateArrayElementException(typeToWrap, pair.Key, pair.Value);
+        }
+
+        public static Exception DuplicateMapElement(Type typeToWrap, KeyValuePair<string, PropertyInfo[]> pair)
+        {
+            return new DuplicateMapElementException(typeToWrap, pair.Key, pair.Value);
         }
     }
 }

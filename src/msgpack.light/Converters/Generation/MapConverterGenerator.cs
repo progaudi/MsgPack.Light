@@ -6,6 +6,8 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
+using ProGaudi.MsgPack.Light.Converters.Generation.Exceptions;
+
 namespace ProGaudi.MsgPack.Light.Converters.Generation
 {
     public class MapConverterGenerator
@@ -79,7 +81,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             {
                 if (pair.Value.Length > 1)
                 {
-                    throw new DuplicateMapElementException(typeToWrap, pair.Key, pair.Value);
+                    throw ExceptionUtils.DuplicateMapElement(typeToWrap, pair);
                 }
 
                 yield return pair.Value[0];
