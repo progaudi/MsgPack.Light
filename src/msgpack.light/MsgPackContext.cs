@@ -21,8 +21,12 @@ namespace ProGaudi.MsgPack.Light
 
         private readonly Dictionary<Type, Func<object>> _objectActivators = new Dictionary<Type, Func<object>>();
 
-        public MsgPackContext(bool strictParseOfFloat = false)
+        private readonly EnumConverterGenerator _enumConverterGenerator;
+
+        public MsgPackContext(bool strictParseOfFloat = false, bool convertEnumsAsStrings = false)
         {
+            _enumConverterGenerator = new EnumConverterGenerator(this, convertEnumsAsStrings);
+
             var numberConverter = new NumberConverter(strictParseOfFloat);
             _converters = new Dictionary<Type, IMsgPackConverter>
             {
@@ -168,12 +172,14 @@ namespace ProGaudi.MsgPack.Light
         private IMsgPackConverter TryGenerateEnumConverter<T>(Type type)
         {
             var enumTypeInfo = typeof(T).GetTypeInfo();
-            if (!enumTypeInfo.IsEnum)
+            var iconvertible = typeof(IConvertible).GetTypeInfo();
+            if (!enumTypeInfo.IsEnum && !iconvertible.IsAssignableFrom(enumTypeInfo))
             {
                 return null;
             }
 
-            return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(EnumConverter<>).MakeGenericType(x))));
+            return _converters
+                .GetOrAdd(type, x => CreateAndInializeConverter(()=>_enumConverterGenerator.CreateConverter<T>()));
         }
 
         public Func<object> GetObjectActivator(Type type) => _objectActivators.GetOrAdd(type, CompiledLambdaActivatorFactory.GetActivator);

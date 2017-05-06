@@ -23,6 +23,36 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
 
             enumResult.ShouldBe(valueResult);
         }
+
+        [Theory, ClassData(typeof(EnumValuesProvider<DefaultEnum>))]
+        public void WriteEnumAsString(DefaultEnum enumValue)
+        {
+            var stringConverterContext = new MsgPackContext(convertEnumsAsStrings: true);
+            var enumAsStringResult = MsgPackSerializer.Serialize(enumValue, stringConverterContext);
+            var enumAsStringExpected = MsgPackSerializer.Serialize(enumValue.ToString(), stringConverterContext);
+
+            enumAsStringResult.ShouldBe(enumAsStringExpected);
+        }
+
+        [Theory, ClassData(typeof(EnumValuesProvider<FlagEnum>))]
+        public void WriteFlagEnum(FlagEnum enumValue)
+        {
+            var enumResult = MsgPackSerializer.Serialize(enumValue);
+            var valueResult = MsgPackSerializer.Serialize((int)enumValue);
+
+            enumResult.ShouldBe(valueResult);
+        }
+
+        [Theory, ClassData(typeof(EnumValuesProvider<FlagEnum>))]
+        public void WriteFlagEnumAsString(FlagEnum enumValue)
+        {
+            var stringConverterContext = new MsgPackContext(convertEnumsAsStrings: true);
+            var enumAsStringResult = MsgPackSerializer.Serialize(enumValue, stringConverterContext);
+            var enumAsStringExpected = MsgPackSerializer.Serialize(enumValue.ToString(), stringConverterContext);
+
+            enumAsStringResult.ShouldBe(enumAsStringExpected);
+        }
+
         [Theory, ClassData(typeof(EnumValuesProvider<SbyteEnum>))]
         public void WriteSbyteEnum(SbyteEnum enumValue)
         {
@@ -120,6 +150,18 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         TestValue2,
 
         TestValue3 = 3
+    }
+
+    [Flags]
+    public enum FlagEnum
+    {
+        Value1,
+
+        Value2,
+
+        Value3 = Value1 | Value2,
+
+        Value4 = Value1 & Value2
     }
 
     public enum SbyteEnum : sbyte
