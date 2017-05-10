@@ -17,6 +17,8 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
         private readonly ArrayConverterGenerator _arrayGenerator;
 
+        private readonly EnumConverterGenerator _enumConverterGenerator;
+
         private readonly InterfaceStubGenerator _interfaceStubGenerator;
 
         private readonly ConcurrentDictionary<Type, Type> _implementationCaches = new ConcurrentDictionary<Type, Type>();
@@ -35,6 +37,8 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 #endif
             _mapGenerator = new MapConverterGenerator(moduleBuilder, _namespace);
             _arrayGenerator = new ArrayConverterGenerator(moduleBuilder, _namespace);
+            _enumConverterGenerator = new EnumConverterGenerator(moduleBuilder, _namespace);
+
             _interfaceStubGenerator = new InterfaceStubGenerator(moduleBuilder, _namespace);
         }
 
@@ -57,6 +61,12 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
         public IMsgPackConverter GenerateArrayConverter(Type @interface, Type implementation)
         {
             var generatorType = _converterCaches.GetOrAdd((@interface, implementation), x => _arrayGenerator.Generate(x.Item1, x.Item2));
+            return (IMsgPackConverter)generatorType.GetActivator()();
+        }
+
+        public IMsgPackConverter GenerateEnumConverter(Type type, bool convertEnumsAsStrings)
+        {
+            var generatorType = _converterCaches.GetOrAdd((type, type), x => _enumConverterGenerator.Generate(x.Item1, convertEnumsAsStrings));
             return (IMsgPackConverter)generatorType.GetActivator()();
         }
 

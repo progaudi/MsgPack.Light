@@ -11,6 +11,8 @@ namespace ProGaudi.MsgPack.Light
 {
     public class MsgPackContext
     {
+        private readonly bool _convertEnumsAsStrings;
+
         private static readonly IMsgPackConverter<object> SharedNullConverter = new NullConverter();
 
         private readonly ConverterGenerationContext _generatorContext = new ConverterGenerationContext();
@@ -21,12 +23,9 @@ namespace ProGaudi.MsgPack.Light
 
         private readonly Dictionary<Type, Func<object>> _objectActivators = new Dictionary<Type, Func<object>>();
 
-        private readonly EnumConverterGenerator _enumConverterGenerator;
-
         public MsgPackContext(bool strictParseOfFloat = false, bool convertEnumsAsStrings = false)
         {
-            _enumConverterGenerator = new EnumConverterGenerator(this, convertEnumsAsStrings);
-
+            _convertEnumsAsStrings = convertEnumsAsStrings;
             var numberConverter = new NumberConverter(strictParseOfFloat);
             _converters = new Dictionary<Type, IMsgPackConverter>
             {
@@ -129,6 +128,12 @@ namespace ProGaudi.MsgPack.Light
             RegisterConverter((IMsgPackConverter<TImplementation>)generator);
         }
 
+        public void GenerateAndRegisterEnumConverter<T>()
+        {
+            var generator = _generatorContext.GenerateEnumConverter(typeof(T), _convertEnumsAsStrings);
+            RegisterConverter((IMsgPackConverter<T>)generator);
+        }
+
         public void RegisterConverter<T>(IMsgPackConverter<T> converter)
         {
             converter.Initialize(this);
@@ -179,7 +184,7 @@ namespace ProGaudi.MsgPack.Light
             }
 
             return _converters
-                .GetOrAdd(type, x => CreateAndInializeConverter(()=>_enumConverterGenerator.CreateConverter<T>()));
+                .GetOrAdd(type, x => CreateAndInializeConverter(()=>_generatorContext.GenerateEnumConverter(type, _convertEnumsAsStrings)));
         }
 
         public Func<object> GetObjectActivator(Type type) => _objectActivators.GetOrAdd(type, CompiledLambdaActivatorFactory.GetActivator);

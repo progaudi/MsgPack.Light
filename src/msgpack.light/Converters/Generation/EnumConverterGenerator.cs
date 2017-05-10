@@ -3,95 +3,147 @@
 // </copyright>
 
 using System;
-using System.Globalization;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace ProGaudi.MsgPack.Light.Converters.Generation
 {
     internal class EnumConverterGenerator
     {
-        private readonly Lazy<IMsgPackConverter<string>> _stringConverter;
-        private readonly Lazy<IMsgPackConverter<sbyte>> _sbyteConverter;
-        private readonly Lazy<IMsgPackConverter<byte>> _byteConverter;
-        private readonly Lazy<IMsgPackConverter<short>> _shortConverter;
-        private readonly Lazy<IMsgPackConverter<ushort>> _ushortConverter;
-        private readonly Lazy<IMsgPackConverter<int>> _intConverter;
-        private readonly Lazy<IMsgPackConverter<uint>> _uintConverter;
-        private readonly Lazy<IMsgPackConverter<long>> _longConverter;
-        private readonly Lazy<IMsgPackConverter<ulong>> _ulongConverter;
-        private readonly bool _convertEnumsAsStrings;
+        private readonly ModuleBuilder _moduleBuilder;
+        private readonly string _namespaceToPlace;
 
-        public EnumConverterGenerator(MsgPackContext context, bool convertEnumsAsStrings)
+        public EnumConverterGenerator(ModuleBuilder moduleBuilder, string namespaceToPlace)
         {
-            _convertEnumsAsStrings = convertEnumsAsStrings;
-
-            _stringConverter = new Lazy<IMsgPackConverter<string>>(() => context.GetConverter<string>());
-            _sbyteConverter = new Lazy<IMsgPackConverter<sbyte>>(() => context.GetConverter<sbyte>());
-            _byteConverter = new Lazy<IMsgPackConverter<byte>>(() => context.GetConverter<byte>());
-            _shortConverter = new Lazy<IMsgPackConverter<short>>(() => context.GetConverter<short>());
-            _ushortConverter = new Lazy<IMsgPackConverter<ushort>>(() => context.GetConverter<ushort>());
-            _intConverter = new Lazy<IMsgPackConverter<int>>(() => context.GetConverter<int>());
-            _uintConverter = new Lazy<IMsgPackConverter<uint>>(() => context.GetConverter<uint>());
-            _longConverter = new Lazy<IMsgPackConverter<long>>(() => context.GetConverter<long>());
-            _ulongConverter = new Lazy<IMsgPackConverter<ulong>>(() => context.GetConverter<ulong>());
+            _moduleBuilder = moduleBuilder;
+            _namespaceToPlace = namespaceToPlace;
         }
 
-        public EnumConverter<T> CreateConverter<T>()
+        public Type Generate(Type typeToWrap, bool convertEnumsAsStrings)
         {
-            var enumUnderlyingType = Enum.GetUnderlyingType(typeof(T));
-            Action<IConvertible, IMsgPackWriter> writeMethod;
-            Func< IMsgPackReader, T > readMethod;
+            var interfaceToImplement = typeof(IMsgPackConverter<>).MakeGenericType(typeToWrap);
 
-            if (_convertEnumsAsStrings)
-            {
-                readMethod = reader => (T)Enum.Parse(typeof(T), _stringConverter.Value.Read(reader));
-                writeMethod = (value, writer) => _stringConverter.Value.Write(value.ToString(), writer);
-            }
-            else if (enumUnderlyingType == typeof(sbyte))
-            {
-                readMethod = reader => (T)Enum.ToObject(typeof(T), _sbyteConverter.Value.Read(reader));
-                writeMethod = (value, writer) => _sbyteConverter.Value.Write(value.ToSByte(CultureInfo.InvariantCulture), writer);
-            }
-            else if (enumUnderlyingType == typeof(byte))
-            {
-                readMethod = reader => (T)Enum.ToObject(typeof(T), _byteConverter.Value.Read(reader));
-                writeMethod = (value, writer) => _byteConverter.Value.Write(value.ToByte(CultureInfo.InvariantCulture), writer);
-            }
-            else if (enumUnderlyingType == typeof(short))
-            {
-                readMethod = reader => (T)Enum.ToObject(typeof(T), _shortConverter.Value.Read(reader));
-                writeMethod = (value, writer) => _shortConverter.Value.Write(value.ToInt16(CultureInfo.InvariantCulture), writer);
-            }
-            else if (enumUnderlyingType == typeof(ushort))
-            {
-                readMethod = reader => (T)Enum.ToObject(typeof(T), _ushortConverter.Value.Read(reader));
-                writeMethod = (value, writer) => _ushortConverter.Value.Write(value.ToUInt16(CultureInfo.InvariantCulture), writer);
-            }
-            else if (enumUnderlyingType == typeof(int))
-            {
-                readMethod = reader => (T)Enum.ToObject(typeof(T), _intConverter.Value.Read(reader));
-                writeMethod = (value, writer) => _intConverter.Value.Write(value.ToInt32(CultureInfo.InvariantCulture), writer);
-            }
-            else if (enumUnderlyingType == typeof(uint))
-            {
-                readMethod = reader => (T)Enum.ToObject(typeof(T), _uintConverter.Value.Read(reader));
-                writeMethod = (value, writer) => _uintConverter.Value.Write(value.ToUInt32(CultureInfo.InvariantCulture), writer);
-            }
-            else if (enumUnderlyingType == typeof(long))
-            {
-                readMethod = reader => (T)Enum.ToObject(typeof(T), _longConverter.Value.Read(reader));
-                writeMethod = (value, writer) => _longConverter.Value.Write(value.ToInt64(CultureInfo.InvariantCulture), writer);
-            }
-            else if (enumUnderlyingType == typeof(ulong))
-            {
-                readMethod = reader => (T) Enum.ToObject(typeof(T), _ulongConverter.Value.Read(reader));
-                writeMethod = (value, writer) => _ulongConverter.Value.Write(value.ToUInt64(CultureInfo.InvariantCulture), writer);
-            }
-            else
-            {
-                throw ExceptionUtils.UnexpectedEnumUnderlyingType(enumUnderlyingType);
-            }
+            var typeBuilder = _moduleBuilder.DefineType(
+                $"{_namespaceToPlace}.{typeToWrap.GetNormalizedName()}_EnumConverter",
+                TypeAttributes.Public,
+                typeof(object),
+                new[] { interfaceToImplement });
 
-            return new EnumConverter<T>(writeMethod, readMethod);
+            var underlyingType = convertEnumsAsStrings ? typeof(string) : Enum.GetUnderlyingType(typeToWrap);
+
+            var underlyingTypeConverter = typeBuilder.DefineField(
+                $"_{underlyingType.Name}_Converter",
+                typeof(Lazy<>).MakeGenericType(typeof(IMsgPackConverter<>).MakeGenericType(underlyingType)),
+                FieldAttributes.Private);
+
+            EmitInitializeMethod(typeBuilder, underlyingType, underlyingTypeConverter);
+            EmitWriteMethod(typeBuilder, underlyingType, underlyingTypeConverter);
+            EmitReadMethod(typeBuilder, interfaceToImplement, underlyingType, underlyingTypeConverter);
+
+            return typeBuilder.ToType();
+        }
+
+        private static void EmitReadMethod(
+            TypeBuilder typeBuilder,
+            Type @interface,
+            Type underlyingType,
+            FieldBuilder underlyingTypeConverter)
+        {
+            var mb = typeBuilder.DefineMethod(
+                $"{nameof(IMsgPackConverter<object>.Read)}",
+                MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig,
+                CallingConventions.HasThis);
+            mb.SetReturnType(@interface.GenericTypeArguments[0]);
+            mb.SetParameters(typeof(IMsgPackReader));
+
+            mb.SetReturnType(underlyingType);
+            mb.SetParameters(typeof(IMsgPackReader));
+
+            var generator = mb.GetILGenerator();
+
+            var instance = generator.DeclareLocal(underlyingType);
+            
+            generator.Emit(OpCodes.Ldloc, instance);
+            generator.Emit(OpCodes.Ldarg_0);
+            generator.Emit(OpCodes.Ldfld, underlyingTypeConverter);
+            generator.Emit(OpCodes.Callvirt, underlyingTypeConverter.FieldType.GetTypeInfo().GetProperty(nameof(Lazy<object>.Value)).GetMethod);
+            generator.Emit(OpCodes.Ldarg_1);
+            generator.Emit(
+                OpCodes.Callvirt,
+                underlyingTypeConverter.FieldType.GenericTypeArguments[0].GetTypeInfo().GetMethod(nameof(IMsgPackConverter<object>.Read), new[] { typeof(IMsgPackReader) }));
+
+            generator.Emit(OpCodes.Ret);
+        }
+
+        private static void EmitWriteMethod(
+            TypeBuilder typeBuilder,
+            Type @interface,
+            FieldBuilder underlyingTypeConverter)
+        {
+            var mb = typeBuilder.DefineMethod(
+                $"{nameof(IMsgPackConverter<object>.Write)}",
+                MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig,
+                CallingConventions.HasThis);
+            mb.SetReturnType(typeof(void));
+            mb.SetParameters(@interface.GenericTypeArguments[0], typeof(IMsgPackWriter));
+
+            var generator = mb.GetILGenerator();
+
+            generator.Emit(OpCodes.Ldarg_0);
+            generator.Emit(OpCodes.Ldfld, underlyingTypeConverter);
+            generator.Emit(OpCodes.Callvirt, underlyingTypeConverter.FieldType.GetTypeInfo().GetProperty(nameof(Lazy<object>.Value)).GetMethod);
+            generator.Emit(OpCodes.Ldarg_1);
+            generator.Emit(OpCodes.Ldarg_2);
+            generator.Emit(
+                OpCodes.Callvirt,
+                underlyingTypeConverter.FieldType.GenericTypeArguments[0].GetTypeInfo().GetMethod(nameof(IMsgPackConverter<object>.Write), new[] { @interface, typeof(IMsgPackWriter) }));
+
+            generator.Emit(OpCodes.Ret);
+        }
+
+        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
+        private static void EmitInitializeMethod(
+            TypeBuilder typeBuilder,
+            Type underlyingType,
+            FieldBuilder underlyingTypeConverter)
+        {
+            var mb = typeBuilder.DefineMethod(
+                nameof(IMsgPackConverter.Initialize),
+                MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig,
+                CallingConventions.HasThis);
+            mb.SetReturnType(typeof(void));
+            mb.SetParameters(typeof(MsgPackContext));
+
+            var generator = mb.GetILGenerator();
+
+            generator.Emit(OpCodes.Ldarg_0);
+            generator.Emit(OpCodes.Ldarg_1);
+            generator.Emit(
+                OpCodes.Ldftn,
+                typeof(MsgPackContext).GetTypeInfo().GetMethod(nameof(MsgPackContext.GetConverter))
+                    .MakeGenericMethod(underlyingType));
+
+            var converterType = underlyingTypeConverter.FieldType.GenericTypeArguments[0];
+            generator.Emit(
+                OpCodes.Newobj,
+                typeof(Func<>)
+                    .MakeGenericType(converterType)
+                    .GetTypeInfo()
+                    .GetConstructor(new[] { typeof(object), typeof(IntPtr) }));
+            generator.Emit(
+                OpCodes.Newobj,
+                typeof(Lazy<>)
+                    .MakeGenericType(converterType)
+                    .GetTypeInfo()
+                    .GetConstructor(
+                        new[]
+                        {
+                                typeof(Func<>).MakeGenericType(converterType)
+                        }));
+            generator.Emit(OpCodes.Stfld, underlyingTypeConverter);
+
+            generator.Emit(OpCodes.Ret);
         }
     }
 }
