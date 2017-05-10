@@ -11,7 +11,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
     public class InterfaceInheritanceTest : MapGeneratorTestBase
     {
         [Theory]
-        [ClassData(typeof(FixtureProvider))]
+        [ClassData(typeof(FixtureProvider<MapFixture, ArrayFixture>))]
         public void DescendantConverterCanUseAscendant(ContextFixtureBase fixture)
         {
             IImageInfo expected = CreateTestObject();
@@ -22,7 +22,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
         }
 
         [Theory]
-        [ClassData(typeof(FixtureProvider))]
+        [ClassData(typeof(FixtureProvider<MapFixture, ArrayFixture>))]
         public void InterfaceInheritance(ContextFixtureBase fixture)
         {
             IMegaImageInfo expected = new MegaImageInfo
@@ -37,20 +37,6 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
             var actual = MsgPackSerializer.Deserialize<IMegaImageInfo>(MsgPackSerializer.Serialize(expected, fixture.OldContext), fixture.NewContext);
             actual.ShouldBeAssignableTo<IMegaImageInfo>();
             AssertEqual(actual, expected);
-        }
-
-        public class FixtureProvider : IEnumerable<object[]>
-        {
-            public IEnumerator<object[]> GetEnumerator()
-            {
-                yield return new object[] { new MapFixture() };
-                yield return new object[] { new ArrayFixture() };
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
         }
 
         public class MapFixture : MapContextFixture

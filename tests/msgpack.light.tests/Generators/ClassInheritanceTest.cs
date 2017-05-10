@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 
 using Shouldly;
 
@@ -11,7 +9,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
     public class ClassInheritanceTest : MapGeneratorTestBase
     {
         [Theory]
-        [ClassData(typeof(FixtureProvider))]
+        [ClassData(typeof(FixtureProvider<MapFixture, ArrayFixture>))]
         public void WriteSmoke(ContextFixtureBase fixture)
         {
             var testObject = new BigImageInfo
@@ -26,19 +24,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
             MsgPackSerializer.Serialize(testObject, fixture.NewContext).ShouldBe(MsgPackSerializer.Serialize(testObject, fixture.OldContext));
         }
 
-        public class FixtureProvider : IEnumerable<object[]>
-        {
-            public IEnumerator<object[]> GetEnumerator()
-            {
-                yield return new object[] { new MapFixture() };
-                yield return new object[] { new ArrayFixture() };
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
-        }
+       
 
         public class MapFixture : MapContextFixture
         {

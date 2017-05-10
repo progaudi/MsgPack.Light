@@ -10,7 +10,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
     public class ClassTest : MapGeneratorTestBase
     {
         [Theory]
-        [ClassData(typeof(FixtureProvider))]
+        [ClassData(typeof(FixtureProvider<MapFixture, ArrayFixture>))]
         public void WriteSmoke(ContextFixtureBase fixture)
         {
             var testObject = CreateTestObject();
@@ -19,7 +19,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
         }
 
         [Theory]
-        [ClassData(typeof(FixtureProvider))]
+        [ClassData(typeof(FixtureProvider<MapFixture, ArrayFixture>))]
         public void ReadSmoke(ContextFixtureBase fixture)
         {
             var expected = CreateTestObject();
@@ -29,7 +29,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
         }
 
         [Theory]
-        [ClassData(typeof(FixtureProvider))]
+        [ClassData(typeof(FixtureProvider<MapFixture, ArrayFixture>))]
         public void WriteNewReadOld(ContextFixtureBase fixture)
         {
             var expected = CreateTestObject();
@@ -40,7 +40,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
         }
 
         [Theory]
-        [ClassData(typeof(FixtureProvider))]
+        [ClassData(typeof(FixtureProvider<MapFixture, ArrayFixture>))]
         public void WriteOldReadNew(ContextFixtureBase fixture)
         {
             var expected = CreateTestObject();
@@ -48,21 +48,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
             var actual = MsgPackSerializer.Deserialize<ImageInfo>(MsgPackSerializer.Serialize(expected, fixture.OldContext), fixture.NewContext);
             AssertEqual(actual, expected);
         }
-
-        public class FixtureProvider : IEnumerable<object[]>
-        {
-            public IEnumerator<object[]> GetEnumerator()
-            {
-                yield return new object[] { new MapFixture() };
-                yield return new object[] { new ArrayFixture() };
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
-        }
-
+        
         public class MapFixture : MapContextFixture
         {
             public MapFixture()
