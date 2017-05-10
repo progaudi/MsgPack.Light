@@ -130,7 +130,7 @@ namespace ProGaudi.MsgPack.Light
 
         public void GenerateAndRegisterEnumConverter<T>()
         {
-            var generator = _generatorContext.GenerateEnumConverter(typeof(T), _convertEnumsAsStrings);
+            var generator = _generatorContext.GenerateEnumConverter<T>(typeof(T), _convertEnumsAsStrings);
             RegisterConverter((IMsgPackConverter<T>)generator);
         }
 
@@ -184,7 +184,7 @@ namespace ProGaudi.MsgPack.Light
             }
 
             return _converters
-                .GetOrAdd(type, x => CreateAndInializeConverter(()=>_generatorContext.GenerateEnumConverter(type, _convertEnumsAsStrings)));
+                .GetOrAdd(type, x => CreateAndInializeConverter(()=>_generatorContext.GenerateEnumConverter<T>(type, _convertEnumsAsStrings)));
         }
 
         public Func<object> GetObjectActivator(Type type) => _objectActivators.GetOrAdd(type, CompiledLambdaActivatorFactory.GetActivator);

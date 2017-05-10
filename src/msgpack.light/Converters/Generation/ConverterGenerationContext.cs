@@ -64,9 +64,14 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             return (IMsgPackConverter)generatorType.GetActivator()();
         }
 
-        public IMsgPackConverter GenerateEnumConverter(Type type, bool convertEnumsAsStrings)
+        public IMsgPackConverter GenerateEnumConverter<T>(Type type, bool convertEnumsAsStrings)
         {
-            var generatorType = _converterCaches.GetOrAdd((type, type), x => _enumConverterGenerator.Generate(x.Item1, convertEnumsAsStrings));
+            if (convertEnumsAsStrings)
+            {
+                return new EnumStringConverter<T>();
+            }
+
+            var generatorType = _converterCaches.GetOrAdd((type, type), x => _enumConverterGenerator.Generate(x.Item1));
             return (IMsgPackConverter)generatorType.GetActivator()();
         }
 
