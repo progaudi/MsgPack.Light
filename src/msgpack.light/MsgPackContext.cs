@@ -84,23 +84,43 @@ namespace ProGaudi.MsgPack.Light
 
         public void DiscoverConverters(Assembly assembly)
         {
-            var t = GetType().GetTypeInfo().GetGenericMethod(nameof(GenerateAndRegisterConverter), 1);
+            var generateMapConverter = GetType().GetTypeInfo().GetGenericMethod(nameof(GenerateAndRegisterMapConverter), 1);
+            var generateArrayConverter = GetType().GetTypeInfo().GetGenericMethod(nameof(GenerateAndRegisterArrayConverter), 1);
             foreach (var type in assembly.ExportedTypes.Where(x => x.GetTypeInfo().GetCustomAttribute<MsgPackMapAttribute>() != null))
             {
-                t.MakeGenericMethod(type).Invoke(this, null);
+                generateMapConverter.MakeGenericMethod(type).Invoke(this, null);
+            }
+
+            foreach (var type in assembly.ExportedTypes.Where(x => x.GetTypeInfo().GetCustomAttribute<MsgPackArrayAttribute>() != null))
+            {
+                generateArrayConverter.MakeGenericMethod(type).Invoke(this, null);
             }
         }
 
-        public void GenerateAndRegisterConverter<T>()
+        public void GenerateAndRegisterMapConverter<T>()
         {
-            var generator = _generatorContext.GenerateConverter(typeof(T));
+            var generator = _generatorContext.GenerateMapConverter(typeof(T));
             RegisterConverter((IMsgPackConverter<T>) generator);
         }
 
-        public void GenerateAndRegisterConverter<TInterface, TImplementation>()
+        public void GenerateAndRegisterMapConverter<TInterface, TImplementation>()
             where TImplementation : TInterface
         {
-            var generator = _generatorContext.GenerateConverter(typeof(TInterface), typeof(TImplementation));
+            var generator = _generatorContext.GenerateMapConverter(typeof(TInterface), typeof(TImplementation));
+            RegisterConverter((IMsgPackConverter<TInterface>)generator);
+            RegisterConverter((IMsgPackConverter<TImplementation>)generator);
+        }
+
+        public void GenerateAndRegisterArrayConverter<T>()
+        {
+            var generator = _generatorContext.GenerateArrayConverter(typeof(T));
+            RegisterConverter((IMsgPackConverter<T>)generator);
+        }
+
+        public void GenerateAndRegisterArrayConverter<TInterface, TImplementation>()
+            where TImplementation : TInterface
+        {
+            var generator = _generatorContext.GenerateArrayConverter(typeof(TInterface), typeof(TImplementation));
             RegisterConverter((IMsgPackConverter<TInterface>)generator);
             RegisterConverter((IMsgPackConverter<TImplementation>)generator);
         }

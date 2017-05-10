@@ -13,7 +13,8 @@ namespace ProGaudi.MsgPack.Light.Benchmark
         public static readonly SerializationContext MsgPackHardcore = new SerializationContext();
         public static readonly MsgPackContext MsgPackLight = new MsgPackContext();
         public static readonly MsgPackContext MsgPackLightHardcore = new MsgPackContext();
-        public static readonly MsgPackContext MsgPackLightAutoGeneration = new MsgPackContext();
+        public static readonly MsgPackContext MsgPackLightMapAutoGeneration = new MsgPackContext();
+        public static readonly MsgPackContext MsgPackLightArrayAutoGeneration = new MsgPackContext();
 
         static Serializers()
         {
@@ -21,7 +22,8 @@ namespace ProGaudi.MsgPack.Light.Benchmark
             MsgPackLightHardcore.RegisterConverter(new BeerConverterHardCore());
             MsgPack.Serializers.Register(new BeerSerializer(MsgPack));
             MsgPackHardcore.Serializers.Register(new BeerSerializer(MsgPackHardcore));
-            MsgPackLightAutoGeneration.GenerateAndRegisterConverter<Beer>();
+            MsgPackLightMapAutoGeneration.GenerateAndRegisterMapConverter<Beer>();
+            MsgPackLightArrayAutoGeneration.GenerateAndRegisterArrayConverter<Beer>();
         }
     }
 }

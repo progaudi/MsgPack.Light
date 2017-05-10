@@ -10,12 +10,12 @@ using ProGaudi.MsgPack.Light.Converters.Generation.Exceptions;
 
 namespace ProGaudi.MsgPack.Light.Converters.Generation
 {
-    public class MapConverterGenerator
+    public class ArrayConverterGenerator
     {
         private readonly ModuleBuilder _moduleBuilder;
         private readonly string _namespaceToPlace;
 
-        public MapConverterGenerator(ModuleBuilder moduleBuilder, string namespaceToPlace)
+        public ArrayConverterGenerator(ModuleBuilder moduleBuilder, string namespaceToPlace)
         {
             _moduleBuilder = moduleBuilder;
             _namespaceToPlace = namespaceToPlace;
@@ -26,7 +26,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             var propsToWrap = GetDistinctProperties(typeToWrap).ToImmutableArray();
 
             var interfaces = typeToInstantinate == typeToWrap
-                ? new[] {typeof(IMsgPackConverter<>).MakeGenericType(typeToWrap)}
+                ? new[] { typeof(IMsgPackConverter<>).MakeGenericType(typeToWrap) }
                 : new[]
                 {
                     typeof(IMsgPackConverter<>).MakeGenericType(typeToWrap),
@@ -34,7 +34,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
                 };
 
             var typeBuilder = _moduleBuilder.DefineType(
-                $"{_namespaceToPlace}.{typeToWrap.GetNormalizedName()}_{typeToInstantinate.GetNormalizedName()}_Converter",
+                $"{_namespaceToPlace}.{typeToWrap.GetNormalizedName()}_{typeToInstantinate.GetNormalizedName()}_ArrayConverter",
                 TypeAttributes.Public,
                 typeof(object),
                 interfaces);
@@ -42,7 +42,6 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             var converters = propsToWrap
                 .Select(x => x.PropertyType)
                 .Distinct()
-                .Union(new[] {typeof(string)})
                 .Select(
                     x => (x, typeBuilder.DefineField(
                         $"_{x.Name}_Converter",
@@ -73,15 +72,16 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
                 : typeToWrap.GetMembersFromClass(x => x.GetTypeInfo().DeclaredProperties);
 
             var properties = allProperties
-                .Where(x => x.GetCustomAttribute<MsgPackMapElementAttribute>() != null)
-                .GroupBy(x => x.GetMapElementName())
+                .Where(x => x.GetCustomAttribute<MsgPackArrayElementAttribute>() != null)
+                .GroupBy(x => x.GetArrayElementOrder())
+                .OrderBy(x => x.Key)
                 .ToDictionary(x => x.Key, x => x.ToArray());
 
             foreach (var pair in properties)
             {
                 if (pair.Value.Length > 1)
                 {
-                    throw ExceptionUtils.DuplicateMapElement(typeToWrap, pair);
+                    throw ExceptionUtils.DuplicateArrayElement(typeToWrap, pair);
                 }
 
                 yield return pair.Value[0];
@@ -140,11 +140,10 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
             var instance = generator.DeclareLocal(typeToInstantinate);
             var length = generator.DeclareLocal(typeof(uint?));
-            var propertyName = generator.DeclareLocal(typeof(string));
             var index = generator.DeclareLocal(typeof(int));
 
             generator.Emit(OpCodes.Ldarg_1);
-            generator.Emit(OpCodes.Callvirt, typeof(IMsgPackReader).GetTypeInfo().GetMethod(nameof(IMsgPackReader.ReadMapLength)));
+            generator.Emit(OpCodes.Callvirt, typeof(IMsgPackReader).GetTypeInfo().GetMethod(nameof(IMsgPackReader.ReadArrayLength)));
             generator.Emit(OpCodes.Stloc, length);
 
             var nonNullLabel = generator.DefineLabel();
@@ -174,12 +173,10 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
                 generator.Emit(OpCodes.Ldarg_1);
                 generator.Emit(
                     OpCodes.Callvirt,
-                    converter.FieldType.GenericTypeArguments[0].GetTypeInfo().GetMethod(nameof(IMsgPackConverter<object>.Read), new[] {typeof(IMsgPackReader)}));
+                    converter.FieldType.GenericTypeArguments[0].GetTypeInfo().GetMethod(nameof(IMsgPackConverter<object>.Read), new[] { typeof(IMsgPackReader) }));
             }
 
             generator.MarkLabel(beginOfIteration);
-            EmitRead(typeof(string));
-            generator.Emit(OpCodes.Stloc, propertyName);
 
             var next = default(Label?);
             foreach (var property in propsToWrap)
@@ -190,14 +187,10 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
                 }
 
                 next = generator.DefineLabel();
-                generator.Emit(OpCodes.Ldloc, propertyName);
-                generator.Emit(OpCodes.Ldstr, property.GetMapElementName());
-                generator.Emit(OpCodes.Ldc_I4, (int) StringComparison.OrdinalIgnoreCase);
-                generator.Emit(
-                    OpCodes.Call,
-                    typeof(string).GetTypeInfo().GetMethod(
-                        nameof(string.Equals),
-                        new[] {typeof(string), typeof(string), typeof(StringComparison)}));
+
+                generator.Emit(OpCodes.Ldloc, index);
+                generator.Emit(OpCodes.Ldc_I4, property.GetArrayElementOrder());
+                generator.Emit(OpCodes.Ceq);
                 generator.Emit(OpCodes.Brfalse, next.Value);
 
                 generator.Emit(OpCodes.Ldloc, instance);
@@ -259,17 +252,24 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             // emit null version
             var writer = OpCodes.Ldarg_2;
             generator.Emit(writer);
-            generator.Emit(OpCodes.Ldc_I4, (int) DataTypes.Null);
+            generator.Emit(OpCodes.Ldc_I4, (int)DataTypes.Null);
             generator.Emit(
                 OpCodes.Callvirt,
-                typeof(IMsgPackWriter).GetTypeInfo().GetMethod(nameof(IMsgPackWriter.Write), new[] {typeof(DataTypes)}));
+                typeof(IMsgPackWriter).GetTypeInfo().GetMethod(nameof(IMsgPackWriter.Write), new[] { typeof(DataTypes) }));
             generator.Emit(OpCodes.Ret);
 
             // emit not-null version
             generator.MarkLabel(notNullCode);
             generator.Emit(writer);
-            generator.Emit(OpCodes.Ldc_I4, propsToWrap.Length);
-            generator.Emit(OpCodes.Callvirt, typeof(IMsgPackWriter).GetTypeInfo().GetMethod(nameof(IMsgPackWriter.WriteMapHeader)));
+
+            var propsWithIndex = propsToWrap
+                .GroupBy(p => p.GetArrayElementOrder())
+                .ToDictionary(x => x.Key, x => x.Single());
+
+            var maxIndex = propsWithIndex.Max(t => t.Key);
+
+            generator.Emit(OpCodes.Ldc_I4, maxIndex + 1);
+            generator.Emit(OpCodes.Callvirt, typeof(IMsgPackWriter).GetTypeInfo().GetMethod(nameof(IMsgPackWriter.WriteArrayHeader)));
 
             void EmitWrite(Type type, Action<ILGenerator> valueLoader)
             {
@@ -281,21 +281,29 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
                 generator.Emit(writer);
                 generator.Emit(
                     OpCodes.Callvirt,
-                    converter.FieldType.GenericTypeArguments[0].GetTypeInfo().GetMethod(nameof(IMsgPackConverter<object>.Write), new[] {type, typeof(IMsgPackWriter)}));
+                    converter.FieldType.GenericTypeArguments[0].GetTypeInfo().GetMethod(nameof(IMsgPackConverter<object>.Write), new[] { type, typeof(IMsgPackWriter) }));
             }
 
-            foreach (var property in propsToWrap)
+            for (var index = 0; index < maxIndex + 1; index++)
             {
-                EmitWrite(
-                    typeof(string),
-                    x => x.Emit(OpCodes.Ldstr, property.GetMapElementName()));
-                EmitWrite(
-                    property.PropertyType,
-                    x =>
-                    {
-                        x.Emit(OpCodes.Ldarg_1);
-                        x.Emit(OpCodes.Callvirt, property.GetMethod);
-                    });
+                if (propsWithIndex.TryGetValue(index, out var property))
+                {
+                    EmitWrite(
+                        property.PropertyType,
+                        x =>
+                        {
+                            x.Emit(OpCodes.Ldarg_1);
+                            x.Emit(OpCodes.Callvirt, property.GetMethod);
+                        });
+                }
+                else
+                {
+                    generator.Emit(writer);
+                    generator.Emit(OpCodes.Ldc_I4, (int)DataTypes.Null);
+                    generator.Emit(
+                        OpCodes.Callvirt,
+                        typeof(IMsgPackWriter).GetTypeInfo().GetMethod(nameof(IMsgPackWriter.Write), new[] { typeof(DataTypes) }));
+                }
             }
 
             generator.Emit(OpCodes.Ret);
@@ -332,7 +340,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
                     typeof(Func<>)
                         .MakeGenericType(converterType)
                         .GetTypeInfo()
-                        .GetConstructor(new[] {typeof(object), typeof(IntPtr)}));
+                        .GetConstructor(new[] { typeof(object), typeof(IntPtr) }));
                 generator.Emit(
                     OpCodes.Newobj,
                     typeof(Lazy<>)

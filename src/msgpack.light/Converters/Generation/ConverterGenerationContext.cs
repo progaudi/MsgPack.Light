@@ -15,6 +15,8 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
         private readonly MapConverterGenerator _mapGenerator;
 
+        private readonly ArrayConverterGenerator _arrayGenerator;
+
         private readonly InterfaceStubGenerator _interfaceStubGenerator;
 
         private readonly ConcurrentDictionary<Type, Type> _implementationCaches = new ConcurrentDictionary<Type, Type>();
@@ -32,18 +34,30 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             var moduleBuilder = _asmBuilder.DefineDynamicModule("main");
 #endif
             _mapGenerator = new MapConverterGenerator(moduleBuilder, _namespace);
+            _arrayGenerator = new ArrayConverterGenerator(moduleBuilder, _namespace);
             _interfaceStubGenerator = new InterfaceStubGenerator(moduleBuilder, _namespace);
         }
 
-        public IMsgPackConverter GenerateConverter(Type type)
+        public IMsgPackConverter GenerateMapConverter(Type type)
         {
-            return GenerateConverter(type, DetectImplementation(type));
+            return GenerateMapConverter(type, DetectImplementation(type));
         }
 
-        public IMsgPackConverter GenerateConverter(Type @interface, Type implementation)
+        public IMsgPackConverter GenerateMapConverter(Type @interface, Type implementation)
         {
             var generatorType = _converterCaches.GetOrAdd((@interface, implementation), x => _mapGenerator.Generate(x.Item1, x.Item2));
             return (IMsgPackConverter) generatorType.GetActivator()();
+        }
+
+        public IMsgPackConverter GenerateArrayConverter(Type type)
+        {
+            return GenerateArrayConverter(type, DetectImplementation(type));
+        }
+
+        public IMsgPackConverter GenerateArrayConverter(Type @interface, Type implementation)
+        {
+            var generatorType = _converterCaches.GetOrAdd((@interface, implementation), x => _arrayGenerator.Generate(x.Item1, x.Item2));
+            return (IMsgPackConverter)generatorType.GetActivator()();
         }
 
         private Type DetectImplementation(Type @interface)

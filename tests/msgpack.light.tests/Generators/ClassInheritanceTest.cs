@@ -6,17 +6,11 @@ using Xunit;
 
 namespace ProGaudi.MsgPack.Light.Tests.Generators
 {
-    public class ClassInheritanceTest : MapGeneratorTestBase, IClassFixture<ClassInheritanceTest.Fixture>
+    public class ClassInheritanceTest : MapGeneratorTestBase
     {
-        private readonly Fixture _fixture;
-
-        public ClassInheritanceTest(Fixture fixture)
-        {
-            _fixture = fixture;
-        }
-
-        [Fact]
-        public void WriteSmoke()
+        [Theory]
+        [ClassData(typeof(FixtureProvider<MapFixture, ArrayFixture>))]
+        public void WriteSmoke(ContextFixtureBase fixture)
         {
             var testObject = new BigImageInfo
             {
@@ -27,14 +21,24 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators
                 Width = 345
             };
 
-            MsgPackSerializer.Serialize(testObject, _fixture.NewContext).ShouldBe(MsgPackSerializer.Serialize(testObject, _fixture.OldContext));
+            MsgPackSerializer.Serialize(testObject, fixture.NewContext).ShouldBe(MsgPackSerializer.Serialize(testObject, fixture.OldContext));
         }
 
-        public class Fixture : ContextFixture
+       
+
+        public class MapFixture : MapContextFixture
         {
-            public Fixture()
+            public MapFixture()
             {
-                NewContext.GenerateAndRegisterConverter<BigImageInfo>();
+                NewContext.GenerateAndRegisterMapConverter<BigImageInfo>();
+            }
+        }
+
+        public class ArrayFixture : ArrayContextFixture
+        {
+            public ArrayFixture()
+            {
+                NewContext.GenerateAndRegisterArrayConverter<BigImageInfo>();
             }
         }
     }

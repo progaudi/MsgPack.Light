@@ -1,4 +1,5 @@
-﻿using ProGaudi.MsgPack.Light.Converters.Generation;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 using Shouldly;
 
@@ -6,57 +7,61 @@ using Xunit;
 
 namespace ProGaudi.MsgPack.Light.Tests.Generators
 {
-    [Collection(nameof(MapConverterGenerator))]
-    public class FullTest : MapGeneratorTestBase, IClassFixture<FullTest.Fixture>
+    public class FullTest : MapGeneratorTestBase
     {
-        private readonly Fixture _fixture;
-
-        public FullTest(Fixture fixture)
-        {
-            _fixture = fixture;
-        }
-
-        [Fact]
-        public void WriteSmoke()
+        [Theory]
+        [ClassData(typeof(FixtureProvider<MapFixture, ArrayFixture>))]
+        public void WriteSmoke(ContextFixtureBase fixture)
         {
             IImageInfo testObject = CreateTestObject();
 
-            MsgPackSerializer.Serialize(testObject, _fixture.NewContext).ShouldBe(MsgPackSerializer.Serialize(testObject, _fixture.OldContext));
+            MsgPackSerializer.Serialize(testObject, fixture.NewContext).ShouldBe(MsgPackSerializer.Serialize(testObject, fixture.OldContext));
         }
 
-        [Fact]
-        public void ReadSmoke()
+        [Theory]
+        [ClassData(typeof(FixtureProvider<MapFixture, ArrayFixture>))]
+        public void ReadSmoke(ContextFixtureBase fixture)
         {
             IImageInfo expected = CreateTestObject();
 
-            var actual = MsgPackSerializer.Deserialize<IImageInfo>(MsgPackSerializer.Serialize(expected, _fixture.NewContext), _fixture.NewContext);
+            var actual = MsgPackSerializer.Deserialize<IImageInfo>(MsgPackSerializer.Serialize(expected, fixture.NewContext), fixture.NewContext);
             AssertEqual(actual, expected);
         }
 
-        [Fact]
-        public void WriteNewReadOld()
+        [Theory]
+        [ClassData(typeof(FixtureProvider<MapFixture, ArrayFixture>))]
+        public void WriteNewReadOld(ContextFixtureBase fixture)
         {
             IImageInfo expected = CreateTestObject();
 
-            var actual = MsgPackSerializer.Deserialize<IImageInfo>(MsgPackSerializer.Serialize(expected, _fixture.NewContext), _fixture.OldContext);
+            var actual = MsgPackSerializer.Deserialize<IImageInfo>(MsgPackSerializer.Serialize(expected, fixture.NewContext), fixture.OldContext);
 
             AssertEqual(actual, expected);
         }
 
-        [Fact]
-        public void WriteOldReadNew()
+        [Theory]
+        [ClassData(typeof(FixtureProvider<MapFixture, ArrayFixture>))]
+        public void WriteOldReadNew(ContextFixtureBase fixture)
         {
             IImageInfo expected = CreateTestObject();
 
-            var actual = MsgPackSerializer.Deserialize<IImageInfo>(MsgPackSerializer.Serialize(expected, _fixture.OldContext), _fixture.NewContext);
+            var actual = MsgPackSerializer.Deserialize<IImageInfo>(MsgPackSerializer.Serialize(expected, fixture.OldContext), fixture.NewContext);
             AssertEqual(actual, expected);
         }
-
-        public class Fixture : ContextFixture
+        
+        public class MapFixture : MapContextFixture
         {
-            public Fixture()
+            public MapFixture()
             {
-                NewContext.GenerateAndRegisterConverter<IImageInfo, ImageInfo>();
+                NewContext.GenerateAndRegisterMapConverter<IImageInfo, ImageInfo>();
+            }
+        }
+
+        public class ArrayFixture : ArrayContextFixture
+        {
+            public ArrayFixture()
+            {
+                NewContext.GenerateAndRegisterArrayConverter<IImageInfo, ImageInfo>();
             }
         }
     }

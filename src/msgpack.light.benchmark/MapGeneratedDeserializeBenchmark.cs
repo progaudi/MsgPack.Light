@@ -63,7 +63,13 @@ namespace ProGaudi.MsgPack.Light.Benchmark
         [Benchmark]
         public void MPLight_Array_AutoMap()
         {
-            var beer = MsgPackSerializer.Deserialize<Beer>(_msgPackArray, Serializers.MsgPackLightAutoGeneration);
+            var beer = MsgPackSerializer.Deserialize<Beer>(_msgPackArray, Serializers.MsgPackLightMapAutoGeneration);
+        }
+
+        [Benchmark]
+        public void MPLight_Array_AutoArray()
+        {
+            var beer = MsgPackSerializer.Deserialize<Beer>(_msgPackArray, Serializers.MsgPackLightArrayAutoGeneration);
         }
     }
 }
