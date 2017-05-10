@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Description>Tests for MsgPack.Light library</Description>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net46</TargetFrameworks>
+    <TargetFrameworks>net46;netcoreapp1.0;netcoreapp1.1</TargetFrameworks>
     <WarningsAsErrors>true</WarningsAsErrors>
     <AssemblyName>msgpack.light.tests</AssemblyName>
     <RootNamespace>ProGaudi.MsgPack.Light.Tests</RootNamespace>

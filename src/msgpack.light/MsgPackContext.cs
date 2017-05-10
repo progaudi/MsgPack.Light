@@ -70,7 +70,7 @@ namespace ProGaudi.MsgPack.Light
 
         public IMsgPackConverter<object> NullConverter => SharedNullConverter;
 
-#if !NETSTANDARD1_3
+#if !NETSTANDARD1_1
         public void DiscoverConverters()
         {
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -177,8 +177,7 @@ namespace ProGaudi.MsgPack.Light
         private IMsgPackConverter TryGenerateEnumConverter<T>(Type type)
         {
             var enumTypeInfo = typeof(T).GetTypeInfo();
-            var iconvertible = typeof(IConvertible).GetTypeInfo();
-            if (!enumTypeInfo.IsEnum && !iconvertible.IsAssignableFrom(enumTypeInfo))
+            if (!enumTypeInfo.IsEnum)
             {
                 return null;
             }
