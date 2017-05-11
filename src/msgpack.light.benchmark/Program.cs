@@ -20,7 +20,9 @@ namespace ProGaudi.MsgPack.Light.Benchmark
                     typeof (IntSerialize),
                     typeof (DoubleSerialize),
                     typeof (BeerSkip),
-                    typeof (BeerSkipList)
+                    typeof (BeerSkipList),
+                    typeof (EnumGeneratedDeserializeBenchmark),
+                    typeof (EnumGeneratedSerializeBenchmark)
                 });
             switcher.Run(args);
         }
