@@ -1,8 +1,4 @@
-﻿// <copyright file="EnumGeneratedSerialzieBenchmark.cs" company="eVote">
-//   Copyright © eVote
-// </copyright>
-
-using System.IO;
+﻿using System.IO;
 using System.Text;
 
 using BenchmarkDotNet.Attributes;
