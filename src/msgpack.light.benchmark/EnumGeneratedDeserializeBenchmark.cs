@@ -17,13 +17,13 @@ namespace ProGaudi.MsgPack.Light.Benchmark
         {
             var beerType = BeerType.Lager;
             _msgPackArray = PrepareMsgPack(beerType).ToArray();
-            _msgPackForInt = PrepareMsgPack((int) beerType).ToArray();
+            _msgPackForInt = PrepareMsgPack((int)beerType).ToArray();
         }
 
         private MemoryStream PrepareMsgPack<T>(T item)
         {
             var memoryStream = new MemoryStream();
-            MsgPackSerializer.Serialize(item, memoryStream);
+            MsgPackSerializer.Serialize(item, memoryStream, Serializers.MsgPackLight);
             return memoryStream;
         }
 
@@ -36,7 +36,7 @@ namespace ProGaudi.MsgPack.Light.Benchmark
         [Benchmark(Baseline = true)]
         public void MPLight_IntEnum()
         {
-            var beerType = MsgPackSerializer.Deserialize<BeerType>(_msgPackArray, Serializers.MsgPackLightMapAutoGeneration);
+            var beerType = MsgPackSerializer.Deserialize<BeerType>(_msgPackArray, Serializers.MsgPackLightIntEnum);
         }
 
         [Benchmark]

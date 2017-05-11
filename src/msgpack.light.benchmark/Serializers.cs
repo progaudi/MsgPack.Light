@@ -11,7 +11,7 @@ namespace ProGaudi.MsgPack.Light.Benchmark
         public static readonly JsonSerializer Newtonsoft = new JsonSerializer();
         public static readonly SerializationContext MsgPack = new SerializationContext();
         public static readonly SerializationContext MsgPackHardcore = new SerializationContext();
-        public static readonly MsgPackContext MsgPackLight = new MsgPackContext();
+        public static readonly MsgPackContext MsgPackLight = new MsgPackContext(convertEnumsAsStrings: false);
         public static readonly MsgPackContext MsgPackLightHardcore = new MsgPackContext();
         public static readonly MsgPackContext MsgPackLightMapAutoGeneration = new MsgPackContext();
         public static readonly MsgPackContext MsgPackLightArrayAutoGeneration = new MsgPackContext();

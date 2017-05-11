@@ -15,8 +15,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [Theory, ClassData(typeof(EnumValuesProvider<DefaultEnum>))]
         public void WriteEnum(DefaultEnum enumValue)
         {
-            var enumResult = MsgPackSerializer.Serialize(enumValue);
-            var valueResult = MsgPackSerializer.Serialize((int)enumValue);
+            var intEnumContext = new MsgPackContext(convertEnumsAsStrings: false);
+            var enumResult = MsgPackSerializer.Serialize(enumValue, intEnumContext);
+            var valueResult = MsgPackSerializer.Serialize((int)enumValue, intEnumContext);
 
             enumResult.ShouldBe(valueResult);
         }
@@ -24,9 +25,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [Theory, ClassData(typeof(EnumValuesProvider<DefaultEnum>))]
         public void WriteEnumAsString(DefaultEnum enumValue)
         {
-            var stringConverterContext = new MsgPackContext(convertEnumsAsStrings: true);
-            var enumAsStringResult = MsgPackSerializer.Serialize(enumValue, stringConverterContext);
-            var enumAsStringExpected = MsgPackSerializer.Serialize(enumValue.ToString(), stringConverterContext);
+            var enumAsStringResult = MsgPackSerializer.Serialize(enumValue);
+            var enumAsStringExpected = MsgPackSerializer.Serialize(enumValue.ToString());
 
             enumAsStringResult.ShouldBe(enumAsStringExpected);
         }
@@ -34,8 +34,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [Theory, ClassData(typeof(EnumValuesProvider<FlagEnum>))]
         public void WriteFlagEnum(FlagEnum enumValue)
         {
-            var enumResult = MsgPackSerializer.Serialize(enumValue);
-            var valueResult = MsgPackSerializer.Serialize((int)enumValue);
+            var intEnumContext = new MsgPackContext(convertEnumsAsStrings: false);
+            var enumResult = MsgPackSerializer.Serialize(enumValue, intEnumContext);
+            var valueResult = MsgPackSerializer.Serialize((int)enumValue, intEnumContext);
 
             enumResult.ShouldBe(valueResult);
         }
@@ -43,9 +44,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [Theory, ClassData(typeof(EnumValuesProvider<FlagEnum>))]
         public void WriteFlagEnumAsString(FlagEnum enumValue)
         {
-            var stringConverterContext = new MsgPackContext(convertEnumsAsStrings: true);
-            var enumAsStringResult = MsgPackSerializer.Serialize(enumValue, stringConverterContext);
-            var enumAsStringExpected = MsgPackSerializer.Serialize(enumValue.ToString(), stringConverterContext);
+            var enumAsStringResult = MsgPackSerializer.Serialize(enumValue);
+            var enumAsStringExpected = MsgPackSerializer.Serialize(enumValue.ToString());
 
             enumAsStringResult.ShouldBe(enumAsStringExpected);
         }
@@ -53,8 +53,10 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [Theory, ClassData(typeof(EnumValuesProvider<SbyteEnum>))]
         public void WriteSbyteEnum(SbyteEnum enumValue)
         {
-            var enumResult = MsgPackSerializer.Serialize(enumValue);
-            var valueResult = MsgPackSerializer.Serialize((sbyte)enumValue);
+            var intEnumContext = new MsgPackContext(convertEnumsAsStrings: false);
+
+            var enumResult = MsgPackSerializer.Serialize(enumValue, intEnumContext);
+            var valueResult = MsgPackSerializer.Serialize((sbyte)enumValue, intEnumContext);
 
             enumResult.ShouldBe(valueResult);
         }
@@ -62,8 +64,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [Theory, ClassData(typeof(EnumValuesProvider<ByteEnum>))]
         public void WriteByteEnum(ByteEnum enumValue)
         {
-            var enumResult = MsgPackSerializer.Serialize(enumValue);
-            var valueResult = MsgPackSerializer.Serialize((byte)enumValue);
+            var intEnumContext = new MsgPackContext(convertEnumsAsStrings: false);
+            var enumResult = MsgPackSerializer.Serialize(enumValue, intEnumContext);
+            var valueResult = MsgPackSerializer.Serialize((byte)enumValue, intEnumContext);
 
             enumResult.ShouldBe(valueResult);
         }
@@ -71,8 +74,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [Theory, ClassData(typeof(EnumValuesProvider<ShortEnum>))]
         public void WriteShortEnum(ShortEnum enumValue)
         {
-            var enumResult = MsgPackSerializer.Serialize(enumValue);
-            var valueResult = MsgPackSerializer.Serialize((short)enumValue);
+            var intEnumContext = new MsgPackContext(convertEnumsAsStrings: false);
+            var enumResult = MsgPackSerializer.Serialize(enumValue, intEnumContext);
+            var valueResult = MsgPackSerializer.Serialize((short)enumValue, intEnumContext);
 
             enumResult.ShouldBe(valueResult);
         }
@@ -80,8 +84,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [Theory, ClassData(typeof(EnumValuesProvider<UshortEnum>))]
         public void WriteUshortEnum(UshortEnum enumValue)
         {
-            var enumResult = MsgPackSerializer.Serialize(enumValue);
-            var valueResult = MsgPackSerializer.Serialize((ushort)enumValue);
+            var intEnumContext = new MsgPackContext(convertEnumsAsStrings: false);
+            var enumResult = MsgPackSerializer.Serialize(enumValue, intEnumContext);
+            var valueResult = MsgPackSerializer.Serialize((ushort)enumValue, intEnumContext);
 
             enumResult.ShouldBe(valueResult);
         }
@@ -89,8 +94,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [Theory, ClassData(typeof(EnumValuesProvider<IntEnum>))]
         public void WriteIntEnum(IntEnum enumValue)
         {
-            var enumResult = MsgPackSerializer.Serialize(enumValue);
-            var valueResult = MsgPackSerializer.Serialize((int)enumValue);
+            var intEnumContext = new MsgPackContext(convertEnumsAsStrings: false);
+            var enumResult = MsgPackSerializer.Serialize(enumValue, intEnumContext);
+            var valueResult = MsgPackSerializer.Serialize((int)enumValue, intEnumContext);
 
             enumResult.ShouldBe(valueResult);
         }
@@ -98,8 +104,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [Theory, ClassData(typeof(EnumValuesProvider<UintEnum>))]
         public void WriteUintEnum(UintEnum enumValue)
         {
-            var enumResult = MsgPackSerializer.Serialize(enumValue);
-            var valueResult = MsgPackSerializer.Serialize((uint)enumValue);
+            var intEnumContext = new MsgPackContext(convertEnumsAsStrings: false);
+            var enumResult = MsgPackSerializer.Serialize(enumValue, intEnumContext);
+            var valueResult = MsgPackSerializer.Serialize((uint)enumValue, intEnumContext);
 
             enumResult.ShouldBe(valueResult);
         }
@@ -107,8 +114,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [Theory, ClassData(typeof(EnumValuesProvider<LongEnum>))]
         public void WriteLongEnum(LongEnum enumValue)
         {
-            var enumResult = MsgPackSerializer.Serialize(enumValue);
-            var valueResult = MsgPackSerializer.Serialize((long)enumValue);
+            var intEnumContext = new MsgPackContext(convertEnumsAsStrings: false);
+            var enumResult = MsgPackSerializer.Serialize(enumValue, intEnumContext);
+            var valueResult = MsgPackSerializer.Serialize((long)enumValue, intEnumContext);
 
             enumResult.ShouldBe(valueResult);
         }
@@ -116,8 +124,9 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [Theory, ClassData(typeof(EnumValuesProvider<UlongEnum>))]
         public void WriteUlongEnum(UlongEnum enumValue)
         {
-            var enumResult = MsgPackSerializer.Serialize(enumValue);
-            var valueResult = MsgPackSerializer.Serialize((ulong)enumValue);
+            var intEnumContext = new MsgPackContext(convertEnumsAsStrings: false);
+            var enumResult = MsgPackSerializer.Serialize(enumValue, intEnumContext);
+            var valueResult = MsgPackSerializer.Serialize((ulong)enumValue, intEnumContext);
 
             enumResult.ShouldBe(valueResult);
         }
