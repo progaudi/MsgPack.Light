@@ -64,6 +64,16 @@ namespace ProGaudi.MsgPack.Light
             return new ConverterNotFoundException(type);
         }
 
+        public static InvalidOperationException EnumExpected(TypeInfo type)
+        {
+            return new InvalidOperationException($"Enum expected, but got {type}.");
+        }
+
+        public static InvalidOperationException UnexpectedEnumUnderlyingType(Type enumUnderlyingType)
+        {
+            return new InvalidOperationException($"Unexpected underlying enum type: {enumUnderlyingType}.");
+        }
+
         public static Exception DuplicateArrayElement(Type typeToWrap, KeyValuePair<int, PropertyInfo[]> pair)
         {
             return new DuplicateArrayElementException(typeToWrap, pair.Key, pair.Value);

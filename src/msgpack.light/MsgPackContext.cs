@@ -11,6 +11,8 @@ namespace ProGaudi.MsgPack.Light
 {
     public class MsgPackContext
     {
+        private readonly bool _convertEnumsAsStrings;
+
         private static readonly IMsgPackConverter<object> SharedNullConverter = new NullConverter();
 
         private readonly ConverterGenerationContext _generatorContext = new ConverterGenerationContext();
@@ -21,8 +23,9 @@ namespace ProGaudi.MsgPack.Light
 
         private readonly Dictionary<Type, Func<object>> _objectActivators = new Dictionary<Type, Func<object>>();
 
-        public MsgPackContext(bool strictParseOfFloat = false)
+        public MsgPackContext(bool strictParseOfFloat = false, bool convertEnumsAsStrings = false)
         {
+            _convertEnumsAsStrings = convertEnumsAsStrings;
             var numberConverter = new NumberConverter(strictParseOfFloat);
             _converters = new Dictionary<Type, IMsgPackConverter>
             {
@@ -125,6 +128,12 @@ namespace ProGaudi.MsgPack.Light
             RegisterConverter((IMsgPackConverter<TImplementation>)generator);
         }
 
+        public void GenerateAndRegisterEnumConverter<T>()
+        {
+            var generator = _generatorContext.GenerateEnumConverter<T>(typeof(T), _convertEnumsAsStrings);
+            RegisterConverter((IMsgPackConverter<T>)generator);
+        }
+
         public void RegisterConverter<T>(IMsgPackConverter<T> converter)
         {
             converter.Initialize(this);
@@ -150,10 +159,12 @@ namespace ProGaudi.MsgPack.Light
             if (result != null)
                 return result;
 
-            result = (IMsgPackConverter<T>)(TryGenerateConverterFromGenericConverter(type)
-                ?? TryGenerateArrayConverter(type)
-                ?? TryGenerateMapConverter(type)
-                ?? TryGenerateNullableConverter(type));
+            result = (IMsgPackConverter<T>)(
+                TryGenerateEnumConverter<T>(type) ??
+                TryGenerateConverterFromGenericConverter(type) ??
+                TryGenerateArrayConverter(type) ??
+                TryGenerateMapConverter(type) ??
+                TryGenerateNullableConverter(type));
 
             if (result == null)
             {
@@ -161,6 +172,18 @@ namespace ProGaudi.MsgPack.Light
             }
 
             return result;
+        }
+
+        private IMsgPackConverter TryGenerateEnumConverter<T>(Type type)
+        {
+            var enumTypeInfo = typeof(T).GetTypeInfo();
+            if (!enumTypeInfo.IsEnum)
+            {
+                return null;
+            }
+
+            return _converters
+                .GetOrAdd(type, x => CreateAndInializeConverter(()=>_generatorContext.GenerateEnumConverter<T>(type, _convertEnumsAsStrings)));
         }
 
         public Func<object> GetObjectActivator(Type type) => _objectActivators.GetOrAdd(type, CompiledLambdaActivatorFactory.GetActivator);
