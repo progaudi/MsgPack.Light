@@ -23,7 +23,7 @@ namespace ProGaudi.MsgPack.Light
 
         private readonly Dictionary<Type, Func<object>> _objectActivators = new Dictionary<Type, Func<object>>();
 
-        public MsgPackContext(bool strictParseOfFloat = false, bool convertEnumsAsStrings = false)
+        public MsgPackContext(bool strictParseOfFloat = false, bool convertEnumsAsStrings = true)
         {
             _convertEnumsAsStrings = convertEnumsAsStrings;
             var numberConverter = new NumberConverter(strictParseOfFloat);
