@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Text;
-
-using BenchmarkDotNet.Attributes;
+﻿using BenchmarkDotNet.Attributes;
 
 using ProGaudi.MsgPack.Light.Benchmark.Data;
 
@@ -13,29 +9,15 @@ namespace ProGaudi.MsgPack.Light.Benchmark
     {
         private readonly BeerType _beerType;
 
+        private readonly int _beerTypeIntRepresentation;
+
         public EnumGeneratedSerializeBenchmark()
         {
             _beerType = BeerType.Malt;
-        }
-
-        [Benchmark]
-        public void JsonNet()
-        {
-            var memoryStream = new MemoryStream();
-            using (var writer = new StreamWriter(memoryStream, Encoding.UTF8, 1024, true))
-            {
-                Serializers.Newtonsoft.Serialize(writer, _beerType);
-                writer.Flush();
-            }
+            _beerTypeIntRepresentation = (int) _beerType;
         }
 
         [Benchmark(Baseline = true)]
-        public void MPCli_Array()
-        {
-            var bytes = Serializers.MsgPack.GetSerializer<BeerType>().PackSingleObject(_beerType);
-        }
-
-        [Benchmark]
         public void MPLight_IntEnum()
         {
             var bytes = MsgPackSerializer.Serialize(_beerType, Serializers.MsgPackLightIntEnum);
@@ -45,6 +27,12 @@ namespace ProGaudi.MsgPack.Light.Benchmark
         public void MPLight_AutoEnum()
         {
             var bytes = MsgPackSerializer.Serialize(_beerType, Serializers.MsgPackLight);
+        }
+
+        [Benchmark]
+        public void MPLight_Int()
+        {
+            var bytes = MsgPackSerializer.Serialize(_beerTypeIntRepresentation, Serializers.MsgPackLight);
         }
     }
 }
