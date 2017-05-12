@@ -1,7 +1,5 @@
 using System;
 
-using Moq;
-
 namespace ProGaudi.MsgPack.Light.Tests.Generators
 {
     internal class ImageInfoMapConverter : IMsgPackConverter<IImageInfo>, IMsgPackConverter<ImageInfo>, IMsgPackConverter<BigImageInfo>, IMsgPackConverter<IMegaImageInfo>

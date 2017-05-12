@@ -1,76 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
-using ProGaudi.MsgPack.Light.Converters.Generation.Exceptions;
-
 namespace ProGaudi.MsgPack.Light.Converters.Generation
 {
-    public class ArrayConverterGenerator
+    public class ArrayConverterGenerator : ConverterGeneratorBase
     {
-        private readonly ModuleBuilder _moduleBuilder;
-        private readonly string _namespaceToPlace;
-
         public ArrayConverterGenerator(ModuleBuilder moduleBuilder, string namespaceToPlace)
+            : base(moduleBuilder, namespaceToPlace, "ArrayConverter")
         {
-            _moduleBuilder = moduleBuilder;
-            _namespaceToPlace = namespaceToPlace;
         }
 
-        public Type Generate(Type typeToWrap, Type typeToInstantinate)
+        protected override IEnumerable<PropertyInfo> FilterProperties(Type typeToWrap, ImmutableArray<PropertyInfo> allProperties)
         {
-            var propsToWrap = GetDistinctProperties(typeToWrap).ToImmutableArray();
-
-            var interfaces = typeToInstantinate == typeToWrap
-                ? new[] { typeof(IMsgPackConverter<>).MakeGenericType(typeToWrap) }
-                : new[]
-                {
-                    typeof(IMsgPackConverter<>).MakeGenericType(typeToWrap),
-                    typeof(IMsgPackConverter<>).MakeGenericType(typeToInstantinate)
-                };
-
-            var typeBuilder = _moduleBuilder.DefineType(
-                $"{_namespaceToPlace}.{typeToWrap.GetNormalizedName()}_{typeToInstantinate.GetNormalizedName()}_ArrayConverter",
-                TypeAttributes.Public,
-                typeof(object),
-                interfaces);
-
-            var converters = propsToWrap
-                .Select(x => x.PropertyType)
-                .Distinct()
-                .Select(
-                    x => (x, typeBuilder.DefineField(
-                        $"_{x.Name}_Converter",
-                        typeof(Lazy<>).MakeGenericType(typeof(IMsgPackConverter<>).MakeGenericType(x)),
-                        FieldAttributes.Private)))
-                .ToImmutableDictionary(
-                    x => x.Item1,
-                    x => x.Item2
-                );
-
-            EmitInitializeMethod(typeBuilder, converters);
-            var writeImpl = EmitWriteImplMethod(typeBuilder, typeToWrap, propsToWrap, converters);
-            var readImpl = EmitReadImplMethod(typeBuilder, typeToInstantinate, propsToWrap, converters);
-
-            foreach (var @interface in interfaces)
-            {
-                EmitWriteMethod(typeBuilder, @interface, writeImpl);
-                EmitReadMethod(typeBuilder, @interface, readImpl);
-            }
-
-            return typeBuilder.ToType();
-        }
-
-        private static IEnumerable<PropertyInfo> GetDistinctProperties(Type typeToWrap)
-        {
-            var allProperties = typeToWrap.GetTypeInfo().IsInterface
-                ? typeToWrap.GetMembersFromInterface(x => x.GetTypeInfo().DeclaredProperties)
-                : typeToWrap.GetMembersFromClass(x => x.GetTypeInfo().DeclaredProperties);
-
             var properties = allProperties
                 .Where(x => x.GetCustomAttribute<MsgPackArrayElementAttribute>() != null)
                 .GroupBy(x => x.GetArrayElementOrder())
@@ -88,42 +33,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             }
         }
 
-        private static void EmitReadMethod(TypeBuilder typeBuilder, Type @interface, MethodBuilder readImpl)
-        {
-            var mb = typeBuilder.DefineMethod(
-                $"{nameof(IMsgPackConverter<object>.Read)}",
-                MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig,
-                CallingConventions.HasThis);
-            mb.SetReturnType(@interface.GenericTypeArguments[0]);
-            mb.SetParameters(typeof(IMsgPackReader));
-
-            var generator = mb.GetILGenerator();
-
-            generator.Emit(OpCodes.Ldarg_0);
-            generator.Emit(OpCodes.Ldarg_1);
-            generator.Emit(OpCodes.Call, readImpl);
-            generator.Emit(OpCodes.Ret);
-        }
-
-        private static void EmitWriteMethod(TypeBuilder typeBuilder, Type @interface, MethodBuilder writeImpl)
-        {
-            var mb = typeBuilder.DefineMethod(
-                $"{nameof(IMsgPackConverter<object>.Write)}",
-                MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig,
-                CallingConventions.HasThis);
-            mb.SetReturnType(typeof(void));
-            mb.SetParameters(@interface.GenericTypeArguments[0], typeof(IMsgPackWriter));
-
-            var generator = mb.GetILGenerator();
-
-            generator.Emit(OpCodes.Ldarg_0);
-            generator.Emit(OpCodes.Ldarg_1);
-            generator.Emit(OpCodes.Ldarg_2);
-            generator.Emit(OpCodes.Call, writeImpl);
-            generator.Emit(OpCodes.Ret);
-        }
-
-        private static MethodBuilder EmitReadImplMethod(
+        protected override MethodBuilder EmitReadImplMethod(
             TypeBuilder typeBuilder,
             Type typeToInstantinate,
             ImmutableArray<PropertyInfo> propsToWrap,
@@ -229,7 +139,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             return mb;
         }
 
-        private static MethodBuilder EmitWriteImplMethod(
+        protected override MethodBuilder EmitWriteImplMethod(
             TypeBuilder typeBuilder,
             Type typeToWrap,
             ImmutableArray<PropertyInfo> propsToWrap,
@@ -309,52 +219,6 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             generator.Emit(OpCodes.Ret);
 
             return mb;
-        }
-
-        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
-        private static void EmitInitializeMethod(
-            TypeBuilder typeBuilder,
-            ImmutableDictionary<Type, FieldBuilder> converters)
-        {
-            var mb = typeBuilder.DefineMethod(
-                nameof(IMsgPackConverter.Initialize),
-                MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig,
-                CallingConventions.HasThis);
-            mb.SetReturnType(typeof(void));
-            mb.SetParameters(typeof(MsgPackContext));
-
-            var generator = mb.GetILGenerator();
-
-            foreach (var converter in converters)
-            {
-                generator.Emit(OpCodes.Ldarg_0);
-                generator.Emit(OpCodes.Ldarg_1);
-                generator.Emit(
-                    OpCodes.Ldftn,
-                    typeof(MsgPackContext).GetTypeInfo().GetMethod(nameof(MsgPackContext.GetConverter))
-                        .MakeGenericMethod(converter.Key));
-
-                var converterType = converter.Value.FieldType.GenericTypeArguments[0];
-                generator.Emit(
-                    OpCodes.Newobj,
-                    typeof(Func<>)
-                        .MakeGenericType(converterType)
-                        .GetTypeInfo()
-                        .GetConstructor(new[] { typeof(object), typeof(IntPtr) }));
-                generator.Emit(
-                    OpCodes.Newobj,
-                    typeof(Lazy<>)
-                        .MakeGenericType(converterType)
-                        .GetTypeInfo()
-                        .GetConstructor(
-                            new[]
-                            {
-                                typeof(Func<>).MakeGenericType(converterType)
-                            }));
-                generator.Emit(OpCodes.Stfld, converter.Value);
-            }
-
-            generator.Emit(OpCodes.Ret);
         }
     }
 }

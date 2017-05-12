@@ -12,6 +12,8 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
         private readonly string _namespaceToPlace;
 
+        private readonly PropertyProvider _propertyProvider = new PropertyProvider();
+
         public InterfaceStubGenerator(ModuleBuilder moduleBuilder, string namespaceToPlace)
         {
             _moduleBuilder = moduleBuilder;
@@ -40,7 +42,8 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             typeBuilder.AddInterfaceImplementation(typeToWrap);
 
             var methodToSkip = new HashSet<MethodInfo>();
-            foreach (var info in typeToWrap.GetMembersFromInterface(x => x.GetTypeInfo().DeclaredProperties))
+            var properties = _propertyProvider.GetProperties(typeToWrap);
+            foreach (var info in properties)
             {
                 GenerateProperty(info, typeBuilder);
                 if (info.GetMethod != null)
