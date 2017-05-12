@@ -1,10 +1,5 @@
-﻿// <copyright file="ReadToken.cs" company="eVote">
-//   Copyright © eVote
-// </copyright>
-
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 
 using Shouldly;
 

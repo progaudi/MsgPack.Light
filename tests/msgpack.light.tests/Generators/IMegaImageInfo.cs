@@ -1,8 +1,4 @@
-﻿// <copyright file="IMegaImageInfo.cs" company="eVote">
-//   Copyright © eVote
-// </copyright>
-
-using System;
+﻿using System;
 
 namespace ProGaudi.MsgPack.Light.Tests.Generators
 {
