@@ -1,8 +1,4 @@
-﻿// <copyright file="IImageInfo.cs" company="eVote">
-//   Copyright © eVote
-// </copyright>
-
-namespace ProGaudi.MsgPack.Light.Tests.Generators
+﻿namespace ProGaudi.MsgPack.Light.Tests.Generators
 {
     public interface IImageInfo
     {

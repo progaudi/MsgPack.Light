@@ -6,6 +6,8 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
+using ProGaudi.MsgPack.Light.Converters.Generation.Exceptions;
+
 namespace ProGaudi.MsgPack.Light.Converters.Generation
 {
     public abstract class ConverterGeneratorBase
@@ -27,7 +29,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
         public Type Generate(Type typeToWrap, Type typeToInstantinate)
         {
-            var propsToWrap = ImmutableArray.ToImmutableArray(GetDistinctProperties(typeToWrap));
+            var propsToWrap = GetDistinctProperties(typeToWrap).ToImmutableArray();
 
             var interfaces = typeToInstantinate == typeToWrap
                 ? new[] {typeof(IMsgPackConverter<>).MakeGenericType(typeToWrap)}
@@ -67,7 +69,19 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
                 EmitReadMethod(typeBuilder, @interface, readImpl);
             }
 
-            return Extensions.ToType(typeBuilder);
+            return typeBuilder.ToType();
+        }
+
+        protected MethodInfo GetPropertySetter(Type typeToInstantinate, PropertyInfo property)
+        {
+            // if property has setter, we will call it. Otherwise we'll try to find it on implementation.
+            if (property.SetMethod != null) return property.SetMethod;
+
+            var implementationProperty = _propertyProvider.GetPropertyByName(typeToInstantinate, property.Name);
+
+            return implementationProperty != null
+                ? implementationProperty.SetMethod
+                : throw new GeneratorException($"Can't find setter for property {property.PropertyType.Name} {property.Name}");
         }
 
         protected abstract IEnumerable<PropertyInfo> FilterProperties(Type typeToWrap, ImmutableArray<PropertyInfo> properties);

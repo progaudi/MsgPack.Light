@@ -1,10 +1,4 @@
-﻿// <copyright file="Enums.cs" company="eVote">
-//   Copyright © eVote
-// </copyright>
-
-
-
-using Shouldly;
+﻿using Shouldly;
 
 using Xunit;
 

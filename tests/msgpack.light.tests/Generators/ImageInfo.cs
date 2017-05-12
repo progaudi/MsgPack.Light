@@ -1,7 +1,3 @@
-// <copyright file="ImageInfo.cs" company="eVote">
-//   Copyright © eVote
-// </copyright>
-
 namespace ProGaudi.MsgPack.Light.Tests.Generators
 {
     public class ImageInfo : IImageInfo

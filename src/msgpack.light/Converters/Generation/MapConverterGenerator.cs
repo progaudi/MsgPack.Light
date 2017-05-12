@@ -112,16 +112,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
                 generator.Emit(OpCodes.Ldloc, instance);
                 EmitRead(property.PropertyType);
                 // if property has setter, we will call it. Otherwise we'll try to find it on implementation.
-                MethodInfo methodInfo;
-                if (property.SetMethod != null)
-                    methodInfo = property.SetMethod;
-                else
-                {
-                    var typeInfo = typeToInstantinate.GetTypeInfo();
-                    var propertyInfo = typeInfo.GetProperty(property.Name);
-                    methodInfo = propertyInfo.SetMethod;
-                }
-                generator.Emit(OpCodes.Callvirt, methodInfo);
+                generator.Emit(OpCodes.Callvirt, GetPropertySetter(typeToInstantinate, property));
 
                 generator.Emit(OpCodes.Br, incrementLabel);
             }

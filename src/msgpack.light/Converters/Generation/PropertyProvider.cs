@@ -1,8 +1,4 @@
-﻿// <copyright file="PropertyProvider.cs" company="eVote">
-//   Copyright © eVote
-// </copyright>
-
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -13,23 +9,43 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 {
     public class PropertyProvider
     {
-        private readonly ConcurrentDictionary<Type, ImmutableArray<PropertyInfo>> _cache = new ConcurrentDictionary<Type, ImmutableArray<PropertyInfo>>();
+        private readonly ConcurrentDictionary<Type, ImmutableDictionary<string, PropertyInfo>> _cacheByName = new ConcurrentDictionary<Type, ImmutableDictionary<string, PropertyInfo>>();
+        private readonly ConcurrentDictionary<Type, ImmutableArray<PropertyInfo>> _cacheByOrder = new ConcurrentDictionary<Type, ImmutableArray<PropertyInfo>>();
 
         public ImmutableArray<PropertyInfo> GetProperties(Type type)
         {
-            return _cache.GetOrAdd(type, Discover);
+            return GetPropertiesFromCache(type, _cacheByOrder);
         }
 
-        private ImmutableArray<PropertyInfo> Discover(Type type)
+        public PropertyInfo GetPropertyByName(Type type, string name)
         {
-            var result = new Dictionary<string, PropertyInfo>();
+            var cache = GetPropertiesFromCache(type, _cacheByName);
+            return cache.TryGetValue(name, out var r) ? r : null;
+        }
+
+        private T GetPropertiesFromCache<T>(Type type, ConcurrentDictionary<Type, T> cache)
+        {
+            if (cache.TryGetValue(type, out var r))
+                return r;
+
+            Discover(type);
+
+            return cache[type];
+        }
+
+        private void Discover(Type type)
+        {
+            var cacheByName = new Dictionary<string, PropertyInfo>();
+            var cacheByOrder = new List<PropertyInfo>();
             foreach (var info in DiscoverProperties(type))
             {
-                if (!result.ContainsKey(info.Name))
-                    result[info.Name] = info;
+                if (cacheByName.ContainsKey(info.Name)) continue;
+                cacheByName[info.Name] = info;
+                cacheByOrder.Add(info);
             }
 
-            return result.Values.ToImmutableArray();
+            _cacheByName[type] = cacheByName.ToImmutableDictionary(x => x.Key, x => x.Value);
+            _cacheByOrder[type] = cacheByOrder.ToImmutableArray();
         }
 
         private IEnumerable<PropertyInfo> DiscoverProperties(Type type)

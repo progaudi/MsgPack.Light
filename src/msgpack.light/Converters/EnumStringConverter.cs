@@ -1,7 +1,4 @@
-﻿// <copyright file="EnumStringConverter.cs" company="eVote">
-//   Copyright © eVote
-// </copyright>
-using System;
+﻿using System;
 
 namespace ProGaudi.MsgPack.Light.Converters
 {

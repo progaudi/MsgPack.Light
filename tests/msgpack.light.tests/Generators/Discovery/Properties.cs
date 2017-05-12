@@ -33,14 +33,14 @@ namespace ProGaudi.MsgPack.Light.Tests.Generators.Discovery
         }
 
         [Fact]
-        public void Regression72()
+        public void Regression71()
         {
             var context = new MsgPackContext();
             Should.NotThrow(() => context.GenerateAndRegisterMapConverter<IC, C>());
         }
 
         [Fact]
-        public void Regression72_2()
+        public void Regression70()
         {
             var context = new MsgPackContext();
             Should.NotThrow(() => context.GenerateAndRegisterMapConverter<IC>());
