@@ -4,6 +4,8 @@ using System.Text;
 
 using BenchmarkDotNet.Attributes;
 
+using MessagePack;
+
 using ProGaudi.MsgPack.Light.Benchmark.Data;
 
 namespace ProGaudi.MsgPack.Light.Benchmark
@@ -50,6 +52,25 @@ namespace ProGaudi.MsgPack.Light.Benchmark
         internal void MsgPackSerialize(MemoryStream memoryStream)
         {
             Serializers.MsgPack.GetSerializer<Beer>().Pack(memoryStream, _testBeer);
+        }
+
+        [Benchmark]
+        public void MPSharp_Stream()
+        {
+            var stream = new MemoryStream();
+            MessagePackSerializer.Serialize(stream, _testBeer);
+        }
+
+        [Benchmark]
+        public void MPSharp_Array()
+        {
+            MessagePackSerializer.Serialize(_testBeer);
+        }
+
+        [Benchmark]
+        public void MPSharp_Array_Unsafe()
+        {
+            MessagePackSerializer.SerializeUnsafe(_testBeer);
         }
 
         [Benchmark]

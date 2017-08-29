@@ -3,6 +3,8 @@ using System.Text;
 
 using BenchmarkDotNet.Attributes;
 
+using MessagePack;
+
 using ProGaudi.MsgPack.Light.Benchmark.Data;
 
 namespace ProGaudi.MsgPack.Light.Benchmark
@@ -62,6 +64,19 @@ namespace ProGaudi.MsgPack.Light.Benchmark
         }
 
         [Benchmark]
+        public void MPSharp_Stream()
+        {
+            _msgPack.Seek(0, SeekOrigin.Begin);
+            var beer = MessagePackSerializer.Deserialize<Beer>(_msgPack);
+        }
+
+        [Benchmark]
+        public void MPSharp_Array()
+        {
+            var beer = MessagePackSerializer.Deserialize<Beer>(_msgPackArray);
+        }
+
+        [Benchmark]
         public void MPLight_Stream()
         {
             _msgPack.Seek(0, SeekOrigin.Begin);
@@ -111,19 +126,6 @@ namespace ProGaudi.MsgPack.Light.Benchmark
         public void MPLightH_Array_AutoMap()
         {
             var beer = MsgPackSerializer.Deserialize<Beer>(_msgPackArray, Serializers.MsgPackLightMapAutoGeneration);
-        }
-
-        [Benchmark]
-        public void MPLightH_Stream_AutoArray()
-        {
-            _msgPack.Seek(0, SeekOrigin.Begin);
-            var beer = MsgPackSerializer.Deserialize<Beer>(_msgPack, Serializers.MsgPackLightArrayAutoGeneration);
-        }
-
-        [Benchmark]
-        public void MPLightH_Array_AutoArray()
-        {
-            var beer = MsgPackSerializer.Deserialize<Beer>(_msgPackArray, Serializers.MsgPackLightArrayAutoGeneration);
         }
     }
 }
