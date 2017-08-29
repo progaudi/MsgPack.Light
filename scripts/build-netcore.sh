@@ -7,6 +7,10 @@ pushd ${BASH_SOURCE%/*}
 cd ..
 
 dotnet restore
-dotnet build -c Release msgpack.sln
+dotnet build -c Release -f netstandard1.1 src/msgpack.light/msgpack.light.csproj
+dotnet build -c Release -f netstandard2.0 src/msgpack.light/msgpack.light.csproj
+dotnet build -c Release -f netcoreapp1.0 tests/msgpack.light.tests/msgpack.light.tests.csproj
+dotnet build -c Release -f netcoreapp1.1 tests/msgpack.light.tests/msgpack.light.tests.csproj
+dotnet build -c Release -f netcoreapp2.0 tests/msgpack.light.tests/msgpack.light.tests.csproj
 
 popd
