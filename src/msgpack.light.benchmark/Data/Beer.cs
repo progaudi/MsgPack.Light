@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 
+using MessagePack;
+
 namespace ProGaudi.MsgPack.Light.Benchmark.Data
 {
+    [MessagePackObject(true)]
     public class Beer
     {
         [MsgPackMapElement(nameof(Brand))]

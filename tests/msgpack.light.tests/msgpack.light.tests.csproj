@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Description>Tests for MsgPack.Light library</Description>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net46;netcoreapp1.0;netcoreapp1.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp1.0;netcoreapp1.1;netcoreapp2.0</TargetFrameworks>
     <WarningsAsErrors>true</WarningsAsErrors>
     <AssemblyName>msgpack.light.tests</AssemblyName>
     <RootNamespace>ProGaudi.MsgPack.Light.Tests</RootNamespace>
@@ -15,16 +15,15 @@
     <GenerateAssemblyProductAttribute>true</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCopyrightAttribute>true</GenerateAssemblyCopyrightAttribute>
     <ProjectGuid>{4DD9051D-548F-4E11-86EA-746F443CEA67}</ProjectGuid>
+
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
-    <PackageReference Include="Moq" Version="4.7.8" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
+    <PackageReference Include="Moq" Version="4.7.99" />
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
-    <PackageReference Include="Shouldly" Version="2.8.2" />
+    <PackageReference Include="Shouldly" Version="2.8.3" />
     <ProjectReference Include="..\..\src\msgpack.light\msgpack.light.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
 </Project>
