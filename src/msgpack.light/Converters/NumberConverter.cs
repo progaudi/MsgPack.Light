@@ -1,5 +1,5 @@
 using System;
-using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace ProGaudi.MsgPack.Light.Converters
@@ -17,24 +17,6 @@ namespace ProGaudi.MsgPack.Light.Converters
         IMsgPackConverter<double>
     {
         private readonly bool _strictParseOfFloat;
-
-        private static readonly Func<ulong, IMsgPackWriter, bool>[] PositiveSerializationMethods =
-        {
-            TryWriteUnsignedFixNum,
-            TryWriteUInt8,
-            TryWriteUInt16,
-            TryWriteUInt32,
-            TryWriteUInt64
-        };
-
-        private static readonly Func<long, IMsgPackWriter, bool>[] NegativeSerializationMethods =
-        {
-            TryWriteSignedFixNum,
-            TryWriteInt8,
-            TryWriteInt16,
-            TryWriteInt32,
-            TryWriteInt64
-        };
 
         public NumberConverter(bool strictParseOfFloat)
         {
@@ -445,7 +427,8 @@ namespace ProGaudi.MsgPack.Light.Converters
             }
         }
 
-        internal static sbyte ReadInt8(IMsgPackReader reader)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static sbyte ReadInt8(IMsgPackReader reader)
         {
             var temp = reader.ReadByte();
             if (temp <= sbyte.MaxValue)
@@ -454,17 +437,20 @@ namespace ProGaudi.MsgPack.Light.Converters
             return (sbyte)(temp - byte.MaxValue - 1);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static byte ReadUInt8(IMsgPackReader reader)
         {
             return reader.ReadByte();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static ushort ReadUInt16(IMsgPackReader reader)
         {
             return (ushort)((reader.ReadByte() << 8) + reader.ReadByte());
         }
 
-        internal static short ReadInt16(IMsgPackReader reader)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static short ReadInt16(IMsgPackReader reader)
         {
             var temp = ReadUInt16(reader);
             if (temp <= short.MaxValue)
@@ -473,7 +459,8 @@ namespace ProGaudi.MsgPack.Light.Converters
             return (short)(temp - 1 - ushort.MaxValue);
         }
 
-        internal static int ReadInt32(IMsgPackReader reader)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int ReadInt32(IMsgPackReader reader)
         {
             var temp = ReadUInt32(reader);
             if (temp <= int.MaxValue)
@@ -482,6 +469,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             return (int)(temp - 1 - uint.MaxValue);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static uint ReadUInt32(IMsgPackReader reader)
         {
             var temp = (uint)(reader.ReadByte() << 24);
@@ -492,7 +480,8 @@ namespace ProGaudi.MsgPack.Light.Converters
             return temp;
         }
 
-        internal static ulong ReadUInt64(IMsgPackReader reader)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static ulong ReadUInt64(IMsgPackReader reader)
         {
             var temp = (ulong)reader.ReadByte() << 56;
             temp += (ulong)reader.ReadByte() << 48;
@@ -506,7 +495,8 @@ namespace ProGaudi.MsgPack.Light.Converters
             return temp;
         }
 
-        internal static long ReadInt64(IMsgPackReader reader)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static long ReadInt64(IMsgPackReader reader)
         {
             var temp = ReadUInt64(reader);
             if (temp <= long.MaxValue)
@@ -515,6 +505,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             return (long)(temp - 1 - ulong.MaxValue);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool TryWriteSignedFixNum(long value, IMsgPackWriter writer)
         {
             // positive fixnum
@@ -534,6 +525,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             return false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool TryWriteUnsignedFixNum(ulong value, IMsgPackWriter writer)
         {
             // positive fixnum
@@ -546,6 +538,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             return false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool TryWriteInt8(long value, IMsgPackWriter writer)
         {
             if (value > sbyte.MaxValue || value < sbyte.MinValue)
@@ -558,12 +551,14 @@ namespace ProGaudi.MsgPack.Light.Converters
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool TryGetFixPositiveNumber(DataTypes type, out byte temp)
         {
             temp = (byte)type;
             return type.GetHighBits(1) == DataTypes.PositiveFixNum.GetHighBits(1);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool TryGetNegativeNumber(DataTypes type, out sbyte temp)
         {
             temp = (sbyte)((byte)type - 1 - byte.MaxValue);
@@ -661,11 +656,13 @@ namespace ProGaudi.MsgPack.Light.Converters
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void WriteSByteValue(sbyte value, IMsgPackWriter writer)
         {
             writer.Write((byte)value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool TryWriteUInt8(ulong value, IMsgPackWriter writer)
         {
             if (value > byte.MaxValue)
@@ -678,6 +675,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool TryWriteInt16(long value, IMsgPackWriter writer)
         {
             if (value < short.MinValue || value > short.MaxValue)
@@ -690,6 +688,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void WriteShortValue(short value, IMsgPackWriter writer)
         {
             unchecked
@@ -699,6 +698,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool TryWriteUInt16(ulong value, IMsgPackWriter writer)
         {
             if (value > ushort.MaxValue)
@@ -711,6 +711,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool TryWriteInt32(long value, IMsgPackWriter writer)
         {
             if (value > int.MaxValue || value < int.MinValue)
@@ -723,6 +724,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void WriteIntValue(int value, IMsgPackWriter writer)
         {
             unchecked
@@ -734,6 +736,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool TryWriteUInt32(ulong value, IMsgPackWriter writer)
         {
             if (value > uint.MaxValue)
@@ -746,6 +749,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool TryWriteInt64(long value, IMsgPackWriter writer)
         {
             writer.Write(DataTypes.Int64);
@@ -753,6 +757,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void WriteLongValue(long value, IMsgPackWriter writer)
         {
             unchecked
@@ -768,6 +773,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool TryWriteUInt64(ulong value, IMsgPackWriter writer)
         {
             writer.Write(DataTypes.UInt64);
@@ -775,6 +781,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void WriteULongValue(ulong value, IMsgPackWriter writer)
         {
             unchecked
@@ -798,7 +805,27 @@ namespace ProGaudi.MsgPack.Light.Converters
                 return;
             }
 
-            if (NegativeSerializationMethods.Any(method => method(value, writer)))
+            if (TryWriteSignedFixNum(value, writer))
+            {
+                return;
+            }
+
+            if (TryWriteInt8(value, writer))
+            {
+                return;
+            }
+
+            if (TryWriteInt16(value, writer))
+            {
+                return;
+            }
+
+            if (TryWriteInt32(value, writer))
+            {
+                return;
+            }
+
+            if (TryWriteInt64(value, writer))
             {
                 return;
             }
@@ -808,7 +835,27 @@ namespace ProGaudi.MsgPack.Light.Converters
 
         private static void WriteNonNegativeInteger(ulong value, IMsgPackWriter writer)
         {
-            if (PositiveSerializationMethods.Any(method => method(value, writer)))
+            if (TryWriteUnsignedFixNum(value, writer))
+            {
+                return;
+            }
+
+            if (TryWriteUInt8(value, writer))
+            {
+                return;
+            }
+
+            if (TryWriteUInt16(value, writer))
+            {
+                return;
+            }
+
+            if (TryWriteUInt32(value, writer))
+            {
+                return;
+            }
+
+            if (TryWriteUInt64(value, writer))
             {
                 return;
             }
