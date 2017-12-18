@@ -1,11 +1,9 @@
 using System;
 using System.IO;
 
-using ProGaudi.MsgPack.Light.Converters;
-
 namespace ProGaudi.MsgPack.Light
 {
-    internal class MsgPackMemoryStreamWriter : IMsgPackWriter, IDisposable
+    internal class MsgPackMemoryStreamWriter : MsgPackWriterBase, IDisposable
     {
         private readonly MemoryStream _stream;
 
@@ -17,66 +15,30 @@ namespace ProGaudi.MsgPack.Light
             _disposeStream = disposeStream;
         }
 
-        public void Write(DataTypes dataType)
+        public override void Write(DataTypes dataType)
         {
             _stream.WriteByte((byte) dataType);
         }
 
-        public void Write(byte value)
+        public override void Write(byte value)
         {
             _stream.WriteByte(value);
         }
 
-        public void Write(byte[] array)
+        public override void Write(byte[] array)
         {
             _stream.Write(array, 0, array.Length);
+        }
+
+        public override byte[] ToArray()
+        {
+            return _stream.ToArray();
         }
 
         public void Dispose()
         {
             if (_disposeStream)
                 _stream.Dispose();
-        }
-
-        public void WriteArrayHeader(uint length)
-        {
-            if (length <= 15)
-            {
-                NumberConverter.WriteByteValue((byte) ((byte) DataTypes.FixArray + length), this);
-                return;
-            }
-
-            if (length <= ushort.MaxValue)
-            {
-                Write(DataTypes.Array16);
-                NumberConverter.WriteUShortValue((ushort) length, this);
-            }
-            else
-            {
-                Write(DataTypes.Array32);
-                NumberConverter.WriteUIntValue(length, this);
-            }
-
-        }
-
-        public void WriteMapHeader(uint length)
-        {
-            if (length <= 15)
-            {
-                NumberConverter.WriteByteValue((byte) ((byte) DataTypes.FixMap + length), this);
-                return;
-            }
-
-            if (length <= ushort.MaxValue)
-            {
-                Write(DataTypes.Map16);
-                NumberConverter.WriteUShortValue((ushort) length, this);
-            }
-            else
-            {
-                Write(DataTypes.Map32);
-                NumberConverter.WriteUIntValue(length, this);
-            }
         }
     }
 }

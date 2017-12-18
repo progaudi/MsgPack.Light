@@ -14,12 +14,11 @@ namespace ProGaudi.MsgPack.Light
 
         public static byte[] Serialize<T>(T data, [NotNull]MsgPackContext context)
         {
-            var memoryStream = new MemoryStream();
-            using (var writer = new MsgPackMemoryStreamWriter(memoryStream))
+            using (var writer = new MsgPackMemoryStreamWriter(new MemoryStream()))
             {
                 var converter = GetConverter<T>(context);
                 converter.Write(data, writer);
-                return memoryStream.ToArray();
+                return writer.ToArray();
             }
         }
 
@@ -88,12 +87,7 @@ namespace ProGaudi.MsgPack.Light
         {
             var converter = context.GetConverter<T>();
 
-            if (converter == null)
-            {
-                throw new SerializationException($"Provide converter for {typeof(T).Name}");
-            }
-
-            return converter;
+            return converter ?? throw new SerializationException($"Provide converter for {typeof(T).Name}");
         }
     }
 }

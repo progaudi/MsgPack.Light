@@ -1,3 +1,5 @@
+using System;
+
 namespace ProGaudi.MsgPack.Light
 {
     public interface IMsgPackWriter
@@ -11,5 +13,7 @@ namespace ProGaudi.MsgPack.Light
         void WriteArrayHeader(uint length);
 
         void WriteMapHeader(uint length);
+
+        byte[] ToArray();
     }
 }
