@@ -428,6 +428,79 @@ namespace ProGaudi.MsgPack.Light.Converters
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GuessByteArrayLength(double value) => 9;
+
+        bool IMsgPackConverter<double>.HasFixedLength => true;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GuessByteArrayLength(float value) => 5;
+
+        bool IMsgPackConverter<float>.HasFixedLength => true;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GuessByteArrayLength(ulong value)
+        {
+            if (value < 128L) return 1;
+            if (value <= byte.MaxValue) return 2;
+            if (value <= ushort.MaxValue) return 3;
+            return value <= uint.MaxValue ? 5 : 9;
+        }
+
+        bool IMsgPackConverter<ulong>.HasFixedLength => false;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GuessByteArrayLength(long value)
+        {
+            // positive fixnum
+            if (value >= 0)
+            {
+                if (value < 128L) return 1;
+                if (value <= byte.MaxValue) return 2;
+                if (value <= ushort.MaxValue) return 3;
+                return value <= uint.MaxValue ? 5 : 9;
+            }
+
+            // negative fixnum
+            if (value >= -32L && value <= -1L) return 1;
+            if (value >= sbyte.MinValue) return 2;
+            if (value >= short.MinValue) return 3;
+            if (value >= int.MinValue) return 5;
+            return 9;
+        }
+
+        bool IMsgPackConverter<long>.HasFixedLength => false;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GuessByteArrayLength(uint value) => GuessByteArrayLength((ulong) value);
+
+        bool IMsgPackConverter<uint>.HasFixedLength => false;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GuessByteArrayLength(int value) => GuessByteArrayLength((long) value);
+
+        bool IMsgPackConverter<int>.HasFixedLength => false;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GuessByteArrayLength(ushort value) => GuessByteArrayLength((ulong) value);
+
+        bool IMsgPackConverter<ushort>.HasFixedLength => false;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GuessByteArrayLength(short value) => GuessByteArrayLength((long) value);
+
+        bool IMsgPackConverter<short>.HasFixedLength => false;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GuessByteArrayLength(sbyte value) => GuessByteArrayLength((ulong) value);
+
+        bool IMsgPackConverter<sbyte>.HasFixedLength => false;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GuessByteArrayLength(byte value) => GuessByteArrayLength((long) value);
+
+        bool IMsgPackConverter<byte>.HasFixedLength => false;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static sbyte ReadInt8(IMsgPackReader reader)
         {
             var temp = reader.ReadByte();

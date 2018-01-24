@@ -21,6 +21,13 @@ namespace ProGaudi.MsgPack.Light.Converters
             return _converter.Read(reader);
         }
 
+        public int GuessByteArrayLength(T? value)
+        {
+            return value.HasValue ? _converter.GuessByteArrayLength(value.Value) : 1;
+        }
+
+        public bool HasFixedLength => false;
+
         public void Write(T? value, IMsgPackWriter writer)
         {
             if (value.HasValue)

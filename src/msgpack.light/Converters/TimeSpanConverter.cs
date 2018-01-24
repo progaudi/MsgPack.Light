@@ -22,5 +22,12 @@ namespace ProGaudi.MsgPack.Light.Converters
 
             return TimeSpan.FromTicks(longValue);
         }
+
+        public int GuessByteArrayLength(TimeSpan value)
+        {
+            return _longConverter.Value.GuessByteArrayLength(value.Ticks);
+        }
+
+        public bool HasFixedLength => _longConverter.Value.HasFixedLength;
     }
 }

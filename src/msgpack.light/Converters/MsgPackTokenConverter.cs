@@ -19,5 +19,9 @@
             var rawBytes = reader.ReadToken();
             return new MsgPackToken(_context, rawBytes);
         }
+
+        public int GuessByteArrayLength(MsgPackToken value) => value.RawBytes.Length;
+
+        public bool HasFixedLength => true;
     }
 }

@@ -1,11 +1,51 @@
+using System;
 using System.Text;
 
 namespace ProGaudi.MsgPack.Light.Converters
 {
-    internal class StringConverter : IMsgPackConverter<string>
+    public abstract class StringConverter : IMsgPackConverter<string>
     {
         private static readonly Encoding Utf8 = new UTF8Encoding(false);
+
         private MsgPackContext _context;
+
+        protected readonly Encoding Encoding;
+
+        protected StringConverter(Encoding encoding)
+        {
+            Encoding = encoding;
+        }
+
+        /// <summary>
+        /// Use this if you want precision converter. Maybe slow as hell (need to test)
+        /// </summary>
+        public static readonly StringConverter Utf8Precision = new PrecisionEncodingStringConverter(Utf8);
+
+        /// <summary>
+        /// Use this if majority of your strings are Ascii-compatible (1 byte per char)
+        /// https://en.wikipedia.org/wiki/UTF-8
+        /// </summary>
+        public static readonly StringConverter Utf8AsciiCompat = new ConstLengthStringConverter(Utf8, 1);
+
+        /// <summary>
+        /// Use this is majority of your string contain "almost all Latin-script alphabets, and also Greek,
+        /// Cyrillic, Coptic, Armenian, Hebrew, Arabic, Syriac, Thaana and N'Ko alphabets" (2 bytes per char)
+        /// https://en.wikipedia.org/wiki/UTF-8
+        /// </summary>
+        public static readonly StringConverter Utf8TwoBytes = new ConstLengthStringConverter(Utf8, 2);
+
+        /// <summary>
+        /// Use this is majority of your string contain <see cref="Utf8TwoBytes"/> and "virtually all
+        /// characters in common use[11] including most Chinese, Japanese and Korean characters" (3 bytes per char)
+        /// https://en.wikipedia.org/wiki/UTF-8
+        /// </summary>
+        public static readonly StringConverter Utf8ThreeBytes = new ConstLengthStringConverter(Utf8, 2);
+
+        /// <summary>
+        /// Use this is majority of your string will contain emoji (4 bytes per char)
+        /// https://en.wikipedia.org/wiki/UTF-8
+        /// </summary>
+        public static readonly StringConverter Utf8FourBytes = new ConstLengthStringConverter(Utf8, 2);
 
         public void Initialize(MsgPackContext context)
         {
@@ -20,7 +60,7 @@ namespace ProGaudi.MsgPack.Light.Converters
                 return;
             }
 
-            var data = Utf8.GetBytes(value);
+            var data = Encoding.GetBytes(value);
 
             WriteStringHeaderAndLength(writer, data.Length);
 
@@ -46,8 +86,7 @@ namespace ProGaudi.MsgPack.Light.Converters
                     return ReadString(reader, NumberConverter.ReadUInt32(reader));
             }
 
-            uint length;
-            if (TryGetFixstrLength(type, out length))
+            if (TryGetFixstrLength(type, out var length))
             {
                 return ReadString(reader, length);
             }
@@ -55,11 +94,15 @@ namespace ProGaudi.MsgPack.Light.Converters
             throw ExceptionUtils.BadTypeException(type, DataTypes.FixStr, DataTypes.Str8, DataTypes.Str16, DataTypes.Str32);
         }
 
+        public abstract int GuessByteArrayLength(string value);
+
+        public bool HasFixedLength => false;
+
         private string ReadString(IMsgPackReader reader, uint length)
         {
             var buffer = reader.ReadBytes(length);
 
-            return Utf8.GetString(buffer.Array, buffer.Offset, buffer.Count);
+            return Encoding.GetString(buffer.Array, buffer.Offset, buffer.Count);
         }
 
         private bool TryGetFixstrLength(DataTypes type, out uint length)

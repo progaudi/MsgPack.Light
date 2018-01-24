@@ -20,5 +20,12 @@ namespace ProGaudi.MsgPack.Light.Converters
         {
             return (T)Enum.Parse(typeof(T), _stringConverter.Value.Read(reader));
         }
+
+        public int GuessByteArrayLength(T value)
+        {
+            return _stringConverter.Value.GuessByteArrayLength(value.ToString());
+        }
+
+        public bool HasFixedLength => _stringConverter.Value.HasFixedLength;
     }
 }

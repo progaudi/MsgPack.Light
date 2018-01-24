@@ -57,6 +57,25 @@ namespace ProGaudi.MsgPack.Light.Converters
             return array;
         }
 
+        public int GuessByteArrayLength(byte[] value)
+        {
+            if (value == null) return 1;
+
+            if (value.Length <= byte.MaxValue)
+            {
+                return value.Length + 2;
+            }
+
+            if (value.Length <= ushort.MaxValue)
+            {
+                return value.Length + 3;
+            }
+
+            return value.Length + 5;
+        }
+
+        public bool HasFixedLength => true;
+
         private void WriteBinaryHeaderAndLength(uint length, IMsgPackWriter writer)
         {
             if (length <= byte.MaxValue)

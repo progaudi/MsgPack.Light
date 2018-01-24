@@ -27,5 +27,9 @@ namespace ProGaudi.MsgPack.Light.Converters
                     throw ExceptionUtils.BadTypeException(type, DataTypes.True, DataTypes.False);
             }
         }
+
+        public int GuessByteArrayLength(bool value) => 1;
+
+        public bool HasFixedLength => true;
     }
 }

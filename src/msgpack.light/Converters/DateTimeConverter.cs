@@ -26,6 +26,20 @@ namespace ProGaudi.MsgPack.Light.Converters
             return DateTimeUtils.ToDateTime((long)ulongValue);
         }
 
+        public int GuessByteArrayLength(DateTimeOffset value)
+        {
+            return _longConverter.Value.GuessByteArrayLength(DateTimeUtils.FromDateTimeOffset(value));
+        }
+
+        public int GuessByteArrayLength(DateTime value)
+        {
+            return _longConverter.Value.GuessByteArrayLength(DateTimeUtils.FromDateTimeOffset(value));
+        }
+
+        bool IMsgPackConverter<DateTime>.HasFixedLength => _longConverter.Value.HasFixedLength;
+
+        bool IMsgPackConverter<DateTimeOffset>.HasFixedLength => _longConverter.Value.HasFixedLength;
+
         public void Write(DateTimeOffset value, IMsgPackWriter writer)
         {
             var longValue = DateTimeUtils.FromDateTimeOffset(value);

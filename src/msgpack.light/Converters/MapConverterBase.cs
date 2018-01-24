@@ -6,18 +6,9 @@ namespace ProGaudi.MsgPack.Light.Converters
         {
             var keyConverter = context.GetConverter<TKey>();
             var valueConverter = context.GetConverter<TValue>();
-            if (keyConverter == null)
-            {
-                throw ExceptionUtils.NoConverterForCollectionElement(typeof(TKey), "key");
-            }
 
-            if (valueConverter == null)
-            {
-                throw ExceptionUtils.NoConverterForCollectionElement(typeof(TValue), "value");
-            }
-
-            KeyConverter = keyConverter;
-            ValueConverter = valueConverter;
+            KeyConverter = keyConverter ?? throw ExceptionUtils.NoConverterForCollectionElement(typeof(TKey), "key");
+            ValueConverter = valueConverter ?? throw ExceptionUtils.NoConverterForCollectionElement(typeof(TValue), "value");
             Context = context;
         }
 
@@ -25,10 +16,20 @@ namespace ProGaudi.MsgPack.Light.Converters
 
         public abstract TMap Read(IMsgPackReader reader);
 
+        public abstract int GuessByteArrayLength(TMap value);
+
+        public bool HasFixedLength => ValueConverter.HasFixedLength && KeyConverter.HasFixedLength;
+
         protected MsgPackContext Context { get; private set; }
 
         protected IMsgPackConverter<TValue> ValueConverter { get; private set; }
 
         protected IMsgPackConverter<TKey> KeyConverter { get; private set; }
+
+        protected int GetHeaderLength(int valueCount) => valueCount > ushort.MaxValue
+            ? 5
+            : valueCount > 15
+                ? 3
+                : 1;
     }
 }

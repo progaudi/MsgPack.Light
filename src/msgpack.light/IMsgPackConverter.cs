@@ -12,5 +12,9 @@ namespace ProGaudi.MsgPack.Light
         void Write([CanBeNull] T value, [NotNull] IMsgPackWriter writer);
 
         T Read([NotNull] IMsgPackReader reader);
+
+        int GuessByteArrayLength([CanBeNull] T value);
+
+        bool HasFixedLength { get; }
     }
 }

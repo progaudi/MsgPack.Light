@@ -11,8 +11,6 @@ namespace ProGaudi.MsgPack.Light
 {
     public class MsgPackContext
     {
-        private readonly bool _convertEnumsAsStrings;
-
         private static readonly IMsgPackConverter<object> SharedNullConverter = new NullConverter();
 
         private readonly ConverterGenerationContext _generatorContext = new ConverterGenerationContext();
@@ -23,15 +21,33 @@ namespace ProGaudi.MsgPack.Light
 
         private readonly Dictionary<Type, Func<object>> _objectActivators = new Dictionary<Type, Func<object>>();
 
-        public MsgPackContext(bool strictParseOfFloat = false, bool convertEnumsAsStrings = true)
+        public bool ConvertEnumAsStrings { get; }
+
+        public bool PreciseArrayLength { get; }
+
+        public bool PreciseMapLength { get; }
+
+        public MsgPackContext()
+            : this(false, true, StringConverter.Utf8Precision, false, false)
+        {}
+
+        public MsgPackContext(
+            bool strictParseOfFloat,
+            bool convertEnumAsStrings,
+            IMsgPackConverter<string> stringConverter,
+            bool preciseArrayLength,
+            bool preciseMapLength)
         {
-            _convertEnumsAsStrings = convertEnumsAsStrings;
+            ConvertEnumAsStrings = convertEnumAsStrings;
+            PreciseArrayLength = preciseArrayLength;
+            PreciseMapLength = preciseMapLength;
+
             var numberConverter = new NumberConverter(strictParseOfFloat);
             _converters = new Dictionary<Type, IMsgPackConverter>
             {
                 {typeof(MsgPackToken), new MsgPackTokenConverter()},
                 {typeof (bool), new BoolConverter()},
-                {typeof (string), new StringConverter()},
+                {typeof (string), stringConverter ?? StringConverter.Utf8Precision},
                 {typeof (byte[]), new BinaryConverter()},
                 {typeof (float), numberConverter},
                 {typeof (double), numberConverter},
@@ -128,10 +144,11 @@ namespace ProGaudi.MsgPack.Light
             RegisterConverter((IMsgPackConverter<TImplementation>)generator);
         }
 
-        public void GenerateAndRegisterEnumConverter<T>()
+        public void GenerateAndRegisterEnumConverter<T>(bool? convertEnumAsStrings)
+            where T : struct
         {
-            var generator = _generatorContext.GenerateEnumConverter<T>(typeof(T), _convertEnumsAsStrings);
-            RegisterConverter((IMsgPackConverter<T>)generator);
+            var converter = _generatorContext.GenerateEnumConverter<T>(typeof(T), convertEnumAsStrings ?? ConvertEnumAsStrings);
+            RegisterConverter((IMsgPackConverter<T>)converter);
         }
 
         public void RegisterConverter<T>(IMsgPackConverter<T> converter)
@@ -182,8 +199,9 @@ namespace ProGaudi.MsgPack.Light
                 return null;
             }
 
-            return _converters
-                .GetOrAdd(type, x => CreateAndInializeConverter(()=>_generatorContext.GenerateEnumConverter<T>(type, _convertEnumsAsStrings)));
+            return _converters.GetOrAdd(
+                type,
+                x => CreateAndInializeConverter(() => _generatorContext.GenerateEnumConverter<T>(type, ConvertEnumAsStrings)));
         }
 
         public Func<object> GetObjectActivator(Type type) => _objectActivators.GetOrAdd(type, CompiledLambdaActivatorFactory.GetActivator);
@@ -253,12 +271,20 @@ namespace ProGaudi.MsgPack.Light
             var arrayInterface = GetGenericInterface(type, typeof(IList<>));
             if (arrayInterface != null)
             {
-                return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(ArrayConverter<,>).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))));
+                return _converters.GetOrAdd(
+                    type,
+                    x => CreateAndInializeConverter(GetObjectActivator(typeof(ArrayConverter<,>).MakeGenericType(
+                        x,
+                        arrayInterface.GenericTypeArguments[0]))));
             }
 
             arrayInterface = GetGenericInterface(type, typeof(IReadOnlyList<>));
             return arrayInterface != null
-                ? _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(ReadOnlyListConverter<,>).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))))
+                ? _converters.GetOrAdd(
+                    type,
+                    x => CreateAndInializeConverter(GetObjectActivator(typeof(ReadOnlyListConverter<,>).MakeGenericType(
+                        x,
+                        arrayInterface.GenericTypeArguments[0]))))
                 : null;
         }
 
@@ -279,6 +305,68 @@ namespace ProGaudi.MsgPack.Light
                 .ImplementedInterfaces
                 .Select(x => x.GetTypeInfo())
                 .FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == genericInterfaceType);
+        }
+
+        public class Builder
+        {
+            private bool _strictParseOfFloat;
+
+            private bool _enumAsStrings = true;
+
+            private IMsgPackConverter<string> _stringConverter = StringConverter.Utf8Precision;
+
+            private bool _preciseArrayLength;
+
+            private bool _preciseMapLength;
+
+            /// <summary>
+            /// If <b>true</b>, then trying to parse of int as floats will fail.
+            /// </summary>
+            public Builder WithStringFloatParsing(bool strictParseOfFloat = true)
+            {
+                _strictParseOfFloat = strictParseOfFloat;
+                return this;
+            }
+
+            /// <summary>
+            /// If <b>true</b>, then trying to parse of int as floats will fail.
+            /// </summary>
+            public Builder WithEnumAsNums(bool enumAsNumbers = true)
+            {
+                _enumAsStrings = !enumAsNumbers;
+                return this;
+            }
+
+            /// <summary>
+            /// If <b>true</b>, then trying to parse of int as floats will fail.
+            /// </summary>
+            public Builder WithStringConverter(IMsgPackConverter<string> converter)
+            {
+                _stringConverter = converter ?? throw new ArgumentNullException(nameof(converter));
+                return this;
+            }
+
+            /// <summary>
+            /// If <b>true</b>, then we will walk over arrays to calculate length.
+            /// Otherwise Count*Max(first_element_length, last_element_length) will be used.
+            /// </summary>
+            public Builder WithPreciseArrayLength(bool preciseArrayLength = true)
+            {
+                _preciseArrayLength = preciseArrayLength;
+                return this;
+            }
+
+            /// <summary>
+            /// If <b>true</b>, then we will walk over maps to calculate length.
+            /// Otherwise Count*(Max(first_key_length, last_key_length) + Max(first_element_length, last_element_length) will be used.
+            /// </summary>
+            public Builder WithPreciseMapLength(bool preciseMapLength = true)
+            {
+                _preciseMapLength = preciseMapLength;
+                return this;
+            }
+
+            public MsgPackContext Build() => new MsgPackContext(_strictParseOfFloat, _enumAsStrings, _stringConverter, _preciseArrayLength, _preciseMapLength);
         }
     }
 }
