@@ -4,15 +4,15 @@ jobs:
     name: macOS
     pool: 'macOS 10.13'
 
-- template: .azure.build.yml
-  parameters:
-    name: Linux
-    pool: 'Ubuntu 16.04'
+# - template: .azure.build.yml
+#   parameters:
+#     name: Linux
+#     pool: 'Ubuntu 16.04'
 
-- template: .azure.build.yml
-  parameters:
-    name: Windows
-    pool: 'vs2017-win2016'
+# - template: .azure.build.yml
+#   parameters:
+#     name: Windows
+#     pool: 'vs2017-win2016'
 
 # - template: .azure.test.yml
 #   parameters:
