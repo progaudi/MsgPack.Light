@@ -2,35 +2,29 @@ jobs:
 - template: .azure.build.yml
   parameters:
     name: macOS
-    pool:
-      vmImage: 'macOS 10.13'
+    pool: 'macOS 10.13'
 
 - template: .azure.build.yml
   parameters:
     name: Linux
-    pool:
-      vmImage: 'Ubuntu 16.04'
+    pool: 'Ubuntu 16.04'
 
 - template: .azure.build.yml
   parameters:
     name: Windows
-    pool:
-      vmImage: 'vs2017-win2016'
+    pool: 'vs2017-win2016'
 
 - template: .azure.test.yml
   parameters:
     name: macOS
-    pool:
-      vmImage: 'macOS 10.13'
+    pool: 'macOS 10.13'
 
 - template: .azure.test.yml
   parameters:
     name: Linux
-    pool:
-      vmImage: 'Ubuntu 16.04'
+    pool: 'Ubuntu 16.04'
 
 - template: .azure.test.yml
   parameters:
     name: Windows
-    pool:
-      vmImage: 'vs2017-win2016'
+    pool: 'vs2017-win2016'
