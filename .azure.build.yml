@@ -8,7 +8,7 @@ parameters:
   pool: ''
 
 jobs:
-- job: ${{ parameters.name }}-build
+- job: ${{ parameters.name }}
   pool:
     vmImage: ${{ parameters.pool }}
   steps:
