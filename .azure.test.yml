@@ -1,65 +1,21 @@
 parameters:
-  fullNet: false
+  path: ''
+  framework: ''
 
 steps:
 - task: DotNetCoreCLI@2
-  inputs:
-    command: restore
-
-- task: DotNetCoreCLI@2
+  displayName: dotnet build -f ${{ parameters.framework }}
   inputs:
     command: build
     configuration: Release
-    projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
-    arguments: --logger trx -f netcoreapp1.0
-- task: DotNetCoreCLI@2
-  inputs:
-    command: build
-    configuration: Release
-    projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
-    arguments: --logger trx -f netcoreapp1.1
-- task: DotNetCoreCLI@2
-  inputs:
-    command: build
-    configuration: Release
-    projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
-    arguments: --logger trx -f netcoreapp2.0
-
-- ${{ if parameters.fullNet }}:
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: build
-      configuration: Release
-      projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
-      arguments: --logger trx -f net46
+    projects: ${{ parameters.path }}
+    arguments: -f ${{ parameters.framework }}
 
 - task: DotNetCoreCLI@2
+  displayName: dotnet test -f ${{ parameters.framework }}
   inputs:
     command: test
     nobuild: true
     configuration: Release
-    projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
-    arguments: --logger trx -f netcoreapp1.0
-- task: DotNetCoreCLI@2
-  inputs:
-    command: test
-    nobuild: true
-    configuration: Release
-    projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
-    arguments: --logger trx -f netcoreapp1.1
-- task: DotNetCoreCLI@2
-  inputs:
-    command: test
-    nobuild: true
-    configuration: Release
-    projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
-    arguments: --logger trx -f netcoreapp2.0
-
-- ${{ if parameters.fullNet }}:
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: test
-      nobuild: true
-      configuration: Release
-      projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
-      arguments: --logger trx -f net46
+    projects: ${{ parameters.path }}
+    arguments: --logger trx -f ${{ parameters.framework }}

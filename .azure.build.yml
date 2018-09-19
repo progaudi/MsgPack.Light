@@ -1,32 +1,11 @@
-# ASP.NET Core
-# Build and test ASP.NET Core web applications targeting .NET Core.
-# Add steps that run tests, create a NuGet package, deploy, and more:
-# https://docs.microsoft.com/vsts/pipelines/languages/dotnet-core
-
 parameters:
-  fullNet: false
+  path: ''
+  framework: ''
 
 steps:
 - task: DotNetCoreCLI@2
-  inputs:
-    command: restore
-- task: DotNetCoreCLI@2
+  displayName: dotnet build -f ${{ parameters.framework }}
   inputs:
     command: build
     configuration: Release
-    projects: src/msgpack.light/msgpack.light.csproj
-    arguments: --no-restore -f netstandard1.1
-- task: DotNetCoreCLI@2
-  inputs:
-    command: build
-    configuration: Release
-    projects: src/msgpack.light/msgpack.light.csproj
-    arguments: --no-restore -f netstandard2.0
-
-- ${{ if parameters.fullNet }}:
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: build
-      configuration: Release
-      projects: src/msgpack.light/msgpack.light.csproj
-      arguments: --no-restore -f net46
+    projects: ${{ parameters.path }}
