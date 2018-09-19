@@ -2,7 +2,7 @@ jobs:
 - template: .azure.build.yml
   parameters:
     name: macOS
-    pool: 'macOS 10.13'
+    pool: macOS
 
 # - template: .azure.build.yml
 #   parameters:
@@ -17,7 +17,7 @@ jobs:
 # - template: .azure.test.yml
 #   parameters:
 #     name: macOS
-#     pool: 'macOS 10.13'
+#     pool: macOS
 
 # - template: .azure.test.yml
 #   parameters:
