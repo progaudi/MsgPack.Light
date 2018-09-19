@@ -34,4 +34,3 @@ jobs:
     name: Windows
     pool:
       vmImage: 'vs2017-win2016'
-
