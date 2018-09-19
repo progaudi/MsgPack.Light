@@ -1,77 +1,65 @@
-# ASP.NET Core
-# Build and test ASP.NET Core web applications targeting .NET Core.
-# Add steps that run tests, create a NuGet package, deploy, and more:
-# https://docs.microsoft.com/vsts/pipelines/languages/dotnet-core
-
 parameters:
-  name: ''
-  pool: ''
+  fullNet: false
 
-jobs:
-- job: ${{ parameters.name }}_test
-  pool:
-    name: ${{ parameters.pool }}
-  dependsOn:
-  - ${{ parameters.name }}_build
-  steps:
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: restore
+steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: restore
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: build
+    configuration: Release
+    projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
+    arguments: --logger trx -f netcoreapp1.0
+- task: DotNetCoreCLI@2
+  inputs:
+    command: build
+    configuration: Release
+    projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
+    arguments: --logger trx -f netcoreapp1.1
+- task: DotNetCoreCLI@2
+  inputs:
+    command: build
+    configuration: Release
+    projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
+    arguments: --logger trx -f netcoreapp2.0
+
+- ${{ if parameters.fullNet }}:
   - task: DotNetCoreCLI@2
     inputs:
       command: build
       configuration: Release
       projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
-      arguments: --logger trx -f netcoreapp1.0
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: build
-      configuration: Release
-      projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
-      arguments: --logger trx -f netcoreapp1.1
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: build
-      configuration: Release
-      projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
-      arguments: --logger trx -f netcoreapp2.0
+      arguments: --logger trx -f net46
 
-  - ${{ if eq(parameters.name, 'Windows') }}:
-    - task: DotNetCoreCLI@2
-      inputs:
-        command: build
-        configuration: Release
-        projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
-        arguments: --logger trx -f net46
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    nobuild: true
+    configuration: Release
+    projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
+    arguments: --logger trx -f netcoreapp1.0
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    nobuild: true
+    configuration: Release
+    projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
+    arguments: --logger trx -f netcoreapp1.1
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    nobuild: true
+    configuration: Release
+    projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
+    arguments: --logger trx -f netcoreapp2.0
 
+- ${{ if parameters.fullNet }}:
   - task: DotNetCoreCLI@2
     inputs:
       command: test
       nobuild: true
       configuration: Release
       projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
-      arguments: --logger trx -f netcoreapp1.0
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: test
-      nobuild: true
-      configuration: Release
-      projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
-      arguments: --logger trx -f netcoreapp1.1
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: test
-      nobuild: true
-      configuration: Release
-      projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
-      arguments: --logger trx -f netcoreapp2.0
-
-  - ${{ if eq(parameters.name, 'Windows') }}:
-    - task: DotNetCoreCLI@2
-      inputs:
-        command: test
-        nobuild: true
-        configuration: Release
-        projects: tests/msgpack.light.tests/msgpack.light.tests.csproj
-        arguments: --logger trx -f net46
+      arguments: --logger trx -f net46

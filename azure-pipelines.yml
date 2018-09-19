@@ -1,30 +1,46 @@
 jobs:
-- template: .azure.build.yml
-  parameters:
-    name: macOS
-    pool: Hosted macOS
+- job: macOsBuild
+  pool:
+    name: Hosted macOS
+  steps:
+    template: .azure.build.yml
 
-- template: .azure.build.yml
-  parameters:
-    name: Linux
-    pool: Hosted Ubuntu 1604
+- job: macOsTest
+  dependsOn:
+  - macOsBuild
+  pool:
+    name: Hosted macOS
+  steps:
+    template: .azure.test.yml
 
-- template: .azure.build.yml
-  parameters:
-    name: Windows
-    pool: Hosted VS2017
+- job: linuxBuild
+  pool:
+    name: Hosted Ubuntu 1604
+  steps:
+    template: .azure.build.yml
 
-# - template: .azure.test.yml
-#   parameters:
-#     name: macOS
-#     pool: Hosted macOS
+- job: linuxTest
+  dependsOn:
+  - linuxBuild
+  pool:
+    name: Hosted Ubuntu 1604
+  steps:
+    template: .azure.test.yml
 
-# - template: .azure.test.yml
-#   parameters:
-#     name: Linux
-#     pool: Hosted Ubuntu 1604
+- job: winBuild
+  pool:
+    name: Hosted VS2017
+  steps:
+    template: .azure.build.yml
+    parameters:
+      fullNet: true
 
-# - template: .azure.test.yml
-#   parameters:
-#     name: Windows
-#     pool: Hosted VS2017
+- job: winTest
+  dependsOn:
+  - winBuild
+  pool:
+    name: Hosted VS2017
+  steps:
+    template: .azure.test.yml
+    parameters:
+      fullNet: true
