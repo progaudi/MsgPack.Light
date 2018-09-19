@@ -3,7 +3,7 @@ jobs:
   pool:
     name: Hosted macOS
   steps:
-    - template: .azure.build.yml
+    - template: .azure/builds.yml
 
 - job: macOsTest
   dependsOn:
@@ -11,13 +11,13 @@ jobs:
   pool:
     name: Hosted macOS
   steps:
-    - template: .azure.test.yml
+    - template: .azure/tests.yml
 
 - job: linuxBuild
   pool:
     name: Hosted Ubuntu 1604
   steps:
-    - template: .azure.build.yml
+    - template: .azure/builds.yml
 
 - job: linuxTest
   dependsOn:
@@ -25,13 +25,13 @@ jobs:
   pool:
     name: Hosted Ubuntu 1604
   steps:
-    - template: .azure.test.yml
+    - template: .azure/tests.yml
 
 - job: winBuild
   pool:
     name: Hosted VS2017
   steps:
-    - template: .azure.build.yml
+    - template: .azure/builds.yml
       parameters:
         fullNet: true
 
@@ -41,6 +41,6 @@ jobs:
   pool:
     name: Hosted VS2017
   steps:
-    - template: .azure.test.yml
+    - template: .azure/tests.yml
       parameters:
         fullNet: true
