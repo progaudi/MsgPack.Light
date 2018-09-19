@@ -14,17 +14,17 @@ jobs:
     name: Windows
     pool: Hosted VS2017
 
-- template: .azure.test.yml
-  parameters:
-    name: macOS
-    pool: Hosted macOS
+# - template: .azure.test.yml
+#   parameters:
+#     name: macOS
+#     pool: Hosted macOS
 
-- template: .azure.test.yml
-  parameters:
-    name: Linux
-    pool: Hosted Ubuntu 1604
+# - template: .azure.test.yml
+#   parameters:
+#     name: Linux
+#     pool: Hosted Ubuntu 1604
 
-- template: .azure.test.yml
-  parameters:
-    name: Windows
-    pool: Hosted VS2017
+# - template: .azure.test.yml
+#   parameters:
+#     name: Windows
+#     pool: Hosted VS2017
