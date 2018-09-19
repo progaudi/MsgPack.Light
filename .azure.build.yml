@@ -8,9 +8,9 @@ parameters:
   pool: ''
 
 jobs:
-- job: ${{ parameters.name }}
+- job: ${{ parameters.name }}_build
   pool:
-    vmImage: ${{ parameters.pool }}
+    name: ${{ parameters.pool }}
   steps:
   - task: DotNetCoreCLI@2
     inputs:

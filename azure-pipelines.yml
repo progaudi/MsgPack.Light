@@ -2,29 +2,29 @@ jobs:
 - template: .azure.build.yml
   parameters:
     name: macOS
-    pool: macOS
+    pool: Hosted macOS
 
-# - template: .azure.build.yml
-#   parameters:
-#     name: Linux
-#     pool: 'Ubuntu 16.04'
+- template: .azure.build.yml
+  parameters:
+    name: Linux
+    pool: Hosted Ubuntu 1604
 
-# - template: .azure.build.yml
-#   parameters:
-#     name: Windows
-#     pool: 'vs2017-win2016'
+- template: .azure.build.yml
+  parameters:
+    name: Windows
+    pool: Hosted VS2017
 
-# - template: .azure.test.yml
-#   parameters:
-#     name: macOS
-#     pool: macOS
+- template: .azure.test.yml
+  parameters:
+    name: macOS
+    pool: Hosted macOS
 
-# - template: .azure.test.yml
-#   parameters:
-#     name: Linux
-#     pool: 'Ubuntu 16.04'
+- template: .azure.test.yml
+  parameters:
+    name: Linux
+    pool: Hosted Ubuntu 1604
 
-# - template: .azure.test.yml
-#   parameters:
-#     name: Windows
-#     pool: 'vs2017-win2016'
+- template: .azure.test.yml
+  parameters:
+    name: Windows
+    pool: Hosted VS2017
