@@ -11,16 +11,16 @@ jobs:
   - job: ${{ parameters.name }}-build
     pool: ${{ parameters.pool }}
     steps:
-      - task: DotNetCoreCLI@2:
+      - task: DotNetCoreCLI@2
           inputs:
             command: restore
-      - task: DotNetCoreCLI@2:
+      - task: DotNetCoreCLI@2
           inputs:
             command: build
             configuration: Release
             projects: src/msgpack.light/msgpack.light.csproj
             arguments: --no-restore -f netstandard1.1
-      - task: DotNetCoreCLI@2:
+      - task: DotNetCoreCLI@2
           inputs:
             command: build
             configuration: Release
@@ -28,7 +28,7 @@ jobs:
             arguments: --no-restore -f netstandard2.0
 
       - ${{ if eq(parameters.name, 'Windows') }}:
-        - task: DotNetCoreCLI@2:
+        - task: DotNetCoreCLI@2
             inputs:
               command: build
               configuration: Release
