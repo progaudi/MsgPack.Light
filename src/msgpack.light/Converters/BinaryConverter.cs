@@ -47,8 +47,40 @@ namespace ProGaudi.MsgPack.Light.Converters
                     length = NumberConverter.ReadUInt32(reader);
                     break;
 
+                case DataTypes.Str8:
+                    if (_context.BinaryCompatibilityMode)
+                        length = NumberConverter.ReadUInt8(reader);
+                    else
+                        throw ExceptionUtils.CantReadStringAsBinary();
+                    break;
+
+                case DataTypes.Str16:
+                    if (_context.BinaryCompatibilityMode)
+                        length = NumberConverter.ReadUInt16(reader);
+                    else
+                        throw ExceptionUtils.CantReadStringAsBinary();
+                    break;
+
+                case DataTypes.Str32:
+                    if (_context.BinaryCompatibilityMode)
+                        length = NumberConverter.ReadUInt32(reader);
+                    else
+                        throw ExceptionUtils.CantReadStringAsBinary();
+                    break;
+
                 default:
-                    throw ExceptionUtils.BadTypeException(type, DataTypes.Bin8, DataTypes.Bin16, DataTypes.Bin32, DataTypes.Null);
+                    if ((type & DataTypes.FixStr) == DataTypes.FixStr)
+                    {
+                        if (_context.BinaryCompatibilityMode)
+                            length = (uint)(type & ~DataTypes.FixStr);
+                        else
+                            throw ExceptionUtils.CantReadStringAsBinary();
+                    }
+                    else
+                    {
+                        throw ExceptionUtils.BadTypeException(type, DataTypes.Bin8, DataTypes.Bin16, DataTypes.Bin32, DataTypes.Null);
+                    }
+                    break;
             }
 
             var segment = reader.ReadBytes(length);
