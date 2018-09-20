@@ -28,6 +28,8 @@ jobs:
     - script: curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin -channel 1.0 --runtime dotnet
     - script: curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin -channel 1.1 --runtime dotnet
     - template: .azure/tests.yml
+      parameters:
+        netcore1Global: false
 
 - job: winBuild
   pool:
