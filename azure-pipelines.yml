@@ -70,7 +70,7 @@ jobs:
         command: push
         packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
         nuGetFeedType: external
-        externalFeedCredentials: ProgaudiNuget
+        publishFeedCredentials: ProgaudiNuget
     - task: PublishBuildArtifacts@1
       inputs:
         pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
