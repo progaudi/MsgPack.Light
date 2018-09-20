@@ -48,3 +48,29 @@ jobs:
     - template: .azure/tests.yml
       parameters:
         fullNet: true
+
+- job: pushToNuget
+  dependsOn:
+  - macOsTest
+  - linuxTest
+  - winTest
+  pool:
+    name: Hosted VS2017
+  steps:
+    - script: set-variable -name NugetPackageVersion -value "$(git describe --tags | %{$_ -replace '-([^g])', '.$1'})"
+      displayName: set version variable
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: pack
+        versioningScheme: byEnvVar
+        versionEnvVar: NugetPackageVersion
+        arguments: -c Release /property:PackageOutputPath=$(Build.ArtifactStagingDirectory)
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: push
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+        nuGetFeedType: external
+        externalFeedCredentials: ProgaudiNuget
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
