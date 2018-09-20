@@ -25,8 +25,8 @@ jobs:
   pool:
     name: Hosted Ubuntu 1604
   steps:
-    - script: curl -sSL https://dot.net/v1/dotnet-install.sh | sudo bash /dev/stdin -channel 1.0 -sharedruntime
-    - script: curl -sSL https://dot.net/v1/dotnet-install.sh | sudo bash /dev/stdin -channel 1.1 -sharedruntime
+    - script: curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin -channel 1.0 --runtime dotnet
+    - script: curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin -channel 1.1 --runtime dotnet
     - template: .azure/tests.yml
 
 - job: winBuild
