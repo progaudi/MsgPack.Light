@@ -1,7 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+    <TargetFrameworks>net45;net46;netstandard1.1;netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+    <TargetFrameworks>netstandard1.1;netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
   <PropertyGroup>
     <Description>Lightweight msgpack serialization library</Description>
-    <TargetFrameworks>net45;net46;netstandard1.1;netstandard2.0</TargetFrameworks>
     <WarningsAsErrors>true</WarningsAsErrors>
     <AssemblyTitle>msgpack.light</AssemblyTitle>
     <RootNamespace>ProGaudi.MsgPack.Light</RootNamespace>

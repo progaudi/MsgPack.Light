@@ -36,8 +36,6 @@ jobs:
     name: Hosted VS2017
   steps:
     - template: .azure/builds.yml
-      parameters:
-        fullNet: true
 
 - job: winTest
   dependsOn:
@@ -46,8 +44,6 @@ jobs:
     name: Hosted VS2017
   steps:
     - template: .azure/tests.yml
-      parameters:
-        fullNet: true
 
 - job: pushToNuget
   dependsOn:
