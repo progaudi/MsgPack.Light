@@ -14,6 +14,11 @@ namespace ProGaudi.MsgPack.Light
             return new SerializationException($"Got {actual:G} (0x{actual:X}), while expecting one of these: {String.Join(", ", expectedCodes)}");
         }
 
+        public static Exception CantReadStringAsBinary()
+        {
+            return new SerializationException($"Reading a string as a byte array is disabled. Set MsgPackContext.BinaryCompatibilityMode property to true to enable it");
+        }
+
         public static Exception NotEnoughBytes(uint actual, uint expected)
         {
             return new SerializationException($"Expected {expected} bytes, got {actual} bytes.");

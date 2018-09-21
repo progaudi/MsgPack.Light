@@ -23,7 +23,7 @@ namespace ProGaudi.MsgPack.Light
 
         private readonly Dictionary<Type, Func<object>> _objectActivators = new Dictionary<Type, Func<object>>();
 
-        public MsgPackContext(bool strictParseOfFloat = false, bool convertEnumsAsStrings = true)
+        public MsgPackContext(bool strictParseOfFloat = false, bool convertEnumsAsStrings = true, bool binaryCompatibilityMode = false)
         {
             _convertEnumsAsStrings = convertEnumsAsStrings;
             var numberConverter = new NumberConverter(strictParseOfFloat);
@@ -32,7 +32,7 @@ namespace ProGaudi.MsgPack.Light
                 {typeof(MsgPackToken), new MsgPackTokenConverter()},
                 {typeof (bool), new BoolConverter()},
                 {typeof (string), new StringConverter()},
-                {typeof (byte[]), new BinaryConverter()},
+                {typeof (byte[]), new BinaryConverter(binaryCompatibilityMode)},
                 {typeof (float), numberConverter},
                 {typeof (double), numberConverter},
                 {typeof (byte), numberConverter},
