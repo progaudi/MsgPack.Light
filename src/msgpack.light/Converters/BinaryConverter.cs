@@ -19,7 +19,15 @@ namespace ProGaudi.MsgPack.Light.Converters
                 return;
             }
 
-            WriteBinaryHeaderAndLength((uint)value.Length, writer);
+            var valueLength = (uint) value.Length;
+            if (_context.BinaryCompatibilityMode)
+            {
+                WriteStringHeaderAndLength(valueLength, writer);
+            }
+            else
+            {
+                WriteBinaryHeaderAndLength(valueLength, writer);
+            }
 
             writer.Write(value);
         }
@@ -105,6 +113,26 @@ namespace ProGaudi.MsgPack.Light.Converters
             {
                 writer.Write(DataTypes.Bin32);
                 NumberConverter.WriteUIntValue(length, writer);
+            }
+        }
+
+        private void WriteStringHeaderAndLength(uint length, IMsgPackWriter writer)
+        {
+            if (length <= 31)
+            {
+                writer.Write((byte)(((byte)DataTypes.FixStr + length) % 256));
+                return;
+            }
+
+            if (length <= ushort.MaxValue)
+            {
+                writer.Write(DataTypes.Str16);
+                NumberConverter.WriteUShortValue((ushort)length, writer);
+            }
+            else
+            {
+                writer.Write(DataTypes.Str32);
+                NumberConverter.WriteUIntValue((uint)length, writer);
             }
         }
     }
