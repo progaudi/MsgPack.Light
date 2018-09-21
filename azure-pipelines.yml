@@ -57,26 +57,4 @@ jobs:
   pool:
     name: Hosted VS2017
   steps:
-    - task: Bash@3
-      displayName: set version variable
-      inputs:
-        targetType: inline
-        script: echo "##vso[task.setvariable variable=NugetPackageVersion]$(git describe --tags | sed 's/-/./')"
-    - task: DotNetCoreCLI@2
-      displayName: pack nuget package
-      inputs:
-        command: pack
-        versioningScheme: byEnvVar
-        versionEnvVar: NugetPackageVersion
-        arguments: -c Release /property:PackageOutputPath=$(Build.ArtifactStagingDirectory)
-    - task: NuGetCommand@2
-      displayName: 'NuGet push'
-      inputs:
-        command: push
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-        nuGetFeedType: external
-        publishFeedCredentials: api.nuget.org
-    - task: PublishBuildArtifacts@1
-      inputs:
-        pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        artifactName: nupkgs
+    - template: .azure/publish.yml
