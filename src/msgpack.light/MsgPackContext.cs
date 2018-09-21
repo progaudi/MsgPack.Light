@@ -13,8 +13,6 @@ namespace ProGaudi.MsgPack.Light
     {
         private readonly bool _convertEnumsAsStrings;
 
-        public bool BinaryCompatibilityMode { get; set; }
-
         private static readonly IMsgPackConverter<object> SharedNullConverter = new NullConverter();
 
         private readonly ConverterGenerationContext _generatorContext = new ConverterGenerationContext();
@@ -29,13 +27,12 @@ namespace ProGaudi.MsgPack.Light
         {
             _convertEnumsAsStrings = convertEnumsAsStrings;
             var numberConverter = new NumberConverter(strictParseOfFloat);
-            BinaryCompatibilityMode = binaryCompatibilityMode;
             _converters = new Dictionary<Type, IMsgPackConverter>
             {
                 {typeof(MsgPackToken), new MsgPackTokenConverter()},
                 {typeof (bool), new BoolConverter()},
                 {typeof (string), new StringConverter()},
-                {typeof (byte[]), new BinaryConverter()},
+                {typeof (byte[]), new BinaryConverter(binaryCompatibilityMode)},
                 {typeof (float), numberConverter},
                 {typeof (double), numberConverter},
                 {typeof (byte), numberConverter},

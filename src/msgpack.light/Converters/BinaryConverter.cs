@@ -4,7 +4,14 @@ namespace ProGaudi.MsgPack.Light.Converters
 {
     internal class BinaryConverter : IMsgPackConverter<byte[]>
     {
+        private readonly bool _compatibilityMode;
+
         private MsgPackContext _context;
+
+        public BinaryConverter(bool compatibilityMode)
+        {
+            _compatibilityMode = compatibilityMode;
+        }
 
         public void Initialize(MsgPackContext context)
         {
@@ -20,7 +27,7 @@ namespace ProGaudi.MsgPack.Light.Converters
             }
 
             var valueLength = (uint) value.Length;
-            if (_context.BinaryCompatibilityMode)
+            if (_compatibilityMode)
             {
                 WriteStringHeaderAndLength(valueLength, writer);
             }
@@ -56,21 +63,21 @@ namespace ProGaudi.MsgPack.Light.Converters
                     break;
 
                 case DataTypes.Str8:
-                    if (_context.BinaryCompatibilityMode)
+                    if (_compatibilityMode)
                         length = NumberConverter.ReadUInt8(reader);
                     else
                         throw ExceptionUtils.CantReadStringAsBinary();
                     break;
 
                 case DataTypes.Str16:
-                    if (_context.BinaryCompatibilityMode)
+                    if (_compatibilityMode)
                         length = NumberConverter.ReadUInt16(reader);
                     else
                         throw ExceptionUtils.CantReadStringAsBinary();
                     break;
 
                 case DataTypes.Str32:
-                    if (_context.BinaryCompatibilityMode)
+                    if (_compatibilityMode)
                         length = NumberConverter.ReadUInt32(reader);
                     else
                         throw ExceptionUtils.CantReadStringAsBinary();
@@ -79,7 +86,7 @@ namespace ProGaudi.MsgPack.Light.Converters
                 default:
                     if ((type & DataTypes.FixStr) == DataTypes.FixStr)
                     {
-                        if (_context.BinaryCompatibilityMode)
+                        if (_compatibilityMode)
                             length = (uint)(type & ~DataTypes.FixStr);
                         else
                             throw ExceptionUtils.CantReadStringAsBinary();
