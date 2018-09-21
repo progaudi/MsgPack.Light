@@ -58,11 +58,12 @@ jobs:
     name: Hosted VS2017
   steps:
     - task: Bash@3
+      displayName: set version variable
       inputs:
         targetType: inline
-        script: echo "##vso[task.setvariable NugetPackageVersion=$(git describe --tags | sed 's/-/./')]"
-      displayName: set version variable
+        script: echo "##vso[task.setvariable variable=NugetPackageVersion]$(git describe --tags | sed 's/-/./')"
     - task: DotNetCoreCLI@2
+      displayName: pack nuget package
       inputs:
         command: pack
         versioningScheme: byEnvVar
