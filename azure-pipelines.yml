@@ -69,7 +69,8 @@ jobs:
         versioningScheme: byEnvVar
         versionEnvVar: NugetPackageVersion
         arguments: -c Release /property:PackageOutputPath=$(Build.ArtifactStagingDirectory)
-    - task: DotNetCoreCLI@2
+    - task: NuGetCommand@2
+      displayName: 'NuGet push'
       inputs:
         command: push
         packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
