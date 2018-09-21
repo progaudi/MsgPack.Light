@@ -48,3 +48,13 @@ jobs:
     - template: .azure/tests.yml
       parameters:
         fullNet: true
+
+- job: pushToNuget
+  dependsOn:
+  - macOsTest
+  - linuxTest
+  - winTest
+  pool:
+    name: Hosted VS2017
+  steps:
+    - template: .azure/publish.yml
