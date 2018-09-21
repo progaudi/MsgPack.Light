@@ -29,11 +29,11 @@ jobs:
         displayName: push nuget packages
         inputs:
           command: push
-          packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+          packagesToPush: '.nupkgs/*.nupkg'
           nuGetFeedType: external
           publishFeedCredentials: api.nuget.org
 
     - task: PublishBuildArtifacts@1
       inputs:
-        pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        artifactName: nupkgs
+        pathtoPublish: '.nupkgs'
+        artifactName: .nupkgs
