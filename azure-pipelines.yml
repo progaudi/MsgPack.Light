@@ -57,7 +57,10 @@ jobs:
   pool:
     name: Hosted VS2017
   steps:
-    - script: set-variable -name NugetPackageVersion -value "$(git describe --tags | %{$_ -replace '-([^g])', '.$1'})"
+    - task: Bash@3
+      inputs:
+        targetType: inline
+        script: export NugetPackageVersion=$(git describe --tags | sed 's/-/./')
       displayName: set version variable
     - task: DotNetCoreCLI@2
       inputs:
