@@ -69,12 +69,13 @@ jobs:
         versioningScheme: byEnvVar
         versionEnvVar: NugetPackageVersion
         arguments: -c Release /property:PackageOutputPath=$(Build.ArtifactStagingDirectory)
-    # - task: DotNetCoreCLI@2
-    #   inputs:
-    #     command: push
-    #     packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-    #     nuGetFeedType: external
-    #     publishFeedCredentials: ProgaudiNuget
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: push
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+        nuGetFeedType: external
+        publishFeedCredentials: api.nuget.org
     - task: PublishBuildArtifacts@1
       inputs:
-        pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+        pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        artifactName: nupkgs
