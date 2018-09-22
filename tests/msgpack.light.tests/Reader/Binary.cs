@@ -134,7 +134,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void FailToReadOldBinary(byte[] data)
         {
             var e = Should.Throw<SerializationException>(() => MsgPackSerializer.Deserialize<byte[]>(data));
-            e.Message.ShouldBe("Reading a string as a byte array is disabled. Set MsgPackContext.BinaryCompatibilityMode property to true to enable it");
+            e.Message.ShouldBe("Reading a string as a byte array is disabled. Set 'binaryCompatibilityMode' parameter in MsgPackContext constructor to true to enable it");
         }
 
         [Theory]
