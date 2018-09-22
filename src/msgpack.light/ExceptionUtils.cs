@@ -16,7 +16,7 @@ namespace ProGaudi.MsgPack.Light
 
         public static Exception CantReadStringAsBinary()
         {
-            return new SerializationException($"Reading a string as a byte array is disabled. Set MsgPackContext.BinaryCompatibilityMode property to true to enable it");
+            return new SerializationException($"Reading a string as a byte array is disabled. Set 'binaryCompatibilityMode' parameter in MsgPackContext constructor to true to enable it");
         }
 
         public static Exception NotEnoughBytes(uint actual, uint expected)
