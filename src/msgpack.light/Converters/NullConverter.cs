@@ -1,4 +1,4 @@
-namespace ProGaudi.MsgPack.Light.Converters
+namespace ProGaudi.MsgPack.Converters
 {
     internal class NullConverter : IMsgPackConverter<object>
     {

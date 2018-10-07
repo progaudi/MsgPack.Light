@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace ProGaudi.MsgPack.Light
+namespace ProGaudi.MsgPack
 {
     internal class MsgPackMemoryStreamReader : BaseMsgPackReader, IDisposable
     {

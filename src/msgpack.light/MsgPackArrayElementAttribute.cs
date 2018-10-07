@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProGaudi.MsgPack.Light
+namespace ProGaudi.MsgPack
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class MsgPackArrayElementAttribute : Attribute

@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace ProGaudi.MsgPack.Light
+namespace ProGaudi.MsgPack
 {
     public interface IMsgPackReader
     {

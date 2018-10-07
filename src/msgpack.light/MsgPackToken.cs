@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProGaudi.MsgPack.Light
+namespace ProGaudi.MsgPack
 {
     public class MsgPackToken
     {

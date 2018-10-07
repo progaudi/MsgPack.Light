@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 
-using ProGaudi.MsgPack.Light.Converters;
+using ProGaudi.MsgPack.Converters;
 
-namespace ProGaudi.MsgPack.Light
+namespace ProGaudi.MsgPack
 {
     internal class MsgPackMemoryStreamWriter : IMsgPackWriter, IDisposable
     {

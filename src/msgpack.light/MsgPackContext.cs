@@ -4,10 +4,10 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 
-using ProGaudi.MsgPack.Light.Converters;
-using ProGaudi.MsgPack.Light.Converters.Generation;
+using ProGaudi.MsgPack.Converters;
+using ProGaudi.MsgPack.Converters.Generation;
 
-namespace ProGaudi.MsgPack.Light
+namespace ProGaudi.MsgPack
 {
     public class MsgPackContext
     {
@@ -70,7 +70,7 @@ namespace ProGaudi.MsgPack.Light
 
         public IMsgPackConverter<object> NullConverter => SharedNullConverter;
 
-#if !NETSTANDARD1_1
+#if !NETSTANDARD1_4
         public void DiscoverConverters()
         {
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())

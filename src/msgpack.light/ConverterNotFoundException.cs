@@ -1,6 +1,6 @@
 using System;
 
-namespace ProGaudi.MsgPack.Light
+namespace ProGaudi.MsgPack
 {
     public class ConverterNotFoundException : Exception
     {

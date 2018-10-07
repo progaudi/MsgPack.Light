@@ -1,4 +1,4 @@
-namespace ProGaudi.MsgPack.Light
+namespace ProGaudi.MsgPack
 {
     public interface IMsgPackWriter
     {

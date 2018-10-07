@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace ProGaudi.MsgPack.Light.Converters.Generation.Exceptions
+namespace ProGaudi.MsgPack.Converters.Generation.Exceptions
 {
     public class DuplicateArrayElementException : GeneratorException
     {

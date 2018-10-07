@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 
-namespace ProGaudi.MsgPack.Light.Converters.Generation
+namespace ProGaudi.MsgPack.Converters.Generation
 {
     public class PropertyProvider
     {

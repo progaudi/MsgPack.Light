@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace ProGaudi.MsgPack.Light
+namespace ProGaudi.MsgPack
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct, Inherited = false)]
-    public class MsgPackMapAttribute : Attribute
+    public class MsgPackArrayAttribute : Attribute
     {
     }
 }

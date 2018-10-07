@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 
-namespace ProGaudi.MsgPack.Light
+namespace ProGaudi.MsgPack
 {
     public interface IMsgPackConverter
     {

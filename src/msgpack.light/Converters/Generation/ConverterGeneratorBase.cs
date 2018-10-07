@@ -6,9 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
-using ProGaudi.MsgPack.Light.Converters.Generation.Exceptions;
+using ProGaudi.MsgPack.Converters.Generation.Exceptions;
 
-namespace ProGaudi.MsgPack.Light.Converters.Generation
+namespace ProGaudi.MsgPack.Converters.Generation
 {
     public abstract class ConverterGeneratorBase
     {

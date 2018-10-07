@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using ProGaudi.MsgPack.Light.Converters;
+using ProGaudi.MsgPack.Converters;
 
-namespace ProGaudi.MsgPack.Light
+namespace ProGaudi.MsgPack
 {
     internal abstract class BaseMsgPackReader : IMsgPackReader
     {

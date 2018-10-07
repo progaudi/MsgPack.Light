@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ProGaudi.MsgPack.Light.Converters
+namespace ProGaudi.MsgPack.Converters
 {
     public class ReadOnlyMapConverter<TMap, TKey, TValue> : MapConverterBase<TMap, TKey, TValue>
         where TMap : IReadOnlyDictionary<TKey, TValue>

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
 
-using ProGaudi.MsgPack.Light.Converters.Generation.Exceptions;
+using ProGaudi.MsgPack.Converters.Generation.Exceptions;
 
-namespace ProGaudi.MsgPack.Light
+namespace ProGaudi.MsgPack
 {
     public static class ExceptionUtils
     {

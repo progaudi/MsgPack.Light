@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ProGaudi.MsgPack.Light.Converters
+namespace ProGaudi.MsgPack.Converters
 {
     internal class ArrayConverter<TArray, TElement> : ArrayConverterBase<TArray, TElement>
         where TArray : IList<TElement>

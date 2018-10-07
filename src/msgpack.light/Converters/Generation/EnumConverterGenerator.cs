@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace ProGaudi.MsgPack.Light.Converters.Generation
+namespace ProGaudi.MsgPack.Converters.Generation
 {
     internal class EnumConverterGenerator
     {

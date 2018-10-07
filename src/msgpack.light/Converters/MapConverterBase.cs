@@ -1,4 +1,4 @@
-namespace ProGaudi.MsgPack.Light.Converters
+namespace ProGaudi.MsgPack.Converters
 {
     public abstract class MapConverterBase<TMap, TKey, TValue> : IMsgPackConverter<TMap>
     {

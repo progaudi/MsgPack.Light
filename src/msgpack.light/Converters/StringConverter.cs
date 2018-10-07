@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace ProGaudi.MsgPack.Light.Converters
+namespace ProGaudi.MsgPack.Converters
 {
     internal class StringConverter : IMsgPackConverter<string>
     {

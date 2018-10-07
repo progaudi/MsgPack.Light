@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace ProGaudi.MsgPack.Light.Converters.Generation.Exceptions
+namespace ProGaudi.MsgPack.Converters.Generation.Exceptions
 {
     public class GeneratorException : SerializationException
     {

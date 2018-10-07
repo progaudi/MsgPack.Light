@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace ProGaudi.MsgPack.Light.Converters.Generation
+namespace ProGaudi.MsgPack.Converters.Generation
 {
     public static class Extensions
     {
@@ -58,7 +58,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
             return type.DeclaredMethods.SingleOrDefault(x => x.Name == name && x.GetGenericArguments().Length == number);
         }
 
-#if NETSTANDARD1_1
+#if NETSTANDARD1_4
         public static ConstructorInfo GetConstructor(this TypeInfo type, Type[] parameters)
         {
             foreach (var constructor in type.DeclaredConstructors)
