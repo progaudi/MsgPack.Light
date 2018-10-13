@@ -1,31 +1,15 @@
+using System;
+
 namespace ProGaudi.MsgPack.Converters
 {
-    internal class BoolConverter : IMsgPackConverter<bool>
+    internal sealed class BoolConverter : IMsgPackFormatter<bool>, IMsgPackParser<bool>
     {
-        public void Initialize(MsgPackContext context)
-        {
-        }
+        public int GetBufferSize(bool value) => DataLengths.Boolean;
 
-        public void Write(bool value, IMsgPackWriter writer)
-        {
-            writer.Write(value ? DataTypes.True : DataTypes.False);
-        }
+        public bool HasConstantSize => true;
 
-        public bool Read(IMsgPackReader reader)
-        {
-            var type = reader.ReadDataType();
+        public int Format(Span<byte> destination, bool value) => MsgPackSpec.WriteBoolean(destination, value);
 
-            switch (type)
-            {
-                case DataTypes.True:
-                    return true;
-
-                case DataTypes.False:
-                    return false;
-
-                default:
-                    throw ExceptionUtils.BadTypeException(type, DataTypes.True, DataTypes.False);
-            }
-        }
+        public bool Parse(Span<byte> source, out int readSize) => MsgPackSpec.ReadBoolean(source, out readSize);
     }
 }
