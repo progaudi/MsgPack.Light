@@ -895,7 +895,7 @@ namespace ProGaudi.MsgPack.Converters
 
             public FloatBinary(float f)
             {
-                this = default(FloatBinary);
+                this = default;
                 value = f;
             }
 
@@ -951,7 +951,7 @@ namespace ProGaudi.MsgPack.Converters
 
             public DoubleBinary(double f)
             {
-                this = default(DoubleBinary);
+                this = default;
                 value = f;
             }
 

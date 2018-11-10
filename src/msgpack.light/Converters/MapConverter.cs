@@ -25,7 +25,7 @@ namespace ProGaudi.MsgPack.Converters
         public override TMap Read(IMsgPackReader reader)
         {
             var length = reader.ReadMapLength();
-            return length.HasValue ? ReadMap(reader, length.Value) : default(TMap);
+            return length.HasValue ? ReadMap(reader, length.Value) : default;
         }
 
         private TMap ReadMap(IMsgPackReader reader, uint length)

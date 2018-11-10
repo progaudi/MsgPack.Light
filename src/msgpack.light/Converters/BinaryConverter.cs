@@ -104,7 +104,7 @@ namespace ProGaudi.MsgPack.Converters
                 DataCodes.Binary32,
                 DataCodes.String8,
                 DataCodes.String16,
-                DataCodes.String32,
+                DataCodes.String32
             };
 
             public override IMemoryOwner<byte> Parse(ReadOnlySpan<byte> source, out int readSize)
