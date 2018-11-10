@@ -10,6 +10,6 @@ namespace ProGaudi.MsgPack
         /// <param name="source">Buffer to read.</param>
         /// <param name="readSize">Count of read bytes</param>
         /// <returns>Value</returns>
-        T Parse(Span<byte> source, out int readSize);
+        T Parse(ReadOnlySpan<byte> source, out int readSize);
     }
 }

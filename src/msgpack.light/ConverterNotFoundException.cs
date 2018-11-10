@@ -2,6 +2,7 @@ using System;
 
 namespace ProGaudi.MsgPack
 {
+    [Serializable]
     public class ConverterNotFoundException : Exception
     {
         public ConverterNotFoundException(Type type)

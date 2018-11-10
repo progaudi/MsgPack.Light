@@ -10,6 +10,6 @@ namespace ProGaudi.MsgPack.Converters
 
         public int Format(Span<byte> destination, bool value) => MsgPackSpec.WriteBoolean(destination, value);
 
-        public bool Parse(Span<byte> source, out int readSize) => MsgPackSpec.ReadBoolean(source, out readSize);
+        public bool Parse(ReadOnlySpan<byte> source, out int readSize) => MsgPackSpec.ReadBoolean(source, out readSize);
     }
 }
