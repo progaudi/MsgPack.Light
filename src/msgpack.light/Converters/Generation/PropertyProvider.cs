@@ -36,7 +36,7 @@ namespace ProGaudi.MsgPack.Converters.Generation
         private void Discover(Type type)
         {
             var cacheByName = new Dictionary<string, PropertyInfo>();
-            var cacheByOrder = new List<PropertyInfo>();
+            var cacheByOrder = new System.Collections.Generic.List<PropertyInfo>();
             foreach (var info in DiscoverProperties(type))
             {
                 if (cacheByName.ContainsKey(info.Name)) continue;

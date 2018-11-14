@@ -32,7 +32,7 @@ namespace ProGaudi.MsgPack
                 {typeof(MsgPackToken), new MsgPackTokenConverter()},
                 {typeof (bool), new BoolConverter()},
                 {typeof (string), new StringConverter()},
-                {typeof (byte[]), new BinaryConverter(binaryCompatibilityMode)},
+                {typeof (byte[]), new BinaryConverter()},
                 {typeof (float), numberConverter},
                 {typeof (double), numberConverter},
                 {typeof (byte), numberConverter},
@@ -253,7 +253,7 @@ namespace ProGaudi.MsgPack
             var arrayInterface = GetGenericInterface(type, typeof(IList<>));
             if (arrayInterface != null)
             {
-                return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(ArrayConverter<,>).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))));
+                return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(ArrayConverter).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))));
             }
 
             arrayInterface = GetGenericInterface(type, typeof(IReadOnlyList<>));
