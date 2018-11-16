@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
+
+using JetBrains.Annotations;
 
 using ProGaudi.MsgPack.Converters;
 using ProGaudi.MsgPack.Converters.Binary;
@@ -15,12 +19,6 @@ namespace ProGaudi.MsgPack
     public class MsgPackContext
     {
         private readonly bool _convertEnumsAsStrings;
-
-        private static readonly IMsgPackConverter<object> SharedNullConverter = new NullConverter();
-
-        private readonly ConverterGenerationContext _generatorContext = new ConverterGenerationContext();
-
-        private readonly Dictionary<Type, IMsgPackConverter> _converters;
 
         private readonly Dictionary<Type, Type> _genericConverters = new Dictionary<Type, Type>();
 
@@ -282,6 +280,23 @@ namespace ProGaudi.MsgPack
                 .ImplementedInterfaces
                 .Select(x => x.GetTypeInfo())
                 .FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == genericInterfaceType);
+        }
+
+        private static TValue GetOrAdd<TKey, TValue>([NotNull]Dictionary<TKey, TValue> dictionary, [NotNull]TKey key, [NotNull]Func<TKey, TValue> creator)
+        {
+            if (!dictionary.TryGetValue(key, out var temp))
+                dictionary[key] = temp = creator(key);
+            return temp;
+        }
+
+        public IMsgPackFormatter<T> GetFormatter<T>()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IMsgPackParser<T> GetParser<T>()
+        {
+            throw new NotImplementedException();
         }
     }
 }
