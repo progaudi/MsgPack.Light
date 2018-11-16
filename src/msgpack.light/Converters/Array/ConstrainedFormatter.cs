@@ -23,7 +23,7 @@ namespace ProGaudi.MsgPack.Converters.Array
 
             _elementFormatter = default;
 
-            if (minSize.HasValue && maxSize.HasValue)
+            if (minSize.HasValue && maxSize.HasValue && minSize > maxSize)
             {
                 throw ExceptionUtils.MinimumShouldBeLessThanOrEqualToMaximum(minSize.Value, maxSize.Value);
             }
