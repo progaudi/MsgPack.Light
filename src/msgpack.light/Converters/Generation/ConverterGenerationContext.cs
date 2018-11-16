@@ -3,6 +3,8 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using System.Reflection.Emit;
 
+using ProGaudi.MsgPack.Converters.Enum;
+
 namespace ProGaudi.MsgPack.Converters.Generation
 {
     internal class ConverterGenerationContext
@@ -68,7 +70,7 @@ namespace ProGaudi.MsgPack.Converters.Generation
         {
             if (convertEnumsAsStrings)
             {
-                return new EnumStringConverter<T>();
+                return new String<T>();
             }
 
             var generatorType = _converterCaches.GetOrAdd((type, type), x => _enumConverterGenerator.Generate(x.Item1));
