@@ -38,7 +38,7 @@ namespace ProGaudi.MsgPack.Converters.Enumerable
             if (MsgPackSpec.GetDataFamily(Code) != DataFamily.Array)
                 throw ExceptionUtils.BadCodeConstraint(Code, DataFamily.Array);
 
-            (MinSize, MaxSize) = MsgPack.Extensions.ValidateMinMaxCode(Code, minSize, maxSize);
+            (MinSize, MaxSize) = Converters.Extensions.ValidateMinMaxCode(Code, minSize, maxSize);
         }
 
         int IMsgPackFormatter<TEnumerable>.GetBufferSize(TEnumerable value) => value.GetBufferSize(_elementFormatter);
@@ -57,7 +57,7 @@ namespace ProGaudi.MsgPack.Converters.Enumerable
                 result += _elementFormatter.Format(span.Slice(result), element);
                 length += 1;
             }
-            MsgPack.Extensions.CheckMinMax(length, MinSize, MaxSize);
+            Converters.Extensions.CheckMinMax(length, MinSize, MaxSize);
             result += WriteHeader(destination, length);
 
             return result;

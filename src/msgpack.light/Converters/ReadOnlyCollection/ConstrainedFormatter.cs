@@ -42,7 +42,7 @@ namespace ProGaudi.MsgPack.Converters.ReadOnlyCollection
             if (MsgPackSpec.GetDataFamily(codeValue) != DataFamily.Array)
                 throw ExceptionUtils.BadCodeConstraint(codeValue, DataFamily.Array);
 
-            (MinSize, MaxSize) = MsgPack.Extensions.ValidateMinMaxCode(code.Value, minSize, maxSize);
+            (MinSize, MaxSize) = Converters.Extensions.ValidateMinMaxCode(code.Value, minSize, maxSize);
         }
 
         int IMsgPackFormatter<TCollection>.GetBufferSize(TCollection value) => value.GetBufferSize(_elementFormatter);
@@ -55,7 +55,7 @@ namespace ProGaudi.MsgPack.Converters.ReadOnlyCollection
 
             var span = value;
             var length = span.Count;
-            MsgPack.Extensions.CheckMinMax(length, MinSize, MaxSize);
+            Converters.Extensions.CheckMinMax(length, MinSize, MaxSize);
 
             var result = WriteHeader(destination, length);
             foreach (var element in value)

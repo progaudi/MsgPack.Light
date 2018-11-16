@@ -5,7 +5,10 @@ using System.Linq;
 using System.Reflection;
 
 using ProGaudi.MsgPack.Converters;
+using ProGaudi.MsgPack.Converters.Binary;
+using ProGaudi.MsgPack.Converters.DateTime;
 using ProGaudi.MsgPack.Converters.Generation;
+using ProGaudi.MsgPack.Converters.Map;
 
 namespace ProGaudi.MsgPack
 {
@@ -32,7 +35,7 @@ namespace ProGaudi.MsgPack
                 {typeof(MsgPackToken), new MsgPackTokenConverter()},
                 {typeof (bool), new BoolConverter()},
                 {typeof (string), new StringConverter()},
-                {typeof (byte[]), new BinaryConverter()},
+                {typeof (byte[]), new Converter()},
                 {typeof (float), numberConverter},
                 {typeof (double), numberConverter},
                 {typeof (byte), numberConverter},
@@ -219,7 +222,7 @@ namespace ProGaudi.MsgPack
             var mapInterface = GetGenericInterface(type, typeof(IDictionary<,>));
             if (mapInterface != null)
             {
-                return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(MapConverter<,,>).MakeGenericType(
+                return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(UsualFormatter<,,>).MakeGenericType(
                     x,
                     mapInterface.GenericTypeArguments[0],
                     mapInterface.GenericTypeArguments[1]))));

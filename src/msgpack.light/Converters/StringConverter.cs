@@ -2,7 +2,7 @@ using System.Text;
 
 namespace ProGaudi.MsgPack.Converters
 {
-    internal class StringConverter : IMsgPackConverter<string>
+    internal class StringConverter : IMsgPackFormatter<string>, IMsgPackParser<string>
     {
         private static readonly Encoding Utf8 = new UTF8Encoding(false);
         private MsgPackContext _context;
