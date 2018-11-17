@@ -50,7 +50,7 @@ namespace ProGaudi.MsgPack.Converters.Binary
             return HasConstantSize
                 // ReSharper disable once PossibleInvalidOperationException because HasConstantSize will check for it
                 ? DataLengths.GetBinaryHeaderLength(MinSize.Value) + MinSize.Value
-                : _serializer.GetBufferSize(value);
+                : _serializer.GetBufferSize(value.Value);
         }
 
         public bool HasConstantSize => !Nullable && MinSize.HasValue && MinSize == MaxSize;
@@ -64,7 +64,7 @@ namespace ProGaudi.MsgPack.Converters.Binary
 
             Extensions.CheckMinMax(value.Value.Length, MinSize, MaxSize);
 
-            return _serializer.Format(destination, value);
+            return _serializer.Format(destination, value.Value);
         }
 
         public IMemoryOwner<byte> Parse(ReadOnlySpan<byte> source, out int readSize) => _serializer.Parse(source, out readSize);

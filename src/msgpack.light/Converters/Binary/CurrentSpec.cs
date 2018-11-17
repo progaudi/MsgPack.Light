@@ -5,25 +5,17 @@ namespace ProGaudi.MsgPack.Converters.Binary
 {
     internal sealed class CurrentSpec : Converter
     {
-        public override int GetBufferSize(ReadOnlyMemory<byte>? value)
+        public override int GetBufferSize(ReadOnlyMemory<byte> value)
         {
-            if (value == null)
-                return DataLengths.Nil;
-
-            var length = value.Value.Length;
+            var length = value.Length;
             return DataLengths.GetBinaryHeaderLength(length) + length;
         }
 
         public override bool HasConstantSize => false;
 
-        public override int Format(Span<byte> destination, ReadOnlyMemory<byte>? value)
+        public override int Format(Span<byte> destination, ReadOnlyMemory<byte> value)
         {
-            if (value == null)
-            {
-                return MsgPackSpec.WriteNil(destination);
-            }
-
-            var span = value.Value.Span;
+            var span = value.Span;
             return MsgPackSpec.WriteBinary(destination, span);
         }
 

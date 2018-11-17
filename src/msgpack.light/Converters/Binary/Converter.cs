@@ -6,7 +6,6 @@ namespace ProGaudi.MsgPack.Converters.Binary
     public abstract class Converter :
         IMsgPackFormatter<byte[]>,
         IMsgPackFormatter<ReadOnlyMemory<byte>>,
-        IMsgPackFormatter<ReadOnlyMemory<byte>?>,
         IMsgPackParser<byte[]>,
         IMsgPackParser<IMemoryOwner<byte>>
     {
@@ -14,19 +13,19 @@ namespace ProGaudi.MsgPack.Converters.Binary
 
         public static readonly Converter Compatibility = new CompatibilitySpec();
 
-        public abstract int GetBufferSize(ReadOnlyMemory<byte>? value);
+        public int GetBufferSize(byte[] value) => value == null
+            ? DataLengths.Nil
+            : GetBufferSize((ReadOnlyMemory<byte>)value);
 
-        public int GetBufferSize(byte[] value) => GetBufferSize((ReadOnlyMemory<byte>?)value);
-
-        public int GetBufferSize(ReadOnlyMemory<byte> value) => GetBufferSize((ReadOnlyMemory<byte>?)value);
+        public abstract int GetBufferSize(ReadOnlyMemory<byte> value);
 
         public abstract bool HasConstantSize { get; }
 
-        public int Format(Span<byte> destination, ReadOnlyMemory<byte> value) => Format(destination, (ReadOnlyMemory<byte>?)value);
+        public abstract int Format(Span<byte> destination, ReadOnlyMemory<byte> value);
 
-        public int Format(Span<byte> destination, byte[] value) => Format(destination, (ReadOnlyMemory<byte>?)value);
-
-        public abstract int Format(Span<byte> destination, ReadOnlyMemory<byte>? value);
+        public int Format(Span<byte> destination, byte[] value) => value == null
+            ? MsgPackSpec.WriteNil(destination)
+            : Format(destination, (ReadOnlyMemory<byte>)value);
 
         public abstract IMemoryOwner<byte> Parse(ReadOnlySpan<byte> source, out int readSize);
 

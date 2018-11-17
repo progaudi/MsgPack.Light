@@ -12,7 +12,6 @@ namespace ProGaudi.MsgPack
         {
             Cache<IMsgPackFormatter<byte[]>>.Instance = Converters.Binary.Converter.Compatibility;
             Cache<IMsgPackFormatter<ReadOnlyMemory<byte>>>.Instance = Converters.Binary.Converter.Compatibility;
-            Cache<IMsgPackFormatter<ReadOnlyMemory<byte>?>>.Instance = Converters.Binary.Converter.Compatibility;
             Cache<IMsgPackParser<byte[]>>.Instance = Converters.Binary.Converter.Compatibility;
             Cache<IMsgPackParser<IMemoryOwner<byte>>>.Instance = Converters.Binary.Converter.Compatibility;
 
@@ -67,10 +66,10 @@ namespace ProGaudi.MsgPack
                 TryGenerateStructMapper(type, typeof(Nullable<>), typeof(Converters.NullableConverter<>)) ??
                 TryGenerateInterfaceMapper(type, typeof(IList<>), typeof(Converters.List.UsualFormatter<,>)) ??
                 TryGenerateInterfaceMapper(type, typeof(IReadOnlyList<>), typeof(Converters.ReadOnlyList.UsualFormatter<,>)) ??
-                TryGenerateInterfaceMapper(type, typeof(ICollection<>), typeof(Converters.Collection.UsualFormatter<,>)) ??
-                TryGenerateInterfaceMapper(type, typeof(IReadOnlyCollection<>), typeof(Converters.ReadOnlyCollection.UsualFormatter<,>)) ??
                 TryGenerateInterfaceMapper(type, typeof(IDictionary<,>), typeof(Converters.Map.UsualFormatter<,,>)) ??
                 TryGenerateInterfaceMapper(type, typeof(IReadOnlyDictionary<,>), typeof(Converters.ReadOnlyMap.UsualFormatter<,,>)) ??
+                TryGenerateInterfaceMapper(type, typeof(ICollection<>), typeof(Converters.Collection.UsualFormatter<,>)) ??
+                TryGenerateInterfaceMapper(type, typeof(IReadOnlyCollection<>), typeof(Converters.ReadOnlyCollection.UsualFormatter<,>)) ??
                 TryGenerateInterfaceMapper(type, typeof(IEnumerable<>), typeof(Converters.Enumerable.UsualFormatter<,>))
             );
         }
@@ -96,9 +95,12 @@ namespace ProGaudi.MsgPack
 
         private object TryGenerateInterfaceMapper(Type type, Type generic, Type mapper)
         {
-            var @interface = type
-                .GetInterfaces()
-                .FirstOrDefault(x => x.IsConstructedGenericType && x.GetGenericTypeDefinition() == generic);
+            bool Predicate(Type x) => x.IsConstructedGenericType && x.GetGenericTypeDefinition() == generic;
+            var @interface = type.GetTypeInfo().IsInterface && Predicate(type)
+                ? type
+                : type
+                    .GetInterfaces()
+                    .FirstOrDefault(Predicate);
 
             if (@interface == null)
                 return null;

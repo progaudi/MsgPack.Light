@@ -88,14 +88,14 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         public void False()
         {
             using (var blob = MsgPackSerializer.Serialize((bool?) false, out var wroteSize))
-                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.Nil });
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.False });
         }
 
         [Fact]
         public void True()
         {
             using (var blob = MsgPackSerializer.Serialize((bool?) true, out var wroteSize))
-                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.Nil });
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.True });
         }
 
         [Theory]

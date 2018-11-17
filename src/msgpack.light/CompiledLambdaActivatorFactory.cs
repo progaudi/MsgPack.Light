@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -8,16 +9,13 @@ namespace ProGaudi.MsgPack
 {
     public static class CompiledLambdaActivatorFactory
     {
-        private static readonly Dictionary<Type, Func<object>> DefaultConstructorCache = new Dictionary<Type, Func<object>>();
+        private static readonly ConcurrentDictionary<Type, Func<object>> DefaultConstructorCache = new ConcurrentDictionary<Type, Func<object>>();
 
-        private static readonly Dictionary<Type, Func<MsgPackContext, object>> SingleConstructorCache = new Dictionary<Type, Func<MsgPackContext, object>>();
+        private static readonly ConcurrentDictionary<Type, Func<MsgPackContext, object>> SingleConstructorCache = new ConcurrentDictionary<Type, Func<MsgPackContext, object>>();
 
         public static Func<object> GetDefaultActivator(this Type type)
         {
-            if (DefaultConstructorCache.TryGetValue(type, out var value))
-                return value;
-
-            return DefaultConstructorCache[type] = CreateActivator();
+            return DefaultConstructorCache.GetOrAdd(type, x => CreateActivator());
 
             Func<object> CreateActivator()
             {
@@ -41,10 +39,7 @@ namespace ProGaudi.MsgPack
 
         public static Func<MsgPackContext, object> GetContextActivator(this Type type)
         {
-            if (SingleConstructorCache.TryGetValue(type, out var value))
-                return value;
-
-            return SingleConstructorCache[type] = CreateActivator();
+            return SingleConstructorCache.GetOrAdd(type, x => CreateActivator());
 
             Func<MsgPackContext, object> CreateActivator()
             {

@@ -13,11 +13,15 @@ namespace ProGaudi.MsgPack.Converters.Array
 
         public int GetBufferSize(ReadOnlyMemory<TElement> value) => value.GetBufferSize(_elementFormatter);
 
-        public int GetBufferSize(TElement[] value) => GetBufferSize((ReadOnlyMemory<TElement>)value);
+        public int GetBufferSize(TElement[] value) => value == null
+            ? DataLengths.Nil
+            : GetBufferSize((ReadOnlyMemory<TElement>)value);
 
         public bool HasConstantSize => false;
 
-        public int Format(Span<byte> destination, TElement[] value) => Format(destination, (ReadOnlyMemory<TElement>)value);
+        public int Format(Span<byte> destination, TElement[] value) => value == null
+            ? MsgPackSpec.WriteNil(destination)
+            : Format(destination, (ReadOnlyMemory<TElement>)value);
 
         public int Format(Span<byte> destination, ReadOnlyMemory<TElement> value)
         {
