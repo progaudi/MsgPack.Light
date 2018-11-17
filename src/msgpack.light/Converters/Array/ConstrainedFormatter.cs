@@ -2,7 +2,7 @@ using System;
 
 namespace ProGaudi.MsgPack.Converters.Array
 {
-    public sealed class ConstrainedFormatter<TElement> : IMsgPackFormatter<ReadOnlyMemory<TElement>?>
+    public sealed class ConstrainedFormatter<TElement> : IMsgPackFormatter<TElement[]>
     {
         public byte? Code { get; }
 
@@ -38,15 +38,17 @@ namespace ProGaudi.MsgPack.Converters.Array
             (MinSize, MaxSize) = Converters.Extensions.ValidateMinMaxCode(code.Value, minSize, maxSize);
         }
 
-        public int GetBufferSize(ReadOnlyMemory<TElement>? value) => value.GetBufferSize(_elementFormatter);
+        public int GetBufferSize(TElement[] value) => value == null
+            ? DataLengths.Nil
+            : ((ReadOnlyMemory<TElement>) value).GetBufferSize(_elementFormatter);
 
         public bool HasConstantSize => !Nullable && _elementFormatter.HasConstantSize && MinSize.HasValue && MinSize == MaxSize;
 
-        public int Format(Span<byte> destination, ReadOnlyMemory<TElement>? value)
+        public int Format(Span<byte> destination, TElement[] value)
         {
             if (value == null) return MsgPackSpec.WriteNil(destination);
 
-            var span = value.Value.Span;
+            var span = value.AsSpan();
             var length = span.Length;
             Converters.Extensions.CheckMinMax(length, MinSize, MaxSize);
 
