@@ -1,3 +1,6 @@
+using ProGaudi.Buffers;
+using ProGaudi.MsgPack.Converters.Binary;
+
 using Shouldly;
 
 using Xunit;
@@ -83,9 +86,11 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         })]
         public void Test(byte[] value, byte[] data)
         {
-            MsgPackSerializer.Serialize(value).ShouldBe(data);
-
-            ((MsgPackToken)value).RawBytes.ShouldBe(data);
+            using (var blob = FixedLengthMemoryPool<byte>.Shared.Rent(data.Length))
+            {
+                Converter.Current.Format(blob.Memory.Span, value);
+                blob.Memory.ShouldBe(data);
+            }
         }
 
         [Theory]
@@ -165,9 +170,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         })]
         public void WriteOldBinary(byte[] value, byte[] data)
         {
-            var context = new MsgPackContext(binaryCompatibilityMode: true);
-            var result = Should.NotThrow(() => MsgPackSerializer.Serialize(value, context));
-            result.ShouldBe(data);
+            using (var blob = MsgPackSerializer.Serialize(value, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(data);
         }
     }
 }

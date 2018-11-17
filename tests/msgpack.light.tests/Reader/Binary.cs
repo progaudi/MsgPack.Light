@@ -1,5 +1,7 @@
 using System.Runtime.Serialization;
 
+using ProGaudi.MsgPack.Converters.Binary;
+
 using Shouldly;
 
 using Xunit;
@@ -85,10 +87,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         })]
         public void Test(byte[] value, byte[] data)
         {
-            MsgPackSerializer.Deserialize<byte[]>(data).ShouldBe(value);
-
-            var token = Helpers.CheckTokenDeserialization(data);
-            ((byte[])token).ShouldBe(value);
+            MsgPackSerializer.Deserialize<byte[]>(data, out var readSize).ShouldBe(value);
+            readSize.ShouldBe(data.Length);
         }
 
         [Theory]
@@ -133,7 +133,7 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         })]
         public void FailToReadOldBinary(byte[] data)
         {
-            var e = Should.Throw<SerializationException>(() => MsgPackSerializer.Deserialize<byte[]>(data));
+            var e = Should.Throw<SerializationException>(() => Converter.Current.Parse(data, out _));
             e.Message.ShouldBe("Reading a string as a byte array is disabled. Set 'binaryCompatibilityMode' parameter in MsgPackContext constructor to true to enable it");
         }
 
@@ -214,9 +214,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         })]
         public void ReadOldBinary(byte[] value, byte[] data)
         {
-            var context = new MsgPackContext(binaryCompatibilityMode: true);
-            var result = Should.NotThrow(() => MsgPackSerializer.Deserialize<byte[]>(data, context));
-            result.ShouldBe(value);
+            MsgPackSerializer.Deserialize<byte[]>(data, out var readSize).ShouldBe(value);
+            readSize.ShouldBe(data.Length);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace ProGaudi.MsgPack.Light.Tests
         Value2,
         Value3 = 3,
         Value4 = sbyte.MaxValue,
-        Value5 = sbyte.MinValue,
+        Value5 = sbyte.MinValue
     }
 
     public enum ByteEnum : byte
@@ -38,7 +38,7 @@ namespace ProGaudi.MsgPack.Light.Tests
         Value2,
         Value3 = 3,
         Value4 = byte.MaxValue,
-        Value5 = byte.MinValue,
+        Value5 = byte.MinValue
     }
 
     public enum ShortEnum : short
@@ -47,7 +47,7 @@ namespace ProGaudi.MsgPack.Light.Tests
         Value2,
         Value3 = 3,
         Value4 = short.MaxValue,
-        Value5 = short.MinValue,
+        Value5 = short.MinValue
     }
 
     public enum UshortEnum : ushort
@@ -56,16 +56,16 @@ namespace ProGaudi.MsgPack.Light.Tests
         Value2,
         Value3 = 3,
         Value4 = ushort.MaxValue,
-        Value5 = ushort.MinValue,
+        Value5 = ushort.MinValue
     }
 
-    public enum IntEnum : int
+    public enum IntEnum
     {
         Value1,
         Value2,
         Value3 = 3,
         Value4 = int.MaxValue,
-        Value5 = int.MinValue,
+        Value5 = int.MinValue
     }
 
     public enum UintEnum : uint
@@ -74,7 +74,7 @@ namespace ProGaudi.MsgPack.Light.Tests
         Value2,
         Value3 = 3,
         Value4 = uint.MaxValue,
-        Value5 = uint.MinValue,
+        Value5 = uint.MinValue
     }
 
     public enum LongEnum : long
@@ -83,7 +83,7 @@ namespace ProGaudi.MsgPack.Light.Tests
         Value2,
         Value3 = 3,
         Value4 = long.MaxValue,
-        Value5 = long.MinValue,
+        Value5 = long.MinValue
     }
 
     public enum UlongEnum : ulong
@@ -92,6 +92,6 @@ namespace ProGaudi.MsgPack.Light.Tests
         Value2,
         Value3 = 3,
         Value4 = ulong.MaxValue,
-        Value5 = ulong.MinValue,
+        Value5 = ulong.MinValue
     }
 }
