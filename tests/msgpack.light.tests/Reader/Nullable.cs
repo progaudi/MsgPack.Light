@@ -12,7 +12,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         public void ReadNullAsNullableBool()
         {
             var data = new[] { DataCodes.Nil };
-            MsgPackSerializer.Deserialize<bool?>(data, out var readSize).ShouldBe(null);
+            var deserialize = MsgPackSerializer.Deserialize<bool?>(data, out var readSize);
+            deserialize.ShouldBe(null);
             readSize.ShouldBe(1);
         }
 

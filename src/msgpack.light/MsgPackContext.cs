@@ -89,8 +89,8 @@ namespace ProGaudi.MsgPack
                 TryGenerateStructMapper(type, typeof(Memory<>), typeof(Converters.Array.Parser<>)) ??
                 TryGenerateStructMapper(type, typeof(Nullable<>), typeof(Converters.NullableConverter<>)) ??
                 TryGenerateInterfaceMapper(type, typeof(IList<>), typeof(Converters.List.Parser<,>)) ??
-                TryGenerateInterfaceMapper(type, typeof(ICollection<>), typeof(Converters.Collection.Parser<,>)) ??
-                TryGenerateInterfaceMapper(type, typeof(IDictionary<,>), typeof(Converters.Map.Parser<,,>))
+                TryGenerateInterfaceMapper(type, typeof(IDictionary<,>), typeof(Converters.Map.Parser<,,>)) ??
+                TryGenerateInterfaceMapper(type, typeof(ICollection<>), typeof(Converters.Collection.Parser<,>))
             );
         }
 
@@ -104,7 +104,7 @@ namespace ProGaudi.MsgPack
                 return null;
 
             return mapper
-                .MakeGenericType(new [] { @interface }.Concat(type.GetGenericArguments()).ToArray())
+                .MakeGenericType(new [] { type }.Concat(type.GetGenericArguments()).ToArray())
                 .GetContextActivator()(this);
         }
 
@@ -129,7 +129,7 @@ namespace ProGaudi.MsgPack
             if (!type.IsArray || type.GetArrayRank() != 1)
                 return null;
 
-            var element = type.GetGenericArguments()[0];
+            var element = type.GetElementType();
             return mapper
                 .MakeGenericType(element)
                 .GetContextActivator()(this);

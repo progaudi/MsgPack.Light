@@ -56,6 +56,7 @@ namespace ProGaudi.MsgPack.Converters.Binary
 
         public override IMemoryOwner<byte> Parse(ReadOnlySpan<byte> source, out int readSize)
         {
+            if (MsgPackSpec.TryReadNil(source, out readSize)) return null;
             var code = source[0];
             switch (code)
             {

@@ -12,32 +12,59 @@ namespace ProGaudi.MsgPack
 
         private static readonly Dictionary<Type, Func<MsgPackContext, object>> SingleConstructorCache = new Dictionary<Type, Func<MsgPackContext, object>>();
 
-        public static Func<object> GetDefaultActivator(this Type type) => DefaultConstructorCache[type] ??
-            (DefaultConstructorCache[type] = CreateActivatorFromCtor<Func<object>>(
-                type,
-                x => x.GetParameters().Length == 0 && !x.IsStatic));
-
-        public static Func<MsgPackContext, object> GetContextActivator(this Type type) => SingleConstructorCache[type] ??
-            (SingleConstructorCache[type] = CreateActivatorFromCtor<Func<MsgPackContext, object>>(
-                type,
-                x => x.GetParameters().Length == 0 && x.GetParameters()[0].ParameterType == typeof(MsgPackContext) && !x.IsStatic));
-
-        private static T CreateActivatorFromCtor<T>(Type type, Func<ConstructorInfo, bool> predicate)
-            where T : Delegate
+        public static Func<object> GetDefaultActivator(this Type type)
         {
-            var ctor = type
-                .GetTypeInfo()
-                .DeclaredConstructors
-                .FirstOrDefault(predicate);
+            if (DefaultConstructorCache.TryGetValue(type, out var value))
+                return value;
 
-            if (ctor == null)
-                return default;
+            return DefaultConstructorCache[type] = CreateActivator();
 
-            var newExp = Expression.New(ctor);
+            Func<object> CreateActivator()
+            {
+                var ctor = type
+                    .GetTypeInfo()
+                    .DeclaredConstructors
+                    .FirstOrDefault(x => x.GetParameters().Length == 0 && !x.IsStatic);
 
-            var lambda = Expression.Lambda(typeof(T), newExp);
+                if (ctor == null)
+                {
+                    return default;
+                }
 
-            return (T)lambda.Compile();
+                var newExp = Expression.New(ctor);
+
+                var lambda = Expression.Lambda(typeof(Func<object>), newExp);
+
+                return (Func<object>) lambda.Compile();
+            }
+        }
+
+        public static Func<MsgPackContext, object> GetContextActivator(this Type type)
+        {
+            if (SingleConstructorCache.TryGetValue(type, out var value))
+                return value;
+
+            return SingleConstructorCache[type] = CreateActivator();
+
+            Func<MsgPackContext, object> CreateActivator()
+            {
+                var ctor = type
+                    .GetTypeInfo()
+                    .DeclaredConstructors
+                    .FirstOrDefault(x => x.GetParameters().Length == 1 && x.GetParameters()[0].ParameterType == typeof(MsgPackContext) && !x.IsStatic);
+
+                if (ctor == null)
+                {
+                    return default;
+                }
+
+                var parameter = Expression.Parameter(typeof(MsgPackContext), "context");
+                var newExp = Expression.New(ctor, parameter);
+
+                var lambda = Expression.Lambda(typeof(Func<MsgPackContext, object>), newExp, parameter);
+
+                return (Func<MsgPackContext, object>) lambda.Compile();
+            }
         }
     }
 }

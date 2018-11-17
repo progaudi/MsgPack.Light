@@ -35,7 +35,6 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         [InlineData(short.MaxValue, new byte[] {209, 127, 0xff})]
         [InlineData(int.MinValue, new byte[] {210, 128, 0, 0, 0})]
         [InlineData(int.MaxValue, new byte[] {210, 127, 0xff, 0xff, 0xff})]
-        [InlineData(int.MaxValue, new byte[] { 210, 127, 0xff, 0xff, 0xff })]
         [InlineData(50505, new byte[] {205, 197, 73})]
         public void TestSignedInt(int number, byte[] data)
         {

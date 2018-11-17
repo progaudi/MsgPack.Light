@@ -34,7 +34,7 @@ namespace ProGaudi.MsgPack.Converters.Binary
         {
             using (var owner = Parse(source, out readSize))
             {
-                return owner.Memory.ToArray();
+                return owner?.Memory.ToArray();
             }
         }
     }

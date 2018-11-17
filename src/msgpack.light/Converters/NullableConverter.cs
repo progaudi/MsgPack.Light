@@ -24,7 +24,7 @@ namespace ProGaudi.MsgPack.Converters
             : MsgPackSpec.WriteNil(destination);
 
         public T? Parse(ReadOnlySpan<byte> source, out int readSize) => MsgPackSpec.TryReadNil(source, out readSize)
-            ? default
+            ? default(T?)
             : _parser.Parse(source, out readSize);
     }
 }

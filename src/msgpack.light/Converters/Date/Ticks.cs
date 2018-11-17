@@ -24,10 +24,17 @@ namespace ProGaudi.MsgPack.Converters.Date
 
         int IMsgPackFormatter<TimeSpan>.Format(Span<byte> destination, TimeSpan value) => MsgPackSpec.WriteInt64(destination, value.Ticks);
 
-        DateTime IMsgPackParser<DateTime>.Parse(ReadOnlySpan<byte> source, out int readSize) => UnixEpochUtc.AddTicks(MsgPackSpec.ReadInt32(source, out readSize));
+        DateTime IMsgPackParser<DateTime>.Parse(ReadOnlySpan<byte> source, out int readSize) => UnixEpochUtc.AddTicks(ReadTicks(source, out readSize));
 
-        DateTimeOffset IMsgPackParser<DateTimeOffset>.Parse(ReadOnlySpan<byte> source, out int readSize) => UnixEpochUtc.AddTicks(MsgPackSpec.ReadInt32(source, out readSize));
+        DateTimeOffset IMsgPackParser<DateTimeOffset>.Parse(ReadOnlySpan<byte> source, out int readSize) => UnixEpochUtc.AddTicks(ReadTicks(source, out readSize));
 
-        TimeSpan IMsgPackParser<TimeSpan>.Parse(ReadOnlySpan<byte> source, out int readSize) => new TimeSpan(MsgPackSpec.ReadInt32(source, out readSize));
+        TimeSpan IMsgPackParser<TimeSpan>.Parse(ReadOnlySpan<byte> source, out int readSize) => new TimeSpan(ReadTicks(source, out readSize));
+
+        private static long ReadTicks(ReadOnlySpan<byte> source, out int readSize)
+        {
+            return MsgPackSpec.TryReadInt64(source, out var value, out readSize)
+                ? value
+                : (long)MsgPackSpec.ReadUInt64(source, out readSize);
+        }
     }
 }

@@ -21,7 +21,7 @@ namespace ProGaudi.MsgPack.Converters.Enum
                 throw new ArgumentException($"{typeof(T)} is not an enum.");
             }
 
-            var values = System.Enum.GetValues(typeof(T)).Cast<T>().ToArray();
+            var values = System.Enum.GetValues(typeof(T)).Cast<T>().Distinct().ToArray();
             ValueToLabel = values.ToDictionary(x => x, x =>
             {
                 var name = System.Enum.GetName(typeof(T), x);

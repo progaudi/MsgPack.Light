@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ProGaudi.MsgPack
 {
@@ -11,7 +12,7 @@ namespace ProGaudi.MsgPack
         public HashSet<byte> AllowedCodes { get; }
 
         public BadCodeConstraintException(byte dataCode, HashSet<byte> allowedCodes, Exception innerException = null)
-            : base($"{dataCode} should be one of ({string.Join(", ", allowedCodes)}), but it doesn't.", innerException)
+            : base($"{dataCode:x2} should be one of ({string.Join(", ", allowedCodes.Select(x => $"{x:x2}"))}), but it doesn't.", innerException)
         {
             DataCode = dataCode;
             AllowedCodes = allowedCodes;
