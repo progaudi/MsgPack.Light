@@ -11,8 +11,8 @@ namespace ProGaudi.MsgPack.Converters
 
         public NullableConverter(MsgPackContext context)
         {
-            _formatter = default;
-            _parser = default;
+            _formatter = context.GetRequiredFormatter<T>();
+            _parser = context.GetRequiredParser<T>();
         }
 
         public int GetBufferSize(T? value) => value.HasValue ? _formatter.GetBufferSize(value.Value) : DataLengths.Nil;

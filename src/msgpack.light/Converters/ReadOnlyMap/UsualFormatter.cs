@@ -11,8 +11,8 @@ namespace ProGaudi.MsgPack.Converters.ReadOnlyMap
 
         public UsualFormatter(MsgPackContext context)
         {
-            _keyFormatter = default;
-            _valueFormatter = default;
+            _keyFormatter = context.GetRequiredFormatter<TKey>();
+            _valueFormatter = context.GetRequiredFormatter<TValue>();
         }
 
         public int GetBufferSize(TMap value) => value == null

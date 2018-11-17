@@ -11,8 +11,8 @@ namespace ProGaudi.MsgPack.Converters.Map
 
         public Parser(MsgPackContext context)
         {
-            _keyParser = default;
-            _valueParser = default;
+            _keyParser = context.GetRequiredParser<TKey>();
+            _valueParser = context.GetRequiredParser<TValue>();
         }
 
         public TMap Parse(ReadOnlySpan<byte> source, out int readSize)

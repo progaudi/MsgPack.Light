@@ -12,7 +12,7 @@ namespace ProGaudi.MsgPack.Converters.Array
 
         public Parser(MsgPackContext context)
         {
-            _elementParser = default;
+            _elementParser = context.GetRequiredParser<TElement>();
         }
 
         IMemoryOwner<TElement> IMsgPackParser<IMemoryOwner<TElement>>.Parse(ReadOnlySpan<byte> source, out int readSize)

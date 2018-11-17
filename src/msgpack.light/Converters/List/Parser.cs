@@ -11,7 +11,7 @@ namespace ProGaudi.MsgPack.Converters.List
 
         public Parser(MsgPackContext context)
         {
-            _elementParser = default;
+            _elementParser = context.GetRequiredParser<TElement>();
         }
 
         public TList Parse(ReadOnlySpan<byte> source, out int readSize)

@@ -10,7 +10,7 @@ namespace ProGaudi.MsgPack.Converters.List
 
         public UsualFormatter(MsgPackContext context)
         {
-            _elementFormatter = default;
+            _elementFormatter = context.GetRequiredFormatter<TElement>();
         }
 
         int IMsgPackFormatter<TList>.GetBufferSize(TList value) => value.GetBufferSize(_elementFormatter);

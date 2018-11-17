@@ -28,7 +28,7 @@ namespace ProGaudi.MsgPack.Converters.Collection
             MaxSize = maxSize;
             Nullable = nullable;
 
-            _elementFormatter = default;
+            _elementFormatter = context.GetRequiredFormatter<TElement>();
 
             if (minSize.HasValue && maxSize.HasValue && minSize > maxSize)
             {
