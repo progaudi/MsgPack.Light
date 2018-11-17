@@ -8,6 +8,8 @@ namespace ProGaudi.MsgPack.Converters.Date
 
         private static readonly DateTime UnixEpochUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
+        public static readonly Ticks Instance = new Ticks();
+
         public bool HasConstantSize => false;
 
         int IMsgPackFormatter<DateTime>.GetBufferSize(DateTime value) => BufferSize;

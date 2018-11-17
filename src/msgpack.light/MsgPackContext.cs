@@ -1,302 +1,151 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
-
-using JetBrains.Annotations;
-
-using ProGaudi.MsgPack.Converters;
-using ProGaudi.MsgPack.Converters.Binary;
-using ProGaudi.MsgPack.Converters.DateTime;
-using ProGaudi.MsgPack.Converters.Generation;
-using ProGaudi.MsgPack.Converters.Map;
 
 namespace ProGaudi.MsgPack
 {
     public class MsgPackContext
     {
-        private readonly bool _convertEnumsAsStrings;
-
-        private readonly Dictionary<Type, Type> _genericConverters = new Dictionary<Type, Type>();
-
-        private readonly Dictionary<Type, Func<object>> _objectActivators = new Dictionary<Type, Func<object>>();
-
-        public MsgPackContext(bool strictParseOfFloat = false, bool convertEnumsAsStrings = true, bool binaryCompatibilityMode = false)
+        static MsgPackContext()
         {
-            _convertEnumsAsStrings = convertEnumsAsStrings;
-            var numberConverter = new NumberConverter(strictParseOfFloat);
-            _converters = new Dictionary<Type, IMsgPackConverter>
-            {
-                {typeof(MsgPackToken), new MsgPackTokenConverter()},
-                {typeof (bool), new BoolConverter()},
-                {typeof (string), new StringConverter()},
-                {typeof (byte[]), new Converter()},
-                {typeof (float), numberConverter},
-                {typeof (double), numberConverter},
-                {typeof (byte), numberConverter},
-                {typeof (sbyte), numberConverter},
-                {typeof (short), numberConverter},
-                {typeof (ushort), numberConverter},
-                {typeof (int), numberConverter},
-                {typeof (uint), numberConverter},
-                {typeof (long), numberConverter},
-                {typeof (ulong), numberConverter},
-                {typeof (DateTime), new DateTimeConverter()},
-                {typeof (DateTimeOffset), new DateTimeConverter()},
-                {typeof (TimeSpan), new TimeSpanConverter() },
+            Cache<IMsgPackFormatter<byte[]>>.Instance = Converters.Binary.Converter.Compatibility;
+            Cache<IMsgPackFormatter<ReadOnlyMemory<byte>>>.Instance = Converters.Binary.Converter.Compatibility;
+            Cache<IMsgPackFormatter<ReadOnlyMemory<byte>?>>.Instance = Converters.Binary.Converter.Compatibility;
+            Cache<IMsgPackParser<byte[]>>.Instance = Converters.Binary.Converter.Compatibility;
+            Cache<IMsgPackParser<IMemoryOwner<byte>>>.Instance = Converters.Binary.Converter.Compatibility;
 
-                {typeof (bool?), new NullableConverter<bool>()},
-                {typeof (float?), new NullableConverter<float>()},
-                {typeof (double?), new NullableConverter<double>()},
-                {typeof (byte?), new NullableConverter<byte>()},
-                {typeof (sbyte?), new NullableConverter<sbyte>()},
-                {typeof (short?), new NullableConverter<short>()},
-                {typeof (ushort?), new NullableConverter<ushort>()},
-                {typeof (int?), new NullableConverter<int>()},
-                {typeof (uint?), new NullableConverter<uint>()},
-                {typeof (long?), new NullableConverter<long>()},
-                {typeof (ulong?), new NullableConverter<ulong>()},
-                {typeof (DateTime?), new NullableConverter<DateTime>()},
-                {typeof (DateTimeOffset?), new NullableConverter<DateTimeOffset>()}
-            };
+            Cache<IMsgPackFormatter<DateTime>>.Instance = Converters.Date.Ticks.Instance;
+            Cache<IMsgPackFormatter<DateTimeOffset>>.Instance = Converters.Date.Ticks.Instance;
+            Cache<IMsgPackFormatter<TimeSpan>>.Instance = Converters.Date.Ticks.Instance;
+            Cache<IMsgPackParser<DateTimeOffset>>.Instance = Converters.Date.Ticks.Instance;
+            Cache<IMsgPackParser<DateTime>>.Instance = Converters.Date.Ticks.Instance;
+            Cache<IMsgPackParser<TimeSpan>>.Instance = Converters.Date.Ticks.Instance;
 
-            foreach (var converter in _converters)
-            {
-                converter.Value.Initialize(this);
-            }
-        }
+            Cache<IMsgPackFormatter<byte>>.Instance = Converters.Number.UsualFormatter.Instance;
+            Cache<IMsgPackFormatter<sbyte>>.Instance = Converters.Number.UsualFormatter.Instance;
+            Cache<IMsgPackFormatter<short>>.Instance = Converters.Number.UsualFormatter.Instance;
+            Cache<IMsgPackFormatter<ushort>>.Instance = Converters.Number.UsualFormatter.Instance;
+            Cache<IMsgPackFormatter<int>>.Instance = Converters.Number.UsualFormatter.Instance;
+            Cache<IMsgPackFormatter<uint>>.Instance = Converters.Number.UsualFormatter.Instance;
+            Cache<IMsgPackFormatter<long>>.Instance = Converters.Number.UsualFormatter.Instance;
+            Cache<IMsgPackFormatter<ulong>>.Instance = Converters.Number.UsualFormatter.Instance;
+            Cache<IMsgPackFormatter<float>>.Instance = Converters.Number.UsualFormatter.Instance;
+            Cache<IMsgPackFormatter<double>>.Instance = Converters.Number.UsualFormatter.Instance;
 
-        public IMsgPackConverter<object> NullConverter => SharedNullConverter;
+            Cache<IMsgPackParser<byte>>.Instance = Converters.Number.Parser.Instance;
+            Cache<IMsgPackParser<sbyte>>.Instance = Converters.Number.Parser.Instance;
+            Cache<IMsgPackParser<short>>.Instance = Converters.Number.Parser.Instance;
+            Cache<IMsgPackParser<ushort>>.Instance = Converters.Number.Parser.Instance;
+            Cache<IMsgPackParser<int>>.Instance = Converters.Number.Parser.Instance;
+            Cache<IMsgPackParser<uint>>.Instance = Converters.Number.Parser.Instance;
+            Cache<IMsgPackParser<long>>.Instance = Converters.Number.Parser.Instance;
+            Cache<IMsgPackParser<ulong>>.Instance = Converters.Number.Parser.Instance;
+            Cache<IMsgPackParser<float>>.Instance = Converters.Number.Parser.Instance;
+            Cache<IMsgPackParser<double>>.Instance = Converters.Number.Parser.Instance;
 
-#if !NETSTANDARD1_4
-        public void DiscoverConverters()
-        {
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                DiscoverConverters(assembly);
-            }
-        }
-#endif
+            Cache<IMsgPackFormatter<string>>.Instance = new Converters.String.UsualFormatter();
+            Cache<IMsgPackParser<string>>.Instance = new Converters.String.Parser();
 
-        public void DiscoverConverters<T>()
-        {
-            DiscoverConverters(typeof(T).GetTypeInfo().Assembly);
-        }
-
-        public void DiscoverConverters(Assembly assembly)
-        {
-            var generateMapConverter = GetType().GetTypeInfo().GetGenericMethod(nameof(GenerateAndRegisterMapConverter), 1);
-            var generateArrayConverter = GetType().GetTypeInfo().GetGenericMethod(nameof(GenerateAndRegisterArrayConverter), 1);
-            foreach (var type in assembly.ExportedTypes.Where(x => x.GetTypeInfo().GetCustomAttribute<MsgPackMapAttribute>() != null))
-            {
-                generateMapConverter.MakeGenericMethod(type).Invoke(this, null);
-            }
-
-            foreach (var type in assembly.ExportedTypes.Where(x => x.GetTypeInfo().GetCustomAttribute<MsgPackArrayAttribute>() != null))
-            {
-                generateArrayConverter.MakeGenericMethod(type).Invoke(this, null);
-            }
-        }
-
-        public void GenerateAndRegisterMapConverter<T>()
-        {
-            var generator = _generatorContext.GenerateMapConverter(typeof(T));
-            RegisterConverter((IMsgPackConverter<T>) generator);
-        }
-
-        public void GenerateAndRegisterMapConverter<TInterface, TImplementation>()
-            where TImplementation : TInterface
-        {
-            var generator = _generatorContext.GenerateMapConverter(typeof(TInterface), typeof(TImplementation));
-            RegisterConverter((IMsgPackConverter<TInterface>)generator);
-            RegisterConverter((IMsgPackConverter<TImplementation>)generator);
-        }
-
-        public void GenerateAndRegisterArrayConverter<T>()
-        {
-            var generator = _generatorContext.GenerateArrayConverter(typeof(T));
-            RegisterConverter((IMsgPackConverter<T>)generator);
-        }
-
-        public void GenerateAndRegisterArrayConverter<TInterface, TImplementation>()
-            where TImplementation : TInterface
-        {
-            var generator = _generatorContext.GenerateArrayConverter(typeof(TInterface), typeof(TImplementation));
-            RegisterConverter((IMsgPackConverter<TInterface>)generator);
-            RegisterConverter((IMsgPackConverter<TImplementation>)generator);
-        }
-
-        public void GenerateAndRegisterEnumConverter<T>()
-        {
-            var generator = _generatorContext.GenerateEnumConverter<T>(typeof(T), _convertEnumsAsStrings);
-            RegisterConverter((IMsgPackConverter<T>)generator);
-        }
-
-        public void RegisterConverter<T>(IMsgPackConverter<T> converter)
-        {
-            converter.Initialize(this);
-            _converters[typeof(T)] = converter;
-        }
-
-        public void RegisterGenericConverter(Type type)
-        {
-            var converterType = GetGenericInterface(type, typeof(IMsgPackConverter<>));
-            if (converterType == null)
-            {
-                throw new ArgumentException($"Error registering generic converter. Expected IMsgPackConverter<> implementation, but got {type}");
-            }
-
-            var convertedType = converterType.GenericTypeArguments.Single().GetGenericTypeDefinition();
-            _genericConverters.Add(convertedType, type);
-        }
-
-        public IMsgPackConverter<T> GetConverter<T>()
-        {
-            var type = typeof(T);
-            var result = (IMsgPackConverter<T>)GetConverterFromCache<T>();
-            if (result != null)
-                return result;
-
-            result = (IMsgPackConverter<T>)(
-                TryGenerateEnumConverter<T>(type) ??
-                TryGenerateConverterFromGenericConverter(type) ??
-                TryGenerateArrayConverter(type) ??
-                TryGenerateMapConverter(type) ??
-                TryGenerateNullableConverter(type));
-
-            if (result == null)
-            {
-                throw ExceptionUtils.ConverterNotFound(type);
-            }
-
-            return result;
-        }
-
-        private IMsgPackConverter TryGenerateEnumConverter<T>(Type type)
-        {
-            var enumTypeInfo = typeof(T).GetTypeInfo();
-            if (!enumTypeInfo.IsEnum)
-            {
-                return null;
-            }
-
-            return _converters
-                .GetOrAdd(type, x => CreateAndInializeConverter(()=>_generatorContext.GenerateEnumConverter<T>(type, _convertEnumsAsStrings)));
-        }
-
-        public Func<object> GetObjectActivator(Type type) => _objectActivators.GetOrAdd(type, CompiledLambdaActivatorFactory.GetActivator);
-
-        public ImmutableDictionary<Type, IMsgPackConverter> DumpConvertersCache() => _converters.ToImmutableDictionary(x => x.Key, x => x.Value);
-
-        private IMsgPackConverter CreateAndInializeConverter(Func<object> converterActivator)
-        {
-            var converter = (IMsgPackConverter)converterActivator();
-            converter.Initialize(this);
-            return converter;
-        }
-
-        private IMsgPackConverter TryGenerateConverterFromGenericConverter(Type type)
-        {
-            if (!type.GetTypeInfo().IsGenericType)
-            {
-                return null;
-            }
-            var genericType = type.GetGenericTypeDefinition();
-
-            if (!_genericConverters.TryGetValue(genericType, out var genericConverterType))
-            {
-                return null;
-            }
-
-            var converterType = genericConverterType.MakeGenericType(type.GenericTypeArguments);
-            return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(converterType)));
-        }
-
-        private IMsgPackConverter TryGenerateMapConverter(Type type)
-        {
-            var mapInterface = GetGenericInterface(type, typeof(IDictionary<,>));
-            if (mapInterface != null)
-            {
-                return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(UsualFormatter<,,>).MakeGenericType(
-                    x,
-                    mapInterface.GenericTypeArguments[0],
-                    mapInterface.GenericTypeArguments[1]))));
-            }
-
-            mapInterface = GetGenericInterface(type, typeof(IReadOnlyDictionary<,>));
-            if (mapInterface != null)
-            {
-                return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(ReadOnlyMapConverter<,,>).MakeGenericType(
-                    x,
-                    mapInterface.GenericTypeArguments[0],
-                    mapInterface.GenericTypeArguments[1]))));
-            }
-
-            return null;
-        }
-
-        private IMsgPackConverter TryGenerateNullableConverter(Type type)
-        {
-            var typeInfo = type.GetTypeInfo();
-            if (!typeInfo.IsGenericType || typeInfo.GetGenericTypeDefinition() != typeof(Nullable<>))
-            {
-                return null;
-            }
-
-            return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(NullableConverter<>).MakeGenericType(x.GetTypeInfo().GenericTypeArguments[0]))));
-        }
-
-        private IMsgPackConverter TryGenerateArrayConverter(Type type)
-        {
-            var arrayInterface = GetGenericInterface(type, typeof(IList<>));
-            if (arrayInterface != null)
-            {
-                return _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(ArrayConverter).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))));
-            }
-
-            arrayInterface = GetGenericInterface(type, typeof(IReadOnlyList<>));
-            return arrayInterface != null
-                ? _converters.GetOrAdd(type, x => CreateAndInializeConverter(GetObjectActivator(typeof(ReadOnlyListConverter<,>).MakeGenericType(x, arrayInterface.GenericTypeArguments[0]))))
-                : null;
-        }
-
-        private IMsgPackConverter GetConverterFromCache<T>()
-        {
-            return _converters.TryGetValue(typeof(T), out var temp) ? temp : null;
-        }
-
-        private static TypeInfo GetGenericInterface(Type type, Type genericInterfaceType)
-        {
-            var info = type.GetTypeInfo();
-            if (info.IsInterface && info.IsGenericType && info.GetGenericTypeDefinition() == genericInterfaceType)
-            {
-                return info;
-            }
-
-            return info
-                .ImplementedInterfaces
-                .Select(x => x.GetTypeInfo())
-                .FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == genericInterfaceType);
-        }
-
-        private static TValue GetOrAdd<TKey, TValue>([NotNull]Dictionary<TKey, TValue> dictionary, [NotNull]TKey key, [NotNull]Func<TKey, TValue> creator)
-        {
-            if (!dictionary.TryGetValue(key, out var temp))
-                dictionary[key] = temp = creator(key);
-            return temp;
+            Cache<IMsgPackFormatter<bool>>.Instance = Converters.BoolConverter.Instance;
+            Cache<IMsgPackParser<bool>>.Instance = Converters.BoolConverter.Instance;
         }
 
         public IMsgPackFormatter<T> GetFormatter<T>()
         {
-            throw new NotImplementedException();
+            var result = Cache<IMsgPackFormatter<T>>.Instance;
+            if (result != null)
+                return result;
+
+            var type = typeof(T);
+            return Cache<IMsgPackFormatter<T>>.Instance = (IMsgPackFormatter<T>)(
+                TryGenerateEnumMapper(type) ??
+                TryGenerateArrayMapper(type, typeof(Converters.Array.UsualFormatter<>)) ??
+                TryGenerateStructMapper(type, typeof(ReadOnlyMemory<>), typeof(Converters.Array.UsualFormatter<>)) ??
+                TryGenerateStructMapper(type, typeof(Memory<>), typeof(Converters.Array.UsualFormatter<>)) ??
+                TryGenerateStructMapper(type, typeof(Nullable<>), typeof(Converters.NullableConverter<>)) ??
+                TryGenerateInterfaceMapper(type, typeof(IList<>), typeof(Converters.List.UsualFormatter<,>)) ??
+                TryGenerateInterfaceMapper(type, typeof(IReadOnlyList<>), typeof(Converters.ReadOnlyList.UsualFormatter<,>)) ??
+                TryGenerateInterfaceMapper(type, typeof(ICollection<>), typeof(Converters.Collection.UsualFormatter<,>)) ??
+                TryGenerateInterfaceMapper(type, typeof(IReadOnlyCollection<>), typeof(Converters.ReadOnlyCollection.UsualFormatter<,>)) ??
+                TryGenerateInterfaceMapper(type, typeof(IDictionary<,>), typeof(Converters.Map.UsualFormatter<,,>)) ??
+                TryGenerateInterfaceMapper(type, typeof(IReadOnlyDictionary<,>), typeof(Converters.ReadOnlyMap.UsualFormatter<,,>)) ??
+                TryGenerateInterfaceMapper(type, typeof(IEnumerable<>), typeof(Converters.Enumerable.UsualFormatter<,>))
+            );
         }
 
         public IMsgPackParser<T> GetParser<T>()
         {
-            throw new NotImplementedException();
+            var result = Cache<IMsgPackParser<T>>.Instance;
+            if (result != null)
+                return result;
+
+            var type = typeof(T);
+            return Cache<IMsgPackParser<T>>.Instance = (IMsgPackParser<T>)(
+                TryGenerateEnumMapper(type) ??
+                TryGenerateArrayMapper(type, typeof(Converters.Array.Parser<>)) ??
+                TryGenerateStructMapper(type, typeof(ReadOnlyMemory<>), typeof(Converters.Array.Parser<>)) ??
+                TryGenerateStructMapper(type, typeof(Memory<>), typeof(Converters.Array.Parser<>)) ??
+                TryGenerateStructMapper(type, typeof(Nullable<>), typeof(Converters.NullableConverter<>)) ??
+                TryGenerateInterfaceMapper(type, typeof(IList<>), typeof(Converters.List.Parser<,>)) ??
+                TryGenerateInterfaceMapper(type, typeof(ICollection<>), typeof(Converters.Collection.Parser<,>)) ??
+                TryGenerateInterfaceMapper(type, typeof(IDictionary<,>), typeof(Converters.Map.Parser<,,>))
+            );
+        }
+
+        private object TryGenerateInterfaceMapper(Type type, Type generic, Type mapper)
+        {
+            var @interface = type
+                .GetInterfaces()
+                .FirstOrDefault(x => x.IsConstructedGenericType && x.GetGenericTypeDefinition() == generic);
+
+            if (@interface == null)
+                return null;
+
+            return mapper
+                .MakeGenericType(new [] { @interface }.Concat(type.GetGenericArguments()).ToArray())
+                .GetContextActivator()(this);
+        }
+
+        private object TryGenerateStructMapper(Type type, Type generic, Type mapper)
+        {
+            if (!type.GetTypeInfo().IsValueType)
+                return null;
+
+            if (!type.IsConstructedGenericType)
+                return null;
+
+            if (type.GetGenericTypeDefinition() != generic)
+                return null;
+
+            return mapper
+                .MakeGenericType(type.GetGenericArguments())
+                .GetContextActivator()(this);
+        }
+
+        private object TryGenerateArrayMapper(Type type, Type mapper)
+        {
+            if (!type.IsArray || type.GetArrayRank() != 1)
+                return null;
+
+            var element = type.GetGenericArguments()[0];
+            return mapper
+                .MakeGenericType(element)
+                .GetContextActivator()(this);
+        }
+
+        private static object TryGenerateEnumMapper(Type type)
+        {
+            if (!type.GetTypeInfo().IsEnum) return null;
+            return typeof(Converters.Enum.String<>)
+                .MakeGenericType(type)
+                .GetDefaultActivator()();
+        }
+
+        private static class Cache<TFormatter>
+        {
+            public static TFormatter Instance;
         }
     }
 }

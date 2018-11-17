@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -7,20 +8,36 @@ namespace ProGaudi.MsgPack
 {
     public static class CompiledLambdaActivatorFactory
     {
-        public static Func<object> GetActivator(this Type type)
-        {
-            var ctor = type.GetTypeInfo().DeclaredConstructors.First(x => x.GetParameters().Length == 0 && !x.IsStatic);
+        private static readonly Dictionary<Type, Func<object>> DefaultConstructorCache = new Dictionary<Type, Func<object>>();
 
-            //make a NewExpression that calls the
-            //ctor with the args we just created
+        private static readonly Dictionary<Type, Func<MsgPackContext, object>> SingleConstructorCache = new Dictionary<Type, Func<MsgPackContext, object>>();
+
+        public static Func<object> GetDefaultActivator(this Type type) => DefaultConstructorCache[type] ??
+            (DefaultConstructorCache[type] = CreateActivatorFromCtor<Func<object>>(
+                type,
+                x => x.GetParameters().Length == 0 && !x.IsStatic));
+
+        public static Func<MsgPackContext, object> GetContextActivator(this Type type) => SingleConstructorCache[type] ??
+            (SingleConstructorCache[type] = CreateActivatorFromCtor<Func<MsgPackContext, object>>(
+                type,
+                x => x.GetParameters().Length == 0 && x.GetParameters()[0].ParameterType == typeof(MsgPackContext) && !x.IsStatic));
+
+        private static T CreateActivatorFromCtor<T>(Type type, Func<ConstructorInfo, bool> predicate)
+            where T : Delegate
+        {
+            var ctor = type
+                .GetTypeInfo()
+                .DeclaredConstructors
+                .FirstOrDefault(predicate);
+
+            if (ctor == null)
+                return default;
+
             var newExp = Expression.New(ctor);
 
-            //create a lambda with the New
-            //Expression as body and our param object[] as arg
-            var lambda = Expression.Lambda(typeof(Func<object>), newExp);
+            var lambda = Expression.Lambda(typeof(T), newExp);
 
-            //compile it
-            return (Func<object>)lambda.Compile();
+            return (T)lambda.Compile();
         }
     }
 }

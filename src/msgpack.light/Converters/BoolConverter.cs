@@ -4,6 +4,8 @@ namespace ProGaudi.MsgPack.Converters
 {
     internal sealed class BoolConverter : IMsgPackFormatter<bool>, IMsgPackParser<bool>
     {
+        public static BoolConverter Instance = new BoolConverter();
+
         public int GetBufferSize(bool value) => DataLengths.Boolean;
 
         public bool HasConstantSize => true;

@@ -25,6 +25,8 @@ namespace ProGaudi.MsgPack.Converters.Number
         private static readonly int FloatLength = DataLengths.GetHeaderLength(DataCodes.Float32);
         private static readonly int DoubleLength = DataLengths.GetHeaderLength(DataCodes.Float64);
 
+        public static UsualFormatter Instance = new UsualFormatter();
+
         int IMsgPackFormatter<byte>.GetBufferSize(byte value) => ByteLength;
 
         int IMsgPackFormatter<sbyte>.GetBufferSize(sbyte value) => SByteLength;

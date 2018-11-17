@@ -14,6 +14,8 @@ namespace ProGaudi.MsgPack.Converters.Number
         IMsgPackParser<float>,
         IMsgPackParser<double>
     {
+        public static Parser Instance = new Parser();
+
         byte IMsgPackParser<byte>.Parse(ReadOnlySpan<byte> source, out int readSize) => MsgPackSpec.ReadUInt8(source, out readSize);
 
         sbyte IMsgPackParser<sbyte>.Parse(ReadOnlySpan<byte> source, out int readSize) => MsgPackSpec.ReadInt8(source, out readSize);
