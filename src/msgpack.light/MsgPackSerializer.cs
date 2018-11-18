@@ -39,6 +39,11 @@ namespace ProGaudi.MsgPack
             return Deserialize<T>(data, new MsgPackContext(), out readSize);
         }
 
+        public static T Deserialize<T>(ReadOnlySpan<byte> data, [NotNull] MsgPackContext context)
+        {
+            return Deserialize<T>(data, context, out _);
+        }
+
         public static T Deserialize<T>(ReadOnlySpan<byte> data, [NotNull] MsgPackContext context, out int readSize)
         {
             var converter = context.GetRequiredParser<T>();

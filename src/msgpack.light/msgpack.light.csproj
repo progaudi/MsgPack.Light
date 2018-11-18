@@ -31,13 +31,11 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" Condition=" '$(IsDocker)' != 'defined' ">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="progaudi.msgpack.spec" Version="2.0.0.7-g2933f52" />
     <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Formatters" Version="4.3.0" Condition=" '$(TargetFramework)' == 'netstandard1.4' " />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.5.1" Condition=" '$(TargetFramework)' == 'netstandard1.4' " />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\msgpack.spec\src\msgpack.spec\msgpack.spec.csproj" />
   </ItemGroup>
 </Project>

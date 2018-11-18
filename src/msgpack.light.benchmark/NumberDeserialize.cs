@@ -15,7 +15,7 @@ namespace ProGaudi.MsgPack.Light.Benchmark
 
         private readonly MemoryStream _stream;
 
-        private readonly MsgPackContext _mplightContext;
+        private readonly MsgPackContext _mpLightContext;
 
         protected abstract  T[] Numbers { get; }
 
@@ -24,33 +24,26 @@ namespace ProGaudi.MsgPack.Light.Benchmark
             _messagePackSerializer = SerializationContext.Default.GetSerializer<T[]>();
             _bytes = _messagePackSerializer.PackSingleObject(Numbers);
             _stream = new MemoryStream(_bytes);
-            _mplightContext = new MsgPackContext();
+            _mpLightContext = new MsgPackContext();
         }
 
         [Benchmark]
-        public void MPCli_Array()
+        public T[] MPCli_Array()
         {
-            var data = _messagePackSerializer.UnpackSingleObject(_bytes);
+            return _messagePackSerializer.UnpackSingleObject(_bytes);
         }
 
         [Benchmark(Baseline = true)]
-        public void MPCli_Stream()
+        public T[] MPCli_Stream()
         {
             _stream.Seek(0, SeekOrigin.Begin);
-            var data = _messagePackSerializer.Unpack(_stream);
+            return _messagePackSerializer.Unpack(_stream);
         }
 
         [Benchmark]
-        public void MPLight_Array()
+        public T[] MPLight_Array()
         {
-            var data = MsgPackSerializer.Deserialize<T[]>(_bytes, _mplightContext);
-        }
-
-        [Benchmark]
-        public void MPLight_Stream()
-        {
-            _stream.Seek(0, SeekOrigin.Begin);
-            var data = MsgPackSerializer.Deserialize<T[]>(_stream, _mplightContext);
+            return MsgPackSerializer.Deserialize<T[]>(_bytes, _mpLightContext, out _);
         }
     }
 }

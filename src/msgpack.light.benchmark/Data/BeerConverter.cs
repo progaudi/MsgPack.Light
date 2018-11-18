@@ -1,70 +1,92 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace ProGaudi.MsgPack.Light.Benchmark.Data
 {
-    internal class BeerConverter : IMsgPackConverter<Beer>
+    internal sealed class BeerConverter : IMsgPackFormatter<Beer>, IMsgPackParser<Beer>
     {
-        private IMsgPackConverter<string> _stringConverter;
+        private readonly IMsgPackFormatter<string> _stringFormatter;
+        private readonly IMsgPackFormatter<List<string>> _listStringFormatter;
+        private readonly IMsgPackFormatter<float> _floatFormatter;
 
-        private IMsgPackConverter<List<string>> _listStringConverter;
+        private readonly IMsgPackParser<string> _stringParser;
+        private readonly IMsgPackParser<List<string>> _listStringParser;
+        private readonly IMsgPackParser<float> _floatParser;
 
-        private IMsgPackConverter<float> _floatConverter;
-
-        private MsgPackContext _context;
-
-        public void Write(Beer value, IMsgPackWriter writer)
+        public BeerConverter(MsgPackContext context)
         {
-            if (value == null)
-            {
-                _context.NullConverter.Write(null, writer);
-                return;
-            }
+            _stringFormatter = context.GetRequiredFormatter<string>();
+            _listStringFormatter = context.GetRequiredFormatter<List<string>>();
+            _floatFormatter = context.GetRequiredFormatter<float>();
 
-            writer.WriteMapHeader(4);
-            _stringConverter.Write(nameof(value.Brand), writer);
-            _stringConverter.Write(value.Brand, writer);
-
-            _stringConverter.Write(nameof(value.Sort), writer);
-            _listStringConverter.Write(value.Sort, writer);
-
-            _stringConverter.Write(nameof(value.Alcohol), writer);
-            _floatConverter.Write(value.Alcohol, writer);
-
-            _stringConverter.Write(nameof(value.Brewery), writer);
-            _stringConverter.Write(value.Brewery, writer);
+            _stringParser = context.GetRequiredParser<string>();
+            _listStringParser = context.GetRequiredParser<List<string>>();
+            _floatParser = context.GetRequiredParser<float>();
         }
 
-        public Beer Read(IMsgPackReader reader)
-        {
-            var length = reader.ReadMapLength();
-            if (length == null)
-            {
-                return null;
-            }
+        public int GetBufferSize(Beer value) => value == null
+            ? DataLengths.Nil
+            : _stringFormatter.GetBufferSize(value.Brand)
+            + _stringFormatter.GetBufferSize(value.Brewery)
+            + _listStringFormatter.GetBufferSize(value.Sort)
+            + _floatFormatter.GetBufferSize(value.Alcohol)
+            + 27;
 
+        public bool HasConstantSize => false;
+
+        public int Format(Span<byte> destination, Beer value)
+        {
+            if (value == null) return MsgPackSpec.WriteNil(destination);
+
+            var result = MsgPackSpec.WriteMapHeader(destination, 4);
+            result += _stringFormatter.Format(destination.Slice(result), nameof(value.Brand));
+            result += _stringFormatter.Format(destination.Slice(result), value.Brand);
+
+            result += _stringFormatter.Format(destination.Slice(result), nameof(value.Sort));
+            result += _listStringFormatter.Format(destination.Slice(result), value.Sort);
+
+            result += _stringFormatter.Format(destination.Slice(result), nameof(value.Alcohol));
+            result += _floatFormatter.Format(destination.Slice(result), value.Alcohol);
+
+            result += _stringFormatter.Format(destination.Slice(result), nameof(value.Brewery));
+            result += _stringFormatter.Format(destination.Slice(result), value.Brewery);
+
+            return result;
+        }
+
+        public Beer Parse(ReadOnlySpan<byte> source, out int readSize)
+        {
+            if (MsgPackSpec.TryReadNil(source, out readSize)) return null;
+
+            var length = MsgPackSpec.ReadMapHeader(source, out readSize);
             if (length != 4)
             {
                 throw new SerializationException("Bad format");
             }
 
             var result = new Beer();
-            for (var i = 0; i < length.Value; i++)
+            for (var i = 0; i < length; i++)
             {
-                var propertyName = _stringConverter.Read(reader);
+                var propertyName = _stringParser.Parse(source, out var temp);
+                readSize += temp;
                 switch (propertyName)
                 {
                     case nameof(result.Brand):
-                        result.Brand = _stringConverter.Read(reader);
+                        result.Brand = _stringParser.Parse(source, out temp);
+                        readSize += temp;
                         break;
                     case nameof(result.Sort):
-                        result.Sort = _listStringConverter.Read(reader);
+                        result.Sort = _listStringParser.Parse(source, out temp);
+                        readSize += temp;
                         break;
                     case nameof(result.Alcohol):
-                        result.Alcohol = _floatConverter.Read(reader);
+                        result.Alcohol = _floatParser.Parse(source, out temp);
+                        readSize += temp;
                         break;
                     case nameof(result.Brewery):
-                        result.Brewery = _stringConverter.Read(reader);
+                        result.Brewery = _stringParser.Parse(source, out temp);
+                        readSize += temp;
                         break;
                     default:
                         throw new SerializationException("Bad format");
@@ -72,14 +94,6 @@ namespace ProGaudi.MsgPack.Light.Benchmark.Data
             }
 
             return result;
-        }
-
-        public void Initialize(MsgPackContext context)
-        {
-            _stringConverter = context.GetConverter<string>();
-            _listStringConverter = context.GetConverter<List<string>>();
-            _floatConverter = context.GetConverter<float>();
-            _context = context;
         }
     }
 }

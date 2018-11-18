@@ -9,8 +9,8 @@ namespace ProGaudi.MsgPack.Light.Benchmark
             var switcher = new BenchmarkSwitcher(
                 new[]
                 {
-                    typeof (MapGeneratedSerializeBenchmark),
-                    typeof (MapGeneratedDeserializeBenchmark),
+//                    typeof (MapGeneratedSerializeBenchmark),
+//                    typeof (MapGeneratedDeserializeBenchmark),
                     typeof (BeerSerializeBenchmark),
                     typeof (BeerDeserializeBenchmark),
                     typeof (BeerListSerializeBenchmark),
@@ -21,8 +21,8 @@ namespace ProGaudi.MsgPack.Light.Benchmark
                     typeof (DoubleSerialize),
                     typeof (BeerSkip),
                     typeof (BeerSkipList),
-                    typeof (EnumGeneratedDeserializeBenchmark),
-                    typeof (EnumGeneratedSerializeBenchmark)
+//                    typeof (EnumGeneratedDeserializeBenchmark),
+//                    typeof (EnumGeneratedSerializeBenchmark)
                 });
             switcher.Run(args);
         }

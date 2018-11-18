@@ -1,4 +1,6 @@
-﻿using MsgPack.Serialization;
+﻿using System.IO;
+
+using MsgPack.Serialization;
 
 using ProGaudi.MsgPack.Light.Benchmark.Data;
 
@@ -11,21 +13,21 @@ namespace ProGaudi.MsgPack.Light.Benchmark
         public static readonly JsonSerializer Newtonsoft = new JsonSerializer();
         public static readonly SerializationContext MsgPack = new SerializationContext();
         public static readonly SerializationContext MsgPackHardcore = new SerializationContext();
-        public static readonly MsgPackContext MsgPackLight = new MsgPackContext(convertEnumsAsStrings: false);
+        public static readonly MsgPackContext MsgPackLight = new MsgPackContext();
         public static readonly MsgPackContext MsgPackLightHardcore = new MsgPackContext();
-        public static readonly MsgPackContext MsgPackLightMapAutoGeneration = new MsgPackContext();
-        public static readonly MsgPackContext MsgPackLightArrayAutoGeneration = new MsgPackContext();
-        public static readonly MsgPackContext MsgPackLightIntEnum = new MsgPackContext();
 
         static Serializers()
         {
-            MsgPackLight.RegisterConverter(new BeerConverter());
-            MsgPackLightHardcore.RegisterConverter(new BeerConverterHardCore());
+            MsgPackLight.RegisterFormatter(x => new BeerConverter(x));
+            MsgPackLight.RegisterParser(x => new BeerConverter(x));
+
+            MsgPackLightHardcore.RegisterFormatter(x => new BeerConverterHardCore(x));
+            MsgPackLightHardcore.RegisterParser(x => new BeerConverterHardCore(x));
+
             MsgPack.Serializers.Register(new BeerSerializer(MsgPack));
             MsgPackHardcore.Serializers.Register(new BeerSerializer(MsgPackHardcore));
-            MsgPackLightMapAutoGeneration.GenerateAndRegisterMapConverter<Beer>();
-            MsgPackLightArrayAutoGeneration.GenerateAndRegisterArrayConverter<Beer>();
-            MsgPackLightIntEnum.RegisterConverter(new BeerTypeConverter());
         }
+
+        public static MemoryStream CreateStream() => new MemoryStream(1_000_000);
     }
 }

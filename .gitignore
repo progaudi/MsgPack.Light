@@ -18,3 +18,5 @@ Release
 bin
 obj
 /.vs
+
+**/BenchmarkDotNet.Artifacts/

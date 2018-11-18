@@ -51,6 +51,10 @@ namespace ProGaudi.MsgPack
             Cache<IMsgPackParser<bool>>.Instance = Converters.BoolConverter.Instance;
         }
 
+        public IMsgPackFormatter<T> RegisterFormatter<T>(Func<MsgPackContext, IMsgPackFormatter<T>> func) => RegisterFormatter(func(this));
+
+        public IMsgPackFormatter<T> RegisterFormatter<T>(IMsgPackFormatter<T> parser) => Cache<IMsgPackFormatter<T>>.Instance = parser;
+
         public IMsgPackFormatter<T> GetFormatter<T>()
         {
             var result = Cache<IMsgPackFormatter<T>>.Instance;
@@ -73,6 +77,10 @@ namespace ProGaudi.MsgPack
                 TryGenerateInterfaceMapper(type, typeof(IEnumerable<>), typeof(Converters.Enumerable.UsualFormatter<,>))
             );
         }
+
+        public IMsgPackParser<T> RegisterParser<T>(Func<MsgPackContext, IMsgPackParser<T>> func) => RegisterParser(func(this));
+
+        public IMsgPackParser<T> RegisterParser<T>(IMsgPackParser<T> parser) => Cache<IMsgPackParser<T>>.Instance = parser;
 
         public IMsgPackParser<T> GetParser<T>()
         {

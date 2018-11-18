@@ -1,21 +1,14 @@
-﻿namespace ProGaudi.MsgPack.Light.Benchmark
+﻿using System;
+
+namespace ProGaudi.MsgPack.Light.Benchmark
 {
-    public class SkipConverter<T> :IMsgPackConverter<T>
+    public class SkipConverter<T> : IMsgPackParser<T>
     {
-        public void Initialize(MsgPackContext context)
+        public T Parse(ReadOnlySpan<byte> source, out int readSize)
         {
-
-        }
-
-        public void Write(T value, IMsgPackWriter writer)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public T Read(IMsgPackReader reader)
-        {
-            reader.SkipToken();
-            return default(T);
+            var token = MsgPackSpec.ReadToken(source);
+            readSize = token.Length;
+            return default;
         }
     }
 }
