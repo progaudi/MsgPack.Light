@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>msgpack.light.benchmark Console Application</Description>
     <Authors>aensidhe</Authors>
-    <TargetFrameworks>netcoreapp2.0;netcoreapp2.1;netcoreapp2.2</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.0;netcoreapp2.1</TargetFrameworks>
     <AssemblyName>msgpack.light.benchmark</AssemblyName>
     <RootNamespace>ProGaudi.MsgPack.Light.Benchmark</RootNamespace>
     <OutputType>Exe</OutputType>
