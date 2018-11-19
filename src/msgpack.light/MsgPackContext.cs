@@ -6,8 +6,12 @@ using System.Reflection;
 
 namespace ProGaudi.MsgPack
 {
-    public class MsgPackContext
+    public sealed class MsgPackContext
     {
+        private readonly Dictionary<Type, Type> _genericFormatters = new Dictionary<Type, Type>();
+
+        private readonly Dictionary<Type, Type> _genericParsers = new Dictionary<Type, Type>();
+
         static MsgPackContext()
         {
             Cache<IMsgPackFormatter<byte[]>>.Instance = Converters.Binary.Converter.Compatibility;
@@ -51,9 +55,13 @@ namespace ProGaudi.MsgPack
             Cache<IMsgPackParser<bool>>.Instance = Converters.BoolConverter.Instance;
         }
 
+        public void RegisterGenericFormatter(Type type) => RegisterGenericMapper(type, typeof(IMsgPackFormatter<>), _genericFormatters);
+
+        public void RegisterGenericParser(Type type) => RegisterGenericMapper(type, typeof(IMsgPackParser<>), _genericParsers);
+
         public IMsgPackFormatter<T> RegisterFormatter<T>(Func<MsgPackContext, IMsgPackFormatter<T>> func) => RegisterFormatter(func(this));
 
-        public IMsgPackFormatter<T> RegisterFormatter<T>(IMsgPackFormatter<T> parser) => Cache<IMsgPackFormatter<T>>.Instance = parser;
+        public IMsgPackFormatter<T> RegisterFormatter<T>(IMsgPackFormatter<T> formatter) => Cache<IMsgPackFormatter<T>>.Instance = formatter;
 
         public IMsgPackFormatter<T> GetFormatter<T>()
         {
@@ -74,7 +82,8 @@ namespace ProGaudi.MsgPack
                 TryGenerateInterfaceMapper(type, typeof(IReadOnlyDictionary<,>), typeof(Converters.ReadOnlyMap.UsualFormatter<,,>)) ??
                 TryGenerateInterfaceMapper(type, typeof(ICollection<>), typeof(Converters.Collection.UsualFormatter<,>)) ??
                 TryGenerateInterfaceMapper(type, typeof(IReadOnlyCollection<>), typeof(Converters.ReadOnlyCollection.UsualFormatter<,>)) ??
-                TryGenerateInterfaceMapper(type, typeof(IEnumerable<>), typeof(Converters.Enumerable.UsualFormatter<,>))
+                TryGenerateInterfaceMapper(type, typeof(IEnumerable<>), typeof(Converters.Enumerable.UsualFormatter<,>)) ??
+                TryGenerateGenericMapper(type, _genericFormatters)
             );
         }
 
@@ -97,8 +106,18 @@ namespace ProGaudi.MsgPack
                 TryGenerateStructMapper(type, typeof(Nullable<>), typeof(Converters.NullableConverter<>)) ??
                 TryGenerateInterfaceMapper(type, typeof(IList<>), typeof(Converters.List.Parser<,>)) ??
                 TryGenerateInterfaceMapper(type, typeof(IDictionary<,>), typeof(Converters.Map.Parser<,,>)) ??
-                TryGenerateInterfaceMapper(type, typeof(ICollection<>), typeof(Converters.Collection.Parser<,>))
+                TryGenerateInterfaceMapper(type, typeof(ICollection<>), typeof(Converters.Collection.Parser<,>)) ??
+                TryGenerateGenericMapper(type, _genericParsers)
             );
+        }
+
+        private void RegisterGenericMapper(Type mapper, Type baseInterface, Dictionary<Type, Type> cache)
+        {
+            var converterType = GetGenericInterface(mapper, baseInterface)
+                ?? throw new ArgumentException($"Error registering generic mapper. Expected {baseInterface.Name} implementation, but got {mapper}");
+
+            var convertedType = converterType.GenericTypeArguments.Single().GetGenericTypeDefinition();
+            cache[convertedType] = mapper;
         }
 
         private object TryGenerateInterfaceMapper(Type type, Type generic, Type mapper)
@@ -116,6 +135,24 @@ namespace ProGaudi.MsgPack
             return mapper
                 .MakeGenericType(new [] { type }.Concat(type.GetGenericArguments()).ToArray())
                 .GetContextActivator()(this);
+        }
+
+        private object TryGenerateGenericMapper(Type type, Dictionary<Type, Type> mappers)
+        {
+            if (!type.GetTypeInfo().IsGenericType)
+            {
+                return null;
+            }
+            var genericType = type.GetGenericTypeDefinition();
+
+            if (!mappers.TryGetValue(genericType, out var genericConverterType))
+            {
+                return null;
+            }
+
+            var converterType = genericConverterType.MakeGenericType(type.GenericTypeArguments);
+            var contextActivator = converterType.GetContextActivator();
+            return contextActivator != null ? contextActivator(this) : converterType.GetDefaultActivator()();
         }
 
         private object TryGenerateStructMapper(Type type, Type generic, Type mapper)
@@ -151,6 +188,20 @@ namespace ProGaudi.MsgPack
             return typeof(Converters.Enum.String<>)
                 .MakeGenericType(type)
                 .GetDefaultActivator()();
+        }
+
+        private static TypeInfo GetGenericInterface(Type type, Type genericInterfaceType)
+        {
+            var info = type.GetTypeInfo();
+            if (info.IsInterface && info.IsGenericType && info.GetGenericTypeDefinition() == genericInterfaceType)
+            {
+                return info;
+            }
+
+            return info
+                .ImplementedInterfaces
+                .Select(x => x.GetTypeInfo())
+                .FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == genericInterfaceType);
         }
 
         private static class Cache<TFormatter>
