@@ -26,7 +26,7 @@ namespace ProGaudi.MsgPack.Converters.List
             var array = new TList();
             for (var i = 0; i < length; i++)
             {
-                array[i] = _elementParser.Parse(source.Slice(readSize), out var temp);
+                array.Add(_elementParser.Parse(source.Slice(readSize), out var temp));
                 readSize += temp;
             }
 
