@@ -9,7 +9,7 @@ indent_size = 4
 trim_trailing_whitespace = true
 charset = utf-8
 
-[*.{yml,yaml}]
+[*.{yml,yaml,csproj}]
 indent_size = 2
 
 [*.cs]
