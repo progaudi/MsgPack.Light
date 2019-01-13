@@ -79,5 +79,39 @@ namespace ProGaudi.MsgPack.Converters.Binary
                 return result;
             }
         }
+
+        public override IMemoryOwner<byte> Parse(ReadOnlySequence<byte> source, out int readSize)
+        {
+            if (MsgPackSpec.TryReadNil(source, out readSize)) return null;
+            var code = source.GetFirst();
+            switch (code)
+            {
+                case DataCodes.Binary8:
+                case DataCodes.Binary16:
+                case DataCodes.Binary32:
+                    return MsgPackSpec.ReadBinary(source, out readSize);
+
+                case DataCodes.String8:
+                case DataCodes.String16:
+                case DataCodes.String32:
+                    return ReadBinaryFromString(source, out readSize);
+            }
+
+            if (DataCodes.FixStringMin <= code && code <= DataCodes.FixStringMax)
+            {
+                return ReadBinaryFromString(source, out readSize);
+            }
+
+            throw ExceptionUtils.BadBinaryCompatibilityCode(code, AllowedCodes);
+
+            IMemoryOwner<byte> ReadBinaryFromString(ReadOnlySequence<byte> buffer, out int r)
+            {
+                var length = MsgPackSpec.ReadStringHeader(buffer, out r);
+                var result = FixedLengthMemoryPool<byte>.Shared.Rent(length);
+                buffer.Slice(r).CopyTo(result.Memory.Span);
+                r += length;
+                return result;
+            }
+        }
     }
 }

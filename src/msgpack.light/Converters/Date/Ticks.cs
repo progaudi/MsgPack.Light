@@ -1,8 +1,11 @@
 using System;
+using System.Buffers;
 
 namespace ProGaudi.MsgPack.Converters.Date
 {
-    public class Ticks : IMsgPackFormatter<DateTime>, IMsgPackFormatter<DateTimeOffset>, IMsgPackFormatter<TimeSpan>, IMsgPackParser<DateTime>, IMsgPackParser<DateTimeOffset>, IMsgPackParser<TimeSpan>
+    public class Ticks : IMsgPackFormatter<DateTime>, IMsgPackFormatter<DateTimeOffset>, IMsgPackFormatter<TimeSpan>,
+        IMsgPackParser<DateTime>, IMsgPackParser<DateTimeOffset>, IMsgPackParser<TimeSpan>,
+        IMsgPackSequenceParser<DateTime>, IMsgPackSequenceParser<DateTimeOffset>, IMsgPackSequenceParser<TimeSpan>
     {
         private static readonly int BufferSize = DataLengths.GetMinAndMaxLength(DataCodes.Int64).max;
 
@@ -30,7 +33,20 @@ namespace ProGaudi.MsgPack.Converters.Date
 
         TimeSpan IMsgPackParser<TimeSpan>.Parse(ReadOnlySpan<byte> source, out int readSize) => new TimeSpan(ReadTicks(source, out readSize));
 
+        DateTime IMsgPackSequenceParser<DateTime>.Parse(ReadOnlySequence<byte> source, out int readSize) => UnixEpochUtc.AddTicks(ReadTicks(source, out readSize));
+
+        DateTimeOffset IMsgPackSequenceParser<DateTimeOffset>.Parse(ReadOnlySequence<byte> source, out int readSize) => UnixEpochUtc.AddTicks(ReadTicks(source, out readSize));
+
+        TimeSpan IMsgPackSequenceParser<TimeSpan>.Parse(ReadOnlySequence<byte> source, out int readSize) => new TimeSpan(ReadTicks(source, out readSize));
+
         private static long ReadTicks(ReadOnlySpan<byte> source, out int readSize)
+        {
+            return MsgPackSpec.TryReadInt64(source, out var value, out readSize)
+                ? value
+                : (long)MsgPackSpec.ReadUInt64(source, out readSize);
+        }
+
+        private static long ReadTicks(ReadOnlySequence<byte> source, out int readSize)
         {
             return MsgPackSpec.TryReadInt64(source, out var value, out readSize)
                 ? value

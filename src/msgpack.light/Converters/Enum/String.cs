@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
 namespace ProGaudi.MsgPack.Converters.Enum
 {
-    internal class String<T> : IMsgPackFormatter<T>, IMsgPackParser<T>
+    internal class String<T> : IMsgPackFormatter<T>, IMsgPackParser<T>, IMsgPackSequenceParser<T>
         where T : struct
     {
         private static readonly Dictionary<T, (int length, byte[] blob)> ValueToLabel;
@@ -54,6 +55,17 @@ namespace ProGaudi.MsgPack.Converters.Enum
         }
 
         public T Parse(ReadOnlySpan<byte> source, out int readSize)
+        {
+            var value = MsgPackSpec.ReadString(source, out readSize);
+            return LabelToValue.TryGetValue(value, out var x)
+                ? x
+                : (T)System.Enum.Parse(
+                    typeof(T),
+                    value,
+                    true);
+        }
+
+        public T Parse(ReadOnlySequence<byte> source, out int readSize)
         {
             var value = MsgPackSpec.ReadString(source, out readSize);
             return LabelToValue.TryGetValue(value, out var x)

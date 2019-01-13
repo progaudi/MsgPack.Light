@@ -4,8 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+using JetBrains.Annotations;
+
 namespace ProGaudi.MsgPack
 {
+    [PublicAPI]
     public sealed class MsgPackContext
     {
         private readonly Dictionary<Type, Type> _genericFormatters = new Dictionary<Type, Type>();
@@ -18,6 +21,8 @@ namespace ProGaudi.MsgPack
             Cache<IMsgPackFormatter<ReadOnlyMemory<byte>>>.Instance = Converters.Binary.Converter.Compatibility;
             Cache<IMsgPackParser<byte[]>>.Instance = Converters.Binary.Converter.Compatibility;
             Cache<IMsgPackParser<IMemoryOwner<byte>>>.Instance = Converters.Binary.Converter.Compatibility;
+            Cache<IMsgPackSequenceParser<byte[]>>.Instance = Converters.Binary.Converter.Compatibility;
+            Cache<IMsgPackSequenceParser<IMemoryOwner<byte>>>.Instance = Converters.Binary.Converter.Compatibility;
 
             Cache<IMsgPackFormatter<DateTime>>.Instance = Converters.Date.Ticks.Instance;
             Cache<IMsgPackFormatter<DateTimeOffset>>.Instance = Converters.Date.Ticks.Instance;
@@ -25,6 +30,9 @@ namespace ProGaudi.MsgPack
             Cache<IMsgPackParser<DateTimeOffset>>.Instance = Converters.Date.Ticks.Instance;
             Cache<IMsgPackParser<DateTime>>.Instance = Converters.Date.Ticks.Instance;
             Cache<IMsgPackParser<TimeSpan>>.Instance = Converters.Date.Ticks.Instance;
+            Cache<IMsgPackSequenceParser<DateTimeOffset>>.Instance = Converters.Date.Ticks.Instance;
+            Cache<IMsgPackSequenceParser<DateTime>>.Instance = Converters.Date.Ticks.Instance;
+            Cache<IMsgPackSequenceParser<TimeSpan>>.Instance = Converters.Date.Ticks.Instance;
 
             Cache<IMsgPackFormatter<byte>>.Instance = Converters.Number.UsualFormatter.Instance;
             Cache<IMsgPackFormatter<sbyte>>.Instance = Converters.Number.UsualFormatter.Instance;
@@ -48,16 +56,31 @@ namespace ProGaudi.MsgPack
             Cache<IMsgPackParser<float>>.Instance = Converters.Number.Parser.Instance;
             Cache<IMsgPackParser<double>>.Instance = Converters.Number.Parser.Instance;
 
+            Cache<IMsgPackSequenceParser<byte>>.Instance = Converters.Number.SequenceParser.Instance;
+            Cache<IMsgPackSequenceParser<sbyte>>.Instance = Converters.Number.SequenceParser.Instance;
+            Cache<IMsgPackSequenceParser<short>>.Instance = Converters.Number.SequenceParser.Instance;
+            Cache<IMsgPackSequenceParser<ushort>>.Instance = Converters.Number.SequenceParser.Instance;
+            Cache<IMsgPackSequenceParser<int>>.Instance = Converters.Number.SequenceParser.Instance;
+            Cache<IMsgPackSequenceParser<uint>>.Instance = Converters.Number.SequenceParser.Instance;
+            Cache<IMsgPackSequenceParser<long>>.Instance = Converters.Number.SequenceParser.Instance;
+            Cache<IMsgPackSequenceParser<ulong>>.Instance = Converters.Number.SequenceParser.Instance;
+            Cache<IMsgPackSequenceParser<float>>.Instance = Converters.Number.SequenceParser.Instance;
+            Cache<IMsgPackSequenceParser<double>>.Instance = Converters.Number.SequenceParser.Instance;
+
             Cache<IMsgPackFormatter<string>>.Instance = new Converters.String.UsualFormatter();
             Cache<IMsgPackParser<string>>.Instance = new Converters.String.Parser();
+            Cache<IMsgPackSequenceParser<string>>.Instance = new Converters.String.SequenceParser();
 
             Cache<IMsgPackFormatter<bool>>.Instance = Converters.BoolConverter.Instance;
             Cache<IMsgPackParser<bool>>.Instance = Converters.BoolConverter.Instance;
+            Cache<IMsgPackSequenceParser<bool>>.Instance = Converters.BoolConverter.Instance;
         }
 
         public void RegisterGenericFormatter(Type type) => RegisterGenericMapper(type, typeof(IMsgPackFormatter<>), _genericFormatters);
 
         public void RegisterGenericParser(Type type) => RegisterGenericMapper(type, typeof(IMsgPackParser<>), _genericParsers);
+
+        public void RegisterGenericSequenceParser(Type type) => RegisterGenericMapper(type, typeof(IMsgPackSequenceParser<>), _genericParsers);
 
         public IMsgPackFormatter<T> RegisterFormatter<T>(Func<MsgPackContext, IMsgPackFormatter<T>> func) => RegisterFormatter(func(this));
 
@@ -107,6 +130,26 @@ namespace ProGaudi.MsgPack
                 TryGenerateInterfaceMapper(type, typeof(IList<>), typeof(Converters.List.Parser<,>)) ??
                 TryGenerateInterfaceMapper(type, typeof(IDictionary<,>), typeof(Converters.Map.Parser<,,>)) ??
                 TryGenerateInterfaceMapper(type, typeof(ICollection<>), typeof(Converters.Collection.Parser<,>)) ??
+                TryGenerateGenericMapper(type, _genericParsers)
+            );
+        }
+
+        public IMsgPackSequenceParser<T> GetSequenceParser<T>()
+        {
+            var result = Cache<IMsgPackSequenceParser<T>>.Instance;
+            if (result != null)
+                return result;
+
+            var type = typeof(T);
+            return Cache<IMsgPackSequenceParser<T>>.Instance = (IMsgPackSequenceParser<T>)(
+                TryGenerateEnumMapper(type) ??
+                TryGenerateArrayMapper(type, typeof(Converters.Array.SequenceParser<>)) ??
+                TryGenerateStructMapper(type, typeof(ReadOnlyMemory<>), typeof(Converters.Array.SequenceParser<>)) ??
+                TryGenerateStructMapper(type, typeof(Memory<>), typeof(Converters.Array.SequenceParser<>)) ??
+                TryGenerateStructMapper(type, typeof(Nullable<>), typeof(Converters.NullableConverter<>)) ??
+                TryGenerateInterfaceMapper(type, typeof(IList<>), typeof(Converters.List.SequenceParser<,>)) ??
+                TryGenerateInterfaceMapper(type, typeof(IDictionary<,>), typeof(Converters.Map.SequenceParser<,,>)) ??
+                TryGenerateInterfaceMapper(type, typeof(ICollection<>), typeof(Converters.Collection.SequenceParser<,>)) ??
                 TryGenerateGenericMapper(type, _genericParsers)
             );
         }

@@ -31,5 +31,18 @@ namespace ProGaudi.MsgPack
 
             return parser;
         }
+
+        [NotNull]
+        public static IMsgPackSequenceParser<T> GetRequiredSequenceParser<T>(this MsgPackContext context)
+        {
+            var parser = context.GetSequenceParser<T>();
+
+            if (parser == null)
+            {
+                throw new SerializationException($"Provide sequence parser for {typeof(T).Name}");
+            }
+
+            return parser;
+        }
     }
 }

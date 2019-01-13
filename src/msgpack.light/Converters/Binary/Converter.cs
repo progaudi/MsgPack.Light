@@ -7,7 +7,9 @@ namespace ProGaudi.MsgPack.Converters.Binary
         IMsgPackFormatter<byte[]>,
         IMsgPackFormatter<ReadOnlyMemory<byte>>,
         IMsgPackParser<byte[]>,
-        IMsgPackParser<IMemoryOwner<byte>>
+        IMsgPackParser<IMemoryOwner<byte>>,
+        IMsgPackSequenceParser<byte[]>,
+        IMsgPackSequenceParser<IMemoryOwner<byte>>
     {
         public static readonly Converter Current = new CurrentSpec();
 
@@ -30,6 +32,16 @@ namespace ProGaudi.MsgPack.Converters.Binary
         public abstract IMemoryOwner<byte> Parse(ReadOnlySpan<byte> source, out int readSize);
 
         byte[] IMsgPackParser<byte[]>.Parse(ReadOnlySpan<byte> source, out int readSize)
+        {
+            using (var owner = Parse(source, out readSize))
+            {
+                return owner?.Memory.ToArray();
+            }
+        }
+
+        public abstract IMemoryOwner<byte> Parse(ReadOnlySequence<byte> source, out int readSize);
+
+        byte[] IMsgPackSequenceParser<byte[]>.Parse(ReadOnlySequence<byte> source, out int readSize)
         {
             using (var owner = Parse(source, out readSize))
             {

@@ -7,7 +7,7 @@ namespace ProGaudi.MsgPack.Converters.Binary
     {
         private readonly byte _code;
 
-        private readonly IMsgPackParser<IMemoryOwner<byte>> _reader;
+        private readonly Converter _reader;
 
         public DataCodeRestricted(byte code, bool compatibilityMode)
         {
@@ -97,5 +97,7 @@ namespace ProGaudi.MsgPack.Converters.Binary
         }
 
         public override IMemoryOwner<byte> Parse(ReadOnlySpan<byte> source, out int readSize) => _reader.Parse(source, out readSize);
+
+        public override IMemoryOwner<byte> Parse(ReadOnlySequence<byte> source, out int readSize) => _reader.Parse(source, out readSize);
     }
 }

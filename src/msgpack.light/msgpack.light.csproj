@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
-    <TargetFrameworks>net45;net46;netstandard1.4;netstandard2.0;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>netstandard1.4;netstandard2.0;netcoreapp2.1</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
     <TargetFrameworks>netstandard1.4;netstandard2.0;netcoreapp2.1</TargetFrameworks>
@@ -23,6 +23,7 @@
     <Authors>roman-kozachenko;aensidhe</Authors>
     <Company>progaudi</Company>
     <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2018.2.1">
@@ -31,8 +32,8 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" Condition=" '$(IsDocker)' != 'defined' ">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="progaudi.msgpack.spec" Version="2.0.0.7-g2933f52" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
+    <PackageReference Include="progaudi.msgpack.spec" Version="3.1.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Formatters" Version="4.3.0" Condition=" '$(TargetFramework)' == 'netstandard1.4' " />

@@ -29,5 +29,16 @@ namespace ProGaudi.MsgPack.Converters.Binary
 
             return MsgPackSpec.ReadBinary(source, out readSize);
         }
+
+        public override IMemoryOwner<byte> Parse(ReadOnlySequence<byte> source, out int readSize)
+        {
+            if (source.GetFirst() == DataCodes.Nil)
+            {
+                readSize = DataLengths.Nil;
+                return null;
+            }
+
+            return MsgPackSpec.ReadBinary(source, out readSize);
+        }
     }
 }

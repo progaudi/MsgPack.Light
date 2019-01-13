@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 
 namespace ProGaudi.MsgPack.Light.Tests
 {
@@ -27,6 +28,18 @@ namespace ProGaudi.MsgPack.Light.Tests
         public GenericParser(MsgPackContext context) => _parser = context.GetRequiredParser<T>();
 
         public A<T> Parse(ReadOnlySpan<byte> source, out int readSize)
+        {
+            return new A<T> {F = _parser.Parse(source, out readSize)};
+        }
+    }
+
+    public class GenericSequenceParser<T> : IMsgPackSequenceParser<A<T>>
+    {
+        private readonly IMsgPackSequenceParser<T> _parser;
+
+        public GenericSequenceParser(MsgPackContext context) => _parser = context.GetRequiredSequenceParser<T>();
+
+        public A<T> Parse(ReadOnlySequence<byte> source, out int readSize)
         {
             return new A<T> {F = _parser.Parse(source, out readSize)};
         }

@@ -7,6 +7,7 @@ using ProGaudi.Buffers;
 
 namespace ProGaudi.MsgPack
 {
+    [PublicAPI]
     public static class MsgPackSerializer
     {
         public static IMemoryOwner<byte> Serialize<T>(T data, out int wroteSize)
@@ -47,6 +48,22 @@ namespace ProGaudi.MsgPack
         public static T Deserialize<T>(ReadOnlySpan<byte> data, [NotNull] MsgPackContext context, out int readSize)
         {
             var converter = context.GetRequiredParser<T>();
+            return converter.Parse(data, out readSize);
+        }
+
+        public static T Deserialize<T>(ReadOnlySequence<byte> data, out int readSize)
+        {
+            return Deserialize<T>(data, new MsgPackContext(), out readSize);
+        }
+
+        public static T Deserialize<T>(ReadOnlySequence<byte> data, [NotNull] MsgPackContext context)
+        {
+            return Deserialize<T>(data, context, out _);
+        }
+
+        public static T Deserialize<T>(ReadOnlySequence<byte> data, [NotNull] MsgPackContext context, out int readSize)
+        {
+            var converter = context.GetRequiredSequenceParser<T>();
             return converter.Parse(data, out readSize);
         }
     }
