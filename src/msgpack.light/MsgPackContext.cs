@@ -114,6 +114,10 @@ namespace ProGaudi.MsgPack
 
         public IMsgPackParser<T> RegisterParser<T>(IMsgPackParser<T> parser) => Cache<IMsgPackParser<T>>.Instance = parser;
 
+        public IMsgPackSequenceParser<T> RegisterParser<T>(Func<MsgPackContext, IMsgPackSequenceParser<T>> func) => RegisterParser(func(this));
+
+        public IMsgPackSequenceParser<T> RegisterParser<T>(IMsgPackSequenceParser<T> parser) => Cache<IMsgPackSequenceParser<T>>.Instance = parser;
+
         public IMsgPackParser<T> GetParser<T>()
         {
             var result = Cache<IMsgPackParser<T>>.Instance;
@@ -247,9 +251,9 @@ namespace ProGaudi.MsgPack
                 .FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == genericInterfaceType);
         }
 
-        private static class Cache<TFormatter>
+        private static class Cache<T>
         {
-            public static TFormatter Instance;
+            public static T Instance;
         }
     }
 }
