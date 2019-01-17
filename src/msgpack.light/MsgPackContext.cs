@@ -15,6 +15,8 @@ namespace ProGaudi.MsgPack
 
         private readonly Dictionary<Type, Type> _genericParsers = new Dictionary<Type, Type>();
 
+        private readonly Dictionary<Type, Type> _genericSequenceParsers = new Dictionary<Type, Type>();
+
         static MsgPackContext()
         {
             Cache<IMsgPackFormatter<byte[]>>.Instance = Converters.Binary.Converter.Compatibility;
@@ -80,7 +82,7 @@ namespace ProGaudi.MsgPack
 
         public void RegisterGenericParser(Type type) => RegisterGenericMapper(type, typeof(IMsgPackParser<>), _genericParsers);
 
-        public void RegisterGenericSequenceParser(Type type) => RegisterGenericMapper(type, typeof(IMsgPackSequenceParser<>), _genericParsers);
+        public void RegisterGenericSequenceParser(Type type) => RegisterGenericMapper(type, typeof(IMsgPackSequenceParser<>), _genericSequenceParsers);
 
         public IMsgPackFormatter<T> RegisterFormatter<T>(Func<MsgPackContext, IMsgPackFormatter<T>> func) => RegisterFormatter(func(this));
 
@@ -154,7 +156,7 @@ namespace ProGaudi.MsgPack
                 TryGenerateInterfaceMapper(type, typeof(IList<>), typeof(Converters.List.SequenceParser<,>)) ??
                 TryGenerateInterfaceMapper(type, typeof(IDictionary<,>), typeof(Converters.Map.SequenceParser<,,>)) ??
                 TryGenerateInterfaceMapper(type, typeof(ICollection<>), typeof(Converters.Collection.SequenceParser<,>)) ??
-                TryGenerateGenericMapper(type, _genericParsers)
+                TryGenerateGenericMapper(type, _genericSequenceParsers)
             );
         }
 
