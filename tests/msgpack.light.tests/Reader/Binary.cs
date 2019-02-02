@@ -1,4 +1,6 @@
-using System.Runtime.Serialization;
+using System;
+
+using ProGaudi.MsgPack.Converters.Binary;
 
 using Shouldly;
 
@@ -85,16 +87,14 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         })]
         public void Test(byte[] value, byte[] data)
         {
-            MsgPackSerializer.Deserialize<byte[]>(data).ShouldBe(value);
-
-            var token = Helpers.CheckTokenDeserialization(data);
-            ((byte[])token).ShouldBe(value);
+            MsgPackSerializer.Deserialize<byte[]>(data, out var readSize).ShouldBe(value);
+            readSize.ShouldBe(data.Length);
         }
 
         [Theory]
-        [InlineData(new byte[] {160})]
-        [InlineData(new byte[] {161, 1})]
-        [InlineData(new byte[]
+        [InlineData("Wrong data code: 0xa0. Expected: 0xc4, 0xc5 or 0xc6.", new byte[] {160})]
+        [InlineData("Wrong data code: 0xa1. Expected: 0xc4, 0xc5 or 0xc6.", new byte[] {161, 1})]
+        [InlineData("Wrong data code: 0xda. Expected: 0xc4, 0xc5 or 0xc6.", new byte[]
         {
             218, 1, 44,
 
@@ -131,10 +131,10 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
             1, 2, 3, 4, 5, 6, 7, 8, 9, 0,
             1, 2, 3, 4, 5, 6, 7, 8, 9, 0
         })]
-        public void FailToReadOldBinary(byte[] data)
+        public void FailToReadOldBinary(string message, byte[] data)
         {
-            var e = Should.Throw<SerializationException>(() => MsgPackSerializer.Deserialize<byte[]>(data));
-            e.Message.ShouldBe("Reading a string as a byte array is disabled. Set 'binaryCompatibilityMode' parameter in MsgPackContext constructor to true to enable it");
+            var e = Should.Throw<InvalidOperationException>(() => Converter.Current.Parse(data, out _));
+            e.Message.ShouldBe(message);
         }
 
         [Theory]
@@ -214,9 +214,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
         })]
         public void ReadOldBinary(byte[] value, byte[] data)
         {
-            var context = new MsgPackContext(binaryCompatibilityMode: true);
-            var result = Should.NotThrow(() => MsgPackSerializer.Deserialize<byte[]>(data, context));
-            result.ShouldBe(value);
+            MsgPackSerializer.Deserialize<byte[]>(data, out var readSize).ShouldBe(value);
+            readSize.ShouldBe(data.Length);
         }
     }
 }

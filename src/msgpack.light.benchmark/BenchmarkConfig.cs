@@ -5,8 +5,6 @@ using BenchmarkDotNet.Environments;
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Jobs;
-using BenchmarkDotNet.Order;
-using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Toolchains.CsProj;
 
 namespace ProGaudi.MsgPack.Light.Benchmark
@@ -25,11 +23,10 @@ namespace ProGaudi.MsgPack.Light.Benchmark
 
             //Add(Job.ShortRun.With(Jit.RyuJit).With(Platform.X64).With(Runtime.Clr));
 
-            // RyuJit for .NET Core 1.1
-            Add(Job.Default.With(Jit.RyuJit).With(Platform.X64).With(Runtime.Core).With(CsProjCoreToolchain.NetCoreApp11).WithId("netcore1.1"));
-
             // RyuJit for .NET Core 2.0
             Add(Job.Default.With(Jit.RyuJit).With(Platform.X64).With(Runtime.Core).With(CsProjCoreToolchain.NetCoreApp20).WithId("netcore2.0"));
+            Add(Job.Default.With(Jit.RyuJit).With(Platform.X64).With(Runtime.Core).With(CsProjCoreToolchain.NetCoreApp21).WithId("netcore2.1"));
+            Add(Job.Default.With(Jit.RyuJit).With(Platform.X64).With(Runtime.Core).With(CsProjCoreToolchain.NetCoreApp22).WithId("netcore2.2"));
 
             Add(MarkdownExporter.GitHub);
             Add(CsvMeasurementsExporter.Default);

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Buffers;
+using System.IO;
 using System.Text;
 
 using BenchmarkDotNet.Attributes;
@@ -10,11 +11,16 @@ namespace ProGaudi.MsgPack.Light.Benchmark
     [Config(typeof(BenchmarkConfig))]
     public class BeerListSerializeBenchmark
     {
+        private readonly MemoryStream _memoryStream = Serializers.CreateStream();
+
+        private readonly IMemoryOwner<byte> _buffer = MsgPackSerializer.Serialize(BenchmarkData.Belgium, Serializers.MsgPackLight, out _);
+
         [Benchmark]
-        public void JsonNet()
+        public long JsonNet()
         {
-            var memoryStream = new MemoryStream();
-            JsonSerialize(memoryStream);
+            _memoryStream.Seek(0, SeekOrigin.Begin);
+            JsonSerialize(_memoryStream);
+            return _memoryStream.Position;
         }
 
         internal void JsonSerialize(MemoryStream memoryStream)
@@ -25,12 +31,13 @@ namespace ProGaudi.MsgPack.Light.Benchmark
                 writer.Flush();
             }
         }
-        
+
         [Benchmark(Baseline = true)]
-        public void MPCli_Stream()
+        public long MPCli_Stream()
         {
-            var memoryStream = new MemoryStream();
-            MsgPackSerialize(memoryStream);
+            _memoryStream.Seek(0, SeekOrigin.Begin);
+            MsgPackSerialize(_memoryStream);
+            return _memoryStream.Position;
         }
 
         internal void MsgPackSerialize(MemoryStream memoryStream)
@@ -39,66 +46,41 @@ namespace ProGaudi.MsgPack.Light.Benchmark
         }
 
         [Benchmark]
-        public void MPCli_Array()
+        public byte[] MPCli_Array()
         {
-            var bytes = Serializers.MsgPack.GetSerializer<Beer[]>().PackSingleObject(BenchmarkData.Belgium);
+            return Serializers.MsgPack.GetSerializer<Beer[]>().PackSingleObject(BenchmarkData.Belgium);
         }
 
         [Benchmark]
-        public void MPLight_Stream()
+        public int MPLight_Array()
         {
-            var memoryStream = new MemoryStream();
-            MsgPackLightSerialize(memoryStream);
-        }
-
-        internal void MsgPackLightSerialize(MemoryStream memoryStream)
-        {
-            MsgPackSerializer.Serialize(BenchmarkData.Belgium, memoryStream, Serializers.MsgPackLight);
+            return MsgPackSerializer.Serialize(BenchmarkData.Belgium, _buffer.Memory.Span, Serializers.MsgPackLight);
         }
 
         [Benchmark]
-        public void MPLight_Array()
+        public long MPCliH_Stream()
         {
-            var bytes = MsgPackSerializer.Serialize(BenchmarkData.Belgium, Serializers.MsgPackLight);
+            _memoryStream.Seek(0, SeekOrigin.Begin);
+            Serializers.MsgPackHardcore.GetSerializer<Beer[]>().Pack(_memoryStream, BenchmarkData.Belgium);
+            return _memoryStream.Position;
         }
 
         [Benchmark]
-        public void MPCliH_Stream()
+        public byte[] MPCliH_Array()
         {
-            var memoryStream = new MemoryStream();
-            Serializers.MsgPackHardcore.GetSerializer<Beer[]>().Pack(memoryStream, BenchmarkData.Belgium);
+            return Serializers.MsgPackHardcore.GetSerializer<Beer[]>().PackSingleObject(BenchmarkData.Belgium);
         }
 
         [Benchmark]
-        public void MPCliH_Array()
+        public int MPLightH_Array()
         {
-            var bytes = Serializers.MsgPackHardcore.GetSerializer<Beer[]>().PackSingleObject(BenchmarkData.Belgium);
+            return MsgPackSerializer.Serialize(BenchmarkData.Belgium, _buffer.Memory.Span, Serializers.MsgPackLightHardcore);
         }
-
-        [Benchmark]
-        public void MPLightH_Stream()
-        {
-            var memoryStream = new MemoryStream();
-            MsgPackSerializer.Serialize(BenchmarkData.Belgium, memoryStream, Serializers.MsgPackLightHardcore);
-        }
-
-        [Benchmark]
-        public void MPLightH_Array()
-        {
-            var bytes = MsgPackSerializer.Serialize(BenchmarkData.Belgium, Serializers.MsgPackLightHardcore);
-        }
-
-        [Benchmark]
-        public void MPLightH_Stream_AutoMap()
-        {
-            var memoryStream = new MemoryStream();
-            MsgPackSerializer.Serialize(BenchmarkData.Belgium, memoryStream, Serializers.MsgPackLightMapAutoGeneration);
-        }
-
-        [Benchmark]
-        public void MPLightH_Array_AutoMap()
-        {
-            var bytes = MsgPackSerializer.Serialize(BenchmarkData.Belgium, Serializers.MsgPackLightMapAutoGeneration);
-        }
+//
+//        [Benchmark]
+//        public void MPLightH_Array_AutoMap()
+//        {
+//            var bytes = MsgPackSerializer.Serialize(BenchmarkData.Belgium, Serializers.MsgPackLightMapAutoGeneration);
+//        }
     }
 }

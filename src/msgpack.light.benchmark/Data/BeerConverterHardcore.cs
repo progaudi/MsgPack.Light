@@ -1,78 +1,114 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace ProGaudi.MsgPack.Light.Benchmark.Data
 {
-    internal class BeerConverterHardCore : IMsgPackConverter<Beer>
+    internal sealed class BeerConverterHardCore : IMsgPackFormatter<Beer>, IMsgPackParser<Beer>
     {
-        private IMsgPackConverter<string> _stringConverter;
+        private static readonly byte[] Brand;
+        private static readonly byte[] Alcohol;
+        private static readonly byte[] Sort;
+        private static readonly byte[] Brewery;
 
-        private IMsgPackConverter<List<string>> _listStringConverter;
+        private readonly IMsgPackFormatter<string> _stringFormatter;
+        private readonly IMsgPackFormatter<List<string>> _listStringFormatter;
+        private readonly IMsgPackFormatter<float> _floatFormatter;
 
-        private IMsgPackConverter<float> _floatConverter;
+        private readonly IMsgPackParser<string> _stringParser;
+        private readonly IMsgPackParser<List<string>> _listStringParser;
+        private readonly IMsgPackParser<float> _floatParser;
 
-        private MsgPackContext _context;
-
-        private byte[] _brand;
-
-        private byte[] _alcohol;
-
-        private byte[] _sort;
-
-        private byte[] _brewery;
-
-        public void Write(Beer value, IMsgPackWriter writer)
+        static BeerConverterHardCore()
         {
-            if (value == null)
-            {
-                _context.NullConverter.Write(null, writer);
-                return;
-            }
-
-            writer.WriteMapHeader(4);
-            writer.Write(_brand);
-            _stringConverter.Write(value.Brand, writer);
-
-            writer.Write(_sort);
-            _listStringConverter.Write(value.Sort, writer);
-
-            writer.Write(_alcohol);
-            _floatConverter.Write(value.Alcohol, writer);
-
-            writer.Write(_brewery);
-            _stringConverter.Write(value.Brewery, writer);
+            Brand = new byte[6];
+            MsgPackSpec.WriteFixString(Brand, nameof(Beer.Brand).AsSpan());
+            Alcohol = new byte[8];
+            MsgPackSpec.WriteFixString(Alcohol, nameof(Beer.Alcohol).AsSpan());
+            Sort = new byte[5];
+            MsgPackSpec.WriteFixString(Sort, nameof(Beer.Sort).AsSpan());
+            Brewery = new byte[8];
+            MsgPackSpec.WriteFixString(Brewery, nameof(Beer.Brewery).AsSpan());
         }
 
-        public Beer Read(IMsgPackReader reader)
+        public BeerConverterHardCore(MsgPackContext context)
         {
-            var length = reader.ReadMapLength();
-            if (length == null)
-            {
-                return null;
-            }
+            _stringFormatter = context.GetRequiredFormatter<string>();
+            _listStringFormatter = context.GetRequiredFormatter<List<string>>();
+            _floatFormatter = context.GetRequiredFormatter<float>();
 
+            _stringParser = context.GetRequiredParser<string>();
+            _listStringParser = context.GetRequiredParser<List<string>>();
+            _floatParser = context.GetRequiredParser<float>();
+        }
+
+        public int GetBufferSize(Beer value) => value == null
+            ? DataLengths.Nil
+            : _stringFormatter.GetBufferSize(value.Brand)
+            + _stringFormatter.GetBufferSize(value.Brewery)
+            + _listStringFormatter.GetBufferSize(value.Sort)
+            + _floatFormatter.GetBufferSize(value.Alcohol)
+            + 27;
+
+        public bool HasConstantSize => false;
+
+        public int Format(Span<byte> destination, Beer value)
+        {
+            if (value == null) return MsgPackSpec.WriteNil(destination);
+
+            var result = MsgPackSpec.WriteMapHeader(destination, 4);
+
+            Brand.CopyTo(destination.Slice(result));
+            result += Brand.Length;
+            result += _stringFormatter.Format(destination, value.Brand);
+
+            Sort.CopyTo(destination.Slice(result));
+            result += Sort.Length;
+            result += _listStringFormatter.Format(destination, value.Sort);
+
+            Alcohol.CopyTo(destination.Slice(result));
+            result += Alcohol.Length;
+            result += _floatFormatter.Format(destination, value.Alcohol);
+
+            Brewery.CopyTo(destination.Slice(result));
+            result += Brewery.Length;
+            result += _stringFormatter.Format(destination, value.Brewery);
+
+            return result;
+        }
+
+        public Beer Parse(ReadOnlySpan<byte> source, out int readSize)
+        {
+            if (MsgPackSpec.TryReadNil(source, out readSize)) return null;
+
+            var length = MsgPackSpec.ReadMapHeader(source, out readSize);
             if (length != 4)
             {
                 throw new SerializationException("Bad format");
             }
 
             var result = new Beer();
-            for (var i = 0; i < length.Value; i++)
+            for (var i = 0; i < length; i++)
             {
-                var propertyName = _stringConverter.Read(reader);
+                var propertyName = _stringParser.Parse(source, out var temp);
+                readSize += temp;
                 switch (propertyName)
                 {
                     case nameof(result.Brand):
-                        result.Brand = _stringConverter.Read(reader);
+                        result.Brand = _stringParser.Parse(source, out temp);
+                        readSize += temp;
                         break;
                     case nameof(result.Sort):
-                        result.Sort = _listStringConverter.Read(reader);
+                        result.Sort = _listStringParser.Parse(source, out temp);
+                        readSize += temp;
                         break;
                     case nameof(result.Alcohol):
-                        result.Alcohol = _floatConverter.Read(reader);
+                        result.Alcohol = _floatParser.Parse(source, out temp);
+                        readSize += temp;
                         break;
                     case nameof(result.Brewery):
-                        result.Brewery = _stringConverter.Read(reader);
+                        result.Brewery = _stringParser.Parse(source, out temp);
+                        readSize += temp;
                         break;
                     default:
                         throw new SerializationException("Bad format");
@@ -80,18 +116,6 @@ namespace ProGaudi.MsgPack.Light.Benchmark.Data
             }
 
             return result;
-        }
-
-        public void Initialize(MsgPackContext context)
-        {
-            _stringConverter = context.GetConverter<string>();
-            _listStringConverter = context.GetConverter<List<string>>();
-            _floatConverter = context.GetConverter<float>();
-            _brand = MsgPackSerializer.Serialize(nameof(Beer.Brand));
-            _alcohol = MsgPackSerializer.Serialize(nameof(Beer.Alcohol));
-            _sort = MsgPackSerializer.Serialize(nameof(Beer.Sort));
-            _brewery = MsgPackSerializer.Serialize(nameof(Beer.Brewery));
-            _context = context;
         }
     }
 }

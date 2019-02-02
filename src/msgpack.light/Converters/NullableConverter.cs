@@ -1,42 +1,38 @@
-using System.IO;
+using System;
+using System.Buffers;
 
-namespace ProGaudi.MsgPack.Light.Converters
+namespace ProGaudi.MsgPack.Converters
 {
-    public class NullableConverter<T> : IMsgPackConverter<T?>
+    public class NullableConverter<T> : IMsgPackFormatter<T?>, IMsgPackParser<T?>, IMsgPackSequenceParser<T?>
         where T : struct
     {
-        private MsgPackContext _context;
+        private readonly IMsgPackFormatter<T> _formatter;
 
-        private IMsgPackConverter<T> _converter;
+        private readonly IMsgPackParser<T> _parser;
 
-        public T? Read(IMsgPackReader reader)
+        private readonly IMsgPackSequenceParser<T> _sequenceParser;
+
+        public NullableConverter(MsgPackContext context)
         {
-            var type = reader.ReadDataType();
-
-            if (type == DataTypes.Null)
-                return null;
-
-            reader.Seek(-1, SeekOrigin.Current);
-
-            return _converter.Read(reader);
+            _formatter = context.GetRequiredFormatter<T>();
+            _parser = context.GetRequiredParser<T>();
+            _sequenceParser = context.GetRequiredSequenceParser<T>();
         }
 
-        public void Write(T? value, IMsgPackWriter writer)
-        {
-            if (value.HasValue)
-            {
-                _converter.Write(value.Value, writer);
-            }
-            else
-            {
-                _context.NullConverter.Write(null, writer);
-            }
-        }
+        public int GetBufferSize(T? value) => value.HasValue ? _formatter.GetBufferSize(value.Value) : DataLengths.Nil;
 
-        public void Initialize(MsgPackContext context)
-        {
-            _context = context;
-            _converter = context.GetConverter<T>();
-        }
+        public bool HasConstantSize => _formatter.HasConstantSize && _formatter.GetBufferSize(default) == DataLengths.Nil;
+
+        public int Format(Span<byte> destination, T? value) => value.HasValue
+            ? _formatter.Format(destination, value.Value)
+            : MsgPackSpec.WriteNil(destination);
+
+        public T? Parse(ReadOnlySpan<byte> source, out int readSize) => MsgPackSpec.TryReadNil(source, out readSize)
+            ? default(T?)
+            : _parser.Parse(source, out readSize);
+
+        public T? Parse(ReadOnlySequence<byte> source, out int readSize) => MsgPackSpec.TryReadNil(source, out readSize)
+            ? default(T?)
+            : _sequenceParser.Parse(source, out readSize);
     }
 }

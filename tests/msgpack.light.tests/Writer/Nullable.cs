@@ -11,91 +11,91 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [Fact]
         public void WriteNullAsNullableBool()
         {
-            MsgPackSerializer.Serialize(default(bool?)).ShouldBe(new[] { (byte)DataTypes.Null });
-            ((MsgPackToken)default(bool?)).RawBytes.ShouldBe(new[] { (byte)DataTypes.Null });
+            using (var blob = MsgPackSerializer.Serialize((bool?) null, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.Nil });
         }
         [Fact]
         public void WriteNullAsNullableFloat()
         {
-            MsgPackSerializer.Serialize(default(float?)).ShouldBe(new[] { (byte)DataTypes.Null });
-            ((MsgPackToken)default(float?)).RawBytes.ShouldBe(new[] { (byte)DataTypes.Null });
+            using (var blob = MsgPackSerializer.Serialize((float?) null, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.Nil });
         }
 
         [Fact]
         public void WriteNullAsNullableDouble()
         {
-            MsgPackSerializer.Serialize(default(double?)).ShouldBe(new[] { (byte)DataTypes.Null });
-            ((MsgPackToken)default(double?)).RawBytes.ShouldBe(new[] { (byte)DataTypes.Null });
+            using (var blob = MsgPackSerializer.Serialize((double?) null, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.Nil });
         }
 
         [Fact]
         public void WriteNullAsNullableByte()
         {
-            MsgPackSerializer.Serialize(default(byte?)).ShouldBe(new[] { (byte)DataTypes.Null });
-            ((MsgPackToken)default(byte?)).RawBytes.ShouldBe(new[] { (byte)DataTypes.Null });
+            using (var blob = MsgPackSerializer.Serialize((byte?) null, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.Nil });
         }
 
         [Fact]
         public void WriteNullAsNullableSbyte()
         {
-            MsgPackSerializer.Serialize(default(sbyte?)).ShouldBe(new[] { (byte)DataTypes.Null });
-            ((MsgPackToken)default(sbyte?)).RawBytes.ShouldBe(new[] { (byte)DataTypes.Null });
+            using (var blob = MsgPackSerializer.Serialize((sbyte?) null, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.Nil });
         }
 
         [Fact]
         public void WriteNullAsNullableShort()
         {
-            MsgPackSerializer.Serialize(default(short?)).ShouldBe(new[] { (byte)DataTypes.Null });
-            ((MsgPackToken)default(short?)).RawBytes.ShouldBe(new[] { (byte)DataTypes.Null });
+            using (var blob = MsgPackSerializer.Serialize((short?) null, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.Nil });
         }
 
         [Fact]
         public void WriteNullAsNullableUshort()
         {
-            MsgPackSerializer.Serialize(default(ushort?)).ShouldBe(new[] { (byte)DataTypes.Null });
-            ((MsgPackToken)default(ushort?)).RawBytes.ShouldBe(new[] { (byte)DataTypes.Null });
+            using (var blob = MsgPackSerializer.Serialize((ushort?) null, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.Nil });
         }
 
         [Fact]
         public void WriteNullAsNullableInt()
         {
-            MsgPackSerializer.Serialize(default(int?)).ShouldBe(new[] { (byte)DataTypes.Null });
-            ((MsgPackToken)default(int?)).RawBytes.ShouldBe(new[] { (byte)DataTypes.Null });
+            using (var blob = MsgPackSerializer.Serialize((int?) null, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.Nil });
         }
 
         [Fact]
         public void WriteNullAsNullableUint()
         {
-            MsgPackSerializer.Serialize(default(uint?)).ShouldBe(new[] { (byte)DataTypes.Null });
-            ((MsgPackToken)default(uint?)).RawBytes.ShouldBe(new[] { (byte)DataTypes.Null });
+            using (var blob = MsgPackSerializer.Serialize((uint?) null, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.Nil });
         }
 
         [Fact]
         public void WriteNullAsNullableLong()
         {
-            MsgPackSerializer.Serialize(default(long?)).ShouldBe(new[] { (byte)DataTypes.Null });
-            ((MsgPackToken)default(long?)).RawBytes.ShouldBe(new[] { (byte)DataTypes.Null });
+            using (var blob = MsgPackSerializer.Serialize((long?) null, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.Nil });
         }
 
         [Fact]
         public void WriteNullAsNullableUlong()
         {
-            MsgPackSerializer.Serialize(default(ulong?)).ShouldBe(new[] { (byte)DataTypes.Null });
-            ((MsgPackToken)default(ulong?)).RawBytes.ShouldBe(new[] { (byte)DataTypes.Null });
+            using (var blob = MsgPackSerializer.Serialize((ulong?) null, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.Nil });
         }
 
         [Fact]
         public void False()
         {
-            MsgPackSerializer.Serialize((bool?)false).ShouldBe(new[] { (byte)DataTypes.False });
-            ((MsgPackToken)(bool?)false).RawBytes.ShouldBe(new[] { (byte)DataTypes.False });
+            using (var blob = MsgPackSerializer.Serialize((bool?) false, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.False });
         }
 
         [Fact]
         public void True()
         {
-            MsgPackSerializer.Serialize((bool?)true).ShouldBe(new[] { (byte)DataTypes.True });
-            ((MsgPackToken)(bool?)true).RawBytes.ShouldBe(new[] { (byte)DataTypes.True });
+            using (var blob = MsgPackSerializer.Serialize((bool?) true, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.True });
         }
 
         [Theory]
@@ -115,8 +115,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [InlineData(double.NegativeInfinity, new byte[] { 203, 255, 240, 0, 0, 0, 0, 0, 0 })]
         public void TestDouble(double value, byte[] bytes)
         {
-            MsgPackSerializer.Serialize((double?)value).ShouldBe(bytes);
-            ((MsgPackToken)value).RawBytes.ShouldBe(bytes);
+            using (var blob = MsgPackSerializer.Serialize((double?) value, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(bytes);
         }
 
         [Theory]
@@ -136,8 +136,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [InlineData(float.NegativeInfinity, new byte[] { 202, 255, 128, 0, 0 })]
         public void TestFloat(float value, byte[] bytes)
         {
-            MsgPackSerializer.Serialize((float?)value).ShouldBe(bytes);
-            ((MsgPackToken)value).RawBytes.ShouldBe(bytes);
+            using (var blob = MsgPackSerializer.Serialize((float?) value, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(bytes);
         }
 
         [Theory]
@@ -154,8 +154,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [InlineData(long.MinValue, new byte[] { 211, 128, 0, 0, 0, 0, 0, 0, 0 })]
         public void TestSignedLong(long number, byte[] data)
         {
-            MsgPackSerializer.Serialize((long?)number).ShouldBe(data);
-            ((MsgPackToken)number).RawBytes.ShouldBe(data);
+            using (var blob = MsgPackSerializer.Serialize((long?) number, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(data);
         }
 
         [Theory]
@@ -171,8 +171,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [InlineData(50505, new byte[] { 205, 197, 73 })]
         public void TestSignedInt(int number, byte[] data)
         {
-            MsgPackSerializer.Serialize((int?)number).ShouldBe(data);
-            ((MsgPackToken)number).RawBytes.ShouldBe(data);
+            using (var blob = MsgPackSerializer.Serialize((int?) number, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(data);
         }
 
         [Theory]
@@ -185,8 +185,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [InlineData(short.MaxValue, new byte[] { 205, 127, 0xff })]
         public void TestSignedShort(short number, byte[] data)
         {
-            MsgPackSerializer.Serialize((short?)number).ShouldBe(data);
-            ((MsgPackToken)number).RawBytes.ShouldBe(data);
+            using (var blob = MsgPackSerializer.Serialize((short?) number, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(data);
         }
 
         [Theory]
@@ -197,8 +197,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [InlineData(sbyte.MaxValue, new byte[] { 127 })]
         public void TestSignedByte(sbyte number, byte[] data)
         {
-            MsgPackSerializer.Serialize((sbyte?)number).ShouldBe(data);
-            ((MsgPackToken)number).RawBytes.ShouldBe(data);
+            using (var blob = MsgPackSerializer.Serialize((sbyte?) number, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(data);
         }
 
         [Theory]
@@ -208,10 +208,10 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [InlineData(ushort.MaxValue, new byte[] { 0xcd, 0xff, 0xff })]
         [InlineData(uint.MaxValue, new byte[] { 0xce, 0xff, 0xff, 0xff, 0xff })]
         [InlineData(ulong.MaxValue, new byte[] { 0xcf, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff })]
-        public void TetsUnsignedLong(ulong number, byte[] data)
+        public void TestUnsignedLong(ulong number, byte[] data)
         {
-            MsgPackSerializer.Serialize((ulong?)number).ShouldBe(data);
-            ((MsgPackToken)number).RawBytes.ShouldBe(data);
+            using (var blob = MsgPackSerializer.Serialize((ulong?) number, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(data);
         }
 
         [Theory]
@@ -220,10 +220,10 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [InlineData(byte.MaxValue, new byte[] { 0xcc, 0xff })]
         [InlineData(ushort.MaxValue, new byte[] { 0xcd, 0xff, 0xff })]
         [InlineData(uint.MaxValue, new byte[] { 0xce, 0xff, 0xff, 0xff, 0xff })]
-        public void TetsUnsignedInt(uint number, byte[] data)
+        public void TestUnsignedInt(uint number, byte[] data)
         {
-            MsgPackSerializer.Serialize((uint?)number).ShouldBe(data);
-            ((MsgPackToken)number).RawBytes.ShouldBe(data);
+            using (var blob = MsgPackSerializer.Serialize((uint?) number, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(data);
         }
 
         [Theory]
@@ -231,20 +231,20 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [InlineData(1, new byte[] { 1 })]
         [InlineData(byte.MaxValue, new byte[] { 0xcc, 0xff })]
         [InlineData(ushort.MaxValue, new byte[] { 0xcd, 0xff, 0xff })]
-        public void TetsUnsignedShort(ushort number, byte[] data)
+        public void TestUnsignedShort(ushort number, byte[] data)
         {
-            MsgPackSerializer.Serialize((ushort?)number).ShouldBe(data);
-            ((MsgPackToken)number).RawBytes.ShouldBe(data);
+            using (var blob = MsgPackSerializer.Serialize((ushort?) number, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(data);
         }
 
         [Theory]
         [InlineData(0, new byte[] { 0x00 })]
         [InlineData(1, new byte[] { 1 })]
         [InlineData(byte.MaxValue, new byte[] { 0xcc, 0xff })]
-        public void TetsUnsignedByte(byte number, byte[] data)
+        public void TestUnsignedByte(byte number, byte[] data)
         {
-            MsgPackSerializer.Serialize((byte?)number).ShouldBe(data);
-            ((MsgPackToken)number).RawBytes.ShouldBe(data);
+            using (var blob = MsgPackSerializer.Serialize((byte?) number, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(data);
         }
 
     }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Buffers;
+using System.IO;
 
 using BenchmarkDotNet.Attributes;
 
@@ -11,40 +12,39 @@ namespace ProGaudi.MsgPack.Light.Benchmark
     {
         private readonly MessagePackSerializer<T[]> _messagePackSerializer;
 
-        private readonly MsgPackContext _mplightContext;
+        private readonly MsgPackContext _mpLightContext;
+
+        private readonly MemoryStream _stream = Serializers.CreateStream();
+
+        private readonly IMemoryOwner<byte> _buffer;
 
         protected abstract T[] Numbers { get; }
 
         protected NumberSerialize()
         {
             _messagePackSerializer = SerializationContext.Default.GetSerializer<T[]>();
-            _mplightContext = new MsgPackContext();
+            _mpLightContext = new MsgPackContext();
+            _buffer = MsgPackSerializer.Serialize(Numbers, _mpLightContext, out _);
         }
 
         [Benchmark]
-        public void MPCli_Array()
+        public byte[] MPCli_Array()
         {
-            var bytes = _messagePackSerializer.PackSingleObject(Numbers);
+            return _messagePackSerializer.PackSingleObject(Numbers);
         }
 
         [Benchmark(Baseline = true)]
-        public void MPCli_Stream()
+        public long MPCli_Stream()
         {
-            var stream = new MemoryStream();
-            _messagePackSerializer.Pack(stream, Numbers);
+            _stream.Seek(0, SeekOrigin.Begin);
+            _messagePackSerializer.Pack(_stream, Numbers);
+            return _stream.Position;
         }
 
         [Benchmark]
-        public void MPLight_Array()
+        public int MPLight_Array()
         {
-            var bytes = MsgPackSerializer.Serialize(Numbers, _mplightContext);
-        }
-
-        [Benchmark]
-        public void MPLight_Stream()
-        {
-            var stream = new MemoryStream();
-            MsgPackSerializer.Serialize(Numbers, stream, _mplightContext);
+            return MsgPackSerializer.Serialize(Numbers, _buffer.Memory.Span, _mpLightContext);
         }
     }
 }

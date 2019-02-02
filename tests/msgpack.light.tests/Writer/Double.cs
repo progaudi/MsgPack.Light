@@ -25,8 +25,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [InlineData(double.NegativeInfinity, new byte[] {203, 255, 240, 0, 0, 0, 0, 0, 0})]
         public void TestDouble(double value, byte[] bytes)
         {
-            MsgPackSerializer.Serialize(value).ShouldBe(bytes);
-            ((MsgPackToken)value).RawBytes.ShouldBe(bytes);
+            using (var blob = MsgPackSerializer.Serialize(value, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(bytes);
         }
 
         [Theory]
@@ -46,8 +46,8 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [InlineData(float.NegativeInfinity, new byte[] {202, 255, 128, 0, 0})]
         public void TestFloat(float value, byte[] bytes)
         {
-            MsgPackSerializer.Serialize(value).ShouldBe(bytes);
-            ((MsgPackToken)value).RawBytes.ShouldBe(bytes);
+            using (var blob = MsgPackSerializer.Serialize(value, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(bytes);
         }
     }
 }

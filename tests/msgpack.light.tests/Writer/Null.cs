@@ -11,27 +11,29 @@ namespace ProGaudi.MsgPack.Light.Tests.Writer
         [Fact]
         public void WriteNullArray()
         {
-            MsgPackSerializer.Serialize((int[]) null).ShouldBe(new[] {(byte) DataTypes.Null});
+            using (var blob = MsgPackSerializer.Serialize((int[]) null, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.Nil });
         }
 
         [Fact]
         public void WriteNullByteArray()
         {
-            MsgPackSerializer.Serialize((byte[]) null).ShouldBe(new[] {(byte) DataTypes.Null});
-            ((MsgPackToken)(byte[])null).RawBytes.ShouldBe(new[] { (byte)DataTypes.Null });
+            using (var blob = MsgPackSerializer.Serialize((byte[]) null, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.Nil });
         }
 
         [Fact]
         public void WriteNullMap()
         {
-            MsgPackSerializer.Serialize((IDictionary<int, int>) null).ShouldBe(new[] {(byte) DataTypes.Null});
+            using (var blob = MsgPackSerializer.Serialize((IDictionary<int, int>) null, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.Nil });
         }
 
         [Fact]
         public void WriteNullString()
         {
-            MsgPackSerializer.Serialize((string) null).ShouldBe(new[] {(byte) DataTypes.Null});
-            ((MsgPackToken)(string)null).RawBytes.ShouldBe(new[] { (byte)DataTypes.Null });
+            using (var blob = MsgPackSerializer.Serialize((string) null, out var wroteSize))
+                blob.Memory.Slice(0, wroteSize).ShouldBe(new[] { DataCodes.Nil });
         }
     }
 }

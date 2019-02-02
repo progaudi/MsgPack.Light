@@ -1,6 +1,4 @@
 using Shouldly;
-using System.Collections.Generic;
-using System.Linq;
 
 using Xunit;
 
@@ -30,60 +28,20 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
                 161, 101
             };
 
-            MsgPackSerializer.Deserialize<string[]>(bytes).ShouldBe(tests);
-
-            var token = Helpers.CheckTokenDeserialization(bytes);
-            ((MsgPackToken[])token).Select(t => (string)t).ToArray().ShouldBe(tests);
-        }
-
-        [Fact]
-        public void TestArrayPack()
-        {
-            var expected = new object[]
-            {
-                0,
-                50505,
-                float.NaN,
-                float.MaxValue,
-                new[] {true, false, true},
-                null,
-                new Dictionary<object, object> {{"Ball", "Soccer"}}
-            };
-
-            var data = new byte[]
-            {
-                151,
-                0,
-                205, 197, 73,
-                202, 255, 192, 0, 0,
-                202, 127, 127, 255, 255,
-                147,
-                    195,
-                    194,
-                    195,
-                192,
-                129,
-                    164, 66, 97, 108, 108, 166, 83, 111, 99, 99, 101, 114
-            };
-
-            var settings = new MsgPackContext();
-            settings.RegisterConverter(new TestReflectionConverter());
-
-            MsgPackSerializer.Deserialize<object[]>(data, settings).ShouldBe(expected);
-
-            Helpers.CheckTokenDeserialization(data);
+            MsgPackSerializer.Deserialize<string[]>(bytes, out var readSize).ShouldBe(tests);
+            readSize.ShouldBe(bytes.Length);
         }
 
         [Fact]
         public void TestNonFixedArray()
         {
             var array = new[]
-               {
-                    1, 2, 3, 4, 5,
-                    1, 2, 3, 4, 5,
-                    1, 2, 3, 4, 5,
-                    1, 2, 3, 4, 5,
-                };
+            {
+                1, 2, 3, 4, 5,
+                1, 2, 3, 4, 5,
+                1, 2, 3, 4, 5,
+                1, 2, 3, 4, 5
+            };
 
             var bytes = new byte[]
             {
@@ -94,13 +52,11 @@ namespace ProGaudi.MsgPack.Light.Tests.Reader
                 0x01, 0x02, 0x03, 0x04, 0x05,
                 0x01, 0x02, 0x03, 0x04, 0x05,
                 0x01, 0x02, 0x03, 0x04, 0x05,
-                0x01, 0x02, 0x03, 0x04, 0x05,
+                0x01, 0x02, 0x03, 0x04, 0x05
             };
 
-            MsgPackSerializer.Deserialize<int[]>(bytes).ShouldBe(array);
-
-            var token = Helpers.CheckTokenDeserialization(bytes);
-            ((MsgPackToken[])token).Select(t => (int)t).ToArray().ShouldBe(array);
+            MsgPackSerializer.Deserialize<int[]>(bytes, out int readSize).ShouldBe(array);
+            readSize.ShouldBe(bytes.Length);
         }
     }
 }

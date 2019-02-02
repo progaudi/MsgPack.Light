@@ -2,23 +2,14 @@
 
 namespace ProGaudi.MsgPack.Light.Benchmark.Data
 {
-    public class BeerTypeConverter : IMsgPackConverter<BeerType>
+    public class BeerTypeConverter : IMsgPackFormatter<BeerType>, IMsgPackParser<BeerType>
     {
-        private Lazy<IMsgPackConverter<int>> _intConverter;
+        public int GetBufferSize(BeerType value) => DataLengths.PositiveFixInt;
 
-        public void Initialize(MsgPackContext context)
-        {
-            _intConverter = new Lazy<IMsgPackConverter<int>>(context.GetConverter<int>);
-        }
+        public bool HasConstantSize => true;
 
-        public void Write(BeerType value, IMsgPackWriter writer)
-        {
-            _intConverter.Value.Write((int)value, writer);
-        }
+        public int Format(Span<byte> destination, BeerType value) => MsgPackSpec.WritePositiveFixInt(destination, (byte)value);
 
-        public BeerType Read(IMsgPackReader reader)
-        {
-            return (BeerType)_intConverter.Value.Read(reader);
-        }
+        public BeerType Parse(ReadOnlySpan<byte> source, out int readSize) => (BeerType) MsgPackSpec.ReadPositiveFixInt(source, out readSize);
     }
 }

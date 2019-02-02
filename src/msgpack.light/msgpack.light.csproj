@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
-    <TargetFrameworks>net45;net46;netstandard1.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net45;net46;net461;net462;net47;net471;netstandard1.4;netstandard2.0;netcoreapp2.1;netcoreapp2.2</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
-    <TargetFrameworks>netstandard1.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard1.4;netstandard2.0;netcoreapp2.1;netcoreapp2.2</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup>
     <Description>Lightweight msgpack serialization library</Description>
     <WarningsAsErrors>true</WarningsAsErrors>
-    <AssemblyTitle>msgpack.light</AssemblyTitle>
-    <RootNamespace>ProGaudi.MsgPack.Light</RootNamespace>
+    <AssemblyTitle>progaudi.msgpack.light</AssemblyTitle>
+    <RootNamespace>ProGaudi.MsgPack</RootNamespace>
     <Product>msgpack.light</Product>
-    <Copyright>Copyright © 2016, 2017</Copyright>
+    <Copyright>Copyright © 2016 - 2018</Copyright>
     <PackageTags>msgpack;serialization</PackageTags>
     <PackageProjectUrl>https://github.com/progaudi/MsgPack.Light</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/progaudi/MsgPack.Light/master/LICENSE</PackageLicenseUrl>
@@ -22,12 +22,21 @@
     <Version>1.4.0</Version>
     <Authors>roman-kozachenko;aensidhe</Authors>
     <Company>progaudi</Company>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="11.0.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2018.3.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" Condition=" '$(IsDocker)' != 'defined' ">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="progaudi.msgpack.spec" Version="3.1.0.2-g7141644" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+    <PackageReference Include="System.Runtime.Serialization.Formatters" Version="4.3.0" Condition=" '$(TargetFramework)' == 'netstandard1.4' " />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.5.1" Condition=" '$(TargetFramework)' == 'netstandard1.4' " />
   </ItemGroup>
 </Project>

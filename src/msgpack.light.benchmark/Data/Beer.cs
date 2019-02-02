@@ -5,7 +5,7 @@ using MessagePack;
 namespace ProGaudi.MsgPack.Light.Benchmark.Data
 {
     [MessagePackObject(true)]
-    public class Beer
+    public sealed class Beer
     {
         [MsgPackMapElement(nameof(Brand))]
         [MsgPackArrayElement(0)]
