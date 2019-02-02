@@ -26,13 +26,13 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2018.2.1">
+    <PackageReference Include="JetBrains.Annotations" Version="2018.3.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" Condition=" '$(IsDocker)' != 'defined' ">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" Condition=" '$(IsDocker)' != 'defined' ">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="progaudi.msgpack.spec" Version="3.1.0" />
+    <PackageReference Include="progaudi.msgpack.spec" Version="3.1.0.2-g7141644" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
