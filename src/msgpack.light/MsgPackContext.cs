@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -17,17 +18,17 @@ namespace ProGaudi.MsgPack.Light
 
         private readonly ConverterGenerationContext _generatorContext = new ConverterGenerationContext();
 
-        private readonly Dictionary<Type, IMsgPackConverter> _converters;
+        private readonly ConcurrentDictionary<Type, IMsgPackConverter> _converters;
 
-        private readonly Dictionary<Type, Type> _genericConverters = new Dictionary<Type, Type>();
+        private readonly ConcurrentDictionary<Type, Type> _genericConverters = new ConcurrentDictionary<Type, Type>();
 
-        private readonly Dictionary<Type, Func<object>> _objectActivators = new Dictionary<Type, Func<object>>();
+        private readonly ConcurrentDictionary<Type, Func<object>> _objectActivators = new ConcurrentDictionary<Type, Func<object>>();
 
         public MsgPackContext(bool strictParseOfFloat = false, bool convertEnumsAsStrings = true, bool binaryCompatibilityMode = false)
         {
             _convertEnumsAsStrings = convertEnumsAsStrings;
             var numberConverter = new NumberConverter(strictParseOfFloat);
-            _converters = new Dictionary<Type, IMsgPackConverter>
+            _converters = new ConcurrentDictionary<Type, IMsgPackConverter>(new Dictionary<Type, IMsgPackConverter>
             {
                 {typeof(MsgPackToken), new MsgPackTokenConverter()},
                 {typeof (bool), new BoolConverter()},
@@ -60,7 +61,7 @@ namespace ProGaudi.MsgPack.Light
                 {typeof (ulong?), new NullableConverter<ulong>()},
                 {typeof (DateTime?), new NullableConverter<DateTime>()},
                 {typeof (DateTimeOffset?), new NullableConverter<DateTimeOffset>()}
-            };
+            });
 
             foreach (var converter in _converters)
             {
@@ -147,7 +148,7 @@ namespace ProGaudi.MsgPack.Light
             }
 
             var convertedType = converterType.GenericTypeArguments.Single().GetGenericTypeDefinition();
-            _genericConverters.Add(convertedType, type);
+            _genericConverters.TryAdd(convertedType, type);
         }
 
         public IMsgPackConverter<T> GetConverter<T>()
