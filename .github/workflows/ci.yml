@@ -44,3 +44,4 @@ jobs:
       uses: svenstaro/upload-release-action@2.7.0
       with:
         file: ${{ env.NuGetDirectory }}\*.nupkg
+        file_glob: true
