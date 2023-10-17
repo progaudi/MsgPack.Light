@@ -43,4 +43,4 @@ jobs:
       if: ${{ success() && github.ref_type == 'tag' }}
       uses: svenstaro/upload-release-action@2.7.0
       with:
-        file: "${{ env.NuGetDirectory }}\*.nupkg"
+        file: ${{ env.NuGetDirectory }}\*.nupkg
