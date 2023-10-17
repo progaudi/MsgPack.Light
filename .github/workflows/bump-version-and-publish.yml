@@ -1,0 +1,75 @@
+name: Bump version and publish release nuget
+
+on:
+  pull_request:
+    types: [ closed ]
+    branches: [ "master" ] 
+
+env:
+  NuGetDirectory: ${{ github.workspace }}/nuget
+
+jobs:
+  bump_version_and_add_tag:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          fetch-depth: '0'
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.64.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: false
+          DEFAULT_BUMP: patch
+
+  build_test_and_pack:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-22.04
+    needs: [ bump_version_and_add_tag ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetches entire history, so we can analyze commits since last tag
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: |
+            3.1.x
+            6.0.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore -c Release
+      - name: Test on .netcoreapp3.1
+        run: dotnet test -c Release -f netcoreapp3.1 --no-build --verbosity normal
+      - name: Test on .net6.0
+        run: dotnet test -c Release -f net6.0 --no-build --verbosity normal
+      - name: Calc nuget package version
+        id: calc-nuget-version
+        run: echo "NugetPackageVersion=$(git describe --tags --abbrev=1 | sed 's/-/./')" >> $GITHUB_ENV
+      - name: Pack nuget
+        run: dotnet pack -c Release --no-build -v minimal -o ${{ env.NuGetDirectory }} -p:PackageVersion=${{ env.NugetPackageVersion }}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: nuget
+          if-no-files-found: error
+          retention-days: 7
+          path: ${{ env.NuGetDirectory }}/*.nupkg
+
+  deploy_nuget:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-22.04
+    needs: [ build_test_and_pack ]
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: nuget
+          path: ${{ env.NuGetDirectory }}
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+      - name: Publish NuGet package
+        run: dotnet nuget push ${{ env.NuGetDirectory }}/*.nupkg --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json
