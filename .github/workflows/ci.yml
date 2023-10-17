@@ -32,7 +32,7 @@ jobs:
         if: ${{ success() }}
         run: |
           $NugetVersion = git describe --tags --abbrev=1 | sed 's/-/./'
-          dotnet pack -c Release --no-build -v minimal -o ${{ env.NuGetDirectory }} -p:PackageVersion=${{ $NugetVersion }}
+          dotnet pack -c Release --no-build -v minimal -o ${{ env.NuGetDirectory }} -p:PackageVersion=$NugetVersion
       - name: Publish NuGet package
         if: ${{ success() }}
-        run: dotnet nuget push ${{ env.NuGetDirectory }}/*.nupkg --api-key "${{ secrets.NUGET_PUSH} }}" --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push ${{ env.NuGetDirectory }}/*.nupkg --api-key "${{ secrets.NUGET_PUSH }}" --source https://api.nuget.org/v3/index.json
