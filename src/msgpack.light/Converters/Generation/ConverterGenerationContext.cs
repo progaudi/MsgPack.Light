@@ -28,7 +28,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
         public ConverterGenerationContext()
         {
             _name = Guid.NewGuid().ToString("N");
-#if NET46 || NET45
+#if NET462
             _asmBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(_name), AssemblyBuilderAccess.RunAndSave);
             var moduleBuilder = _asmBuilder.DefineDynamicModule("main", $"{_name}.dll");
 #else
@@ -109,7 +109,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
 
         public void Dump()
         {
-#if NET46 || NET45
+#if NET462
             _asmBuilder.Save($"{_name}.dll");
 #else
             throw new NotSupportedException();
