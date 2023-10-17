@@ -28,13 +28,11 @@ jobs:
       - name: Tests
         run: dotnet test -c Release --no-build --verbosity normal
 
-      - name: Calc nuget package version
-        if: ${{ success() }}
-        id: calc-nuget-version
-        run: echo "NugetPackageVersion=$(git describe --tags --abbrev=1 | sed 's/-/./')" >> $GITHUB_ENV
       - name: Pack nuget
         if: ${{ success() }}
-        run: dotnet pack -c Release --no-build -v minimal -o ${{ env.NuGetDirectory }} -p:PackageVersion=${{ env.NugetPackageVersion }}
+        run: |
+          $NugetVersion = git describe --tags --abbrev=1 | sed 's/-/./'
+          dotnet pack -c Release --no-build -v minimal -o ${{ env.NuGetDirectory }} -p:PackageVersion=${{ $NugetVersion }}
       - name: Publish NuGet package
         if: ${{ success() }}
-        run: dotnet nuget push ${{ env.NuGetDirectory }}/*.nupkg --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push ${{ env.NuGetDirectory }}/*.nupkg --api-key "${{ secrets.NUGET_PUSH} }}" --source https://api.nuget.org/v3/index.json
