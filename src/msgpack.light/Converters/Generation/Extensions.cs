@@ -10,7 +10,7 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
     {
         public static Type ToType(this TypeBuilder typeBuilder)
         {
-#if NET46
+#if NET462
             return typeBuilder.CreateType();
 #else
             return typeBuilder.CreateTypeInfo().AsType();
@@ -57,59 +57,5 @@ namespace ProGaudi.MsgPack.Light.Converters.Generation
         {
             return type.DeclaredMethods.SingleOrDefault(x => x.Name == name && x.GetGenericArguments().Length == number);
         }
-
-#if NETSTANDARD1_1
-        public static ConstructorInfo GetConstructor(this TypeInfo type, Type[] parameters)
-        {
-            foreach (var constructor in type.DeclaredConstructors)
-            {
-                var declaredParameters = constructor.GetParameters();
-                if (ParameterMatch(declaredParameters, parameters))
-                    return constructor;
-            }
-
-            return null;
-        }
-
-        public static PropertyInfo GetProperty(this TypeInfo type, string name)
-        {
-            return type.DeclaredProperties.SingleOrDefault(x => x.Name == name);
-        }
-
-        public static MethodInfo GetMethod(this TypeInfo type, string name)
-        {
-            return type.DeclaredMethods.SingleOrDefault(x => x.Name == name);
-        }
-
-        public static MethodInfo GetMethod(this TypeInfo type, string name, Type[] parameters)
-        {
-            foreach (var method in type.DeclaredMethods.Where(x => x.Name == name))
-            {
-                var declaredParameters = method.GetParameters();
-                if (ParameterMatch(declaredParameters, parameters))
-                    return method;
-            }
-
-            return null;
-        }
-
-        private static bool ParameterMatch(IReadOnlyList<ParameterInfo> parameters, IReadOnlyList<Type> types)
-        {
-            if (parameters.Count != types.Count)
-            {
-                return false;
-            }
-
-            for (var i = 0; i < parameters.Count; i++)
-            {
-                if (parameters[i].ParameterType != types[i])
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-#endif
     }
 }

@@ -1,30 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+    <TargetFrameworks>net462;netstandard2.0;net60</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+    <TargetFrameworks>netstandard2.0;net60</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup>
     <Description>Lightweight msgpack serialization library</Description>
-    <WarningsAsErrors>true</WarningsAsErrors>
     <AssemblyTitle>msgpack.light</AssemblyTitle>
     <RootNamespace>ProGaudi.MsgPack.Light</RootNamespace>
     <Product>msgpack.light</Product>
-    <Copyright>Copyright © 2016, 2017</Copyright>
+    <Copyright>Copyright © 2016-2023</Copyright>
     <PackageTags>msgpack;serialization</PackageTags>
     <PackageProjectUrl>https://github.com/progaudi/MsgPack.Light</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/progaudi/MsgPack.Light/master/LICENSE</PackageLicenseUrl>
     <GenerateAssemblyTitleAttribute>true</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyProductAttribute>true</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCopyrightAttribute>true</GenerateAssemblyCopyrightAttribute>
-    <ProjectGuid>{04D4E761-F756-43D8-B31C-79B1B0671243}</ProjectGuid>
     <Version>1.4.0</Version>
     <Authors>roman-kozachenko;aensidhe</Authors>
     <Company>progaudi</Company>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="11.0.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
-    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+    <PackageReference Include="JetBrains.Annotations" />
+    <PackageReference Include="System.Collections.Immutable" />
+    <PackageReference Include="System.Reflection.Emit" />
+    <PackageReference Include="System.Runtime.Serialization.Primitives" />
+    <PackageReference Include="System.ValueTuple" />
   </ItemGroup>
 </Project>

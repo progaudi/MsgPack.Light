@@ -70,7 +70,6 @@ namespace ProGaudi.MsgPack.Light
 
         public IMsgPackConverter<object> NullConverter => SharedNullConverter;
 
-#if !NETSTANDARD1_1
         public void DiscoverConverters()
         {
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -78,7 +77,6 @@ namespace ProGaudi.MsgPack.Light
                 DiscoverConverters(assembly);
             }
         }
-#endif
 
         public void DiscoverConverters<T>()
         {
