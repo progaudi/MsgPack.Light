@@ -6,7 +6,7 @@ on:
     branches: [ "master" ]
 
 env:
-  NuGetDirectory: ${{ github.workspace }}/nuget
+  NuGetDirectory: ${{ github.workspace }}\nuget
 
 jobs:
   build_test_and_pack:
@@ -35,4 +35,4 @@ jobs:
           dotnet pack -c Release --no-build -v minimal -o ${{ env.NuGetDirectory }} -p:PackageVersion=$NugetVersion
       - name: Publish NuGet package
         if: ${{ success() }}
-        run: dotnet nuget push ${{ env.NuGetDirectory }}/*.nupkg --api-key "${{ secrets.NUGET_PUSH }}" --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push "${{ env.NuGetDirectory }}\*.nupkg" --api-key "${{ secrets.NUGET_PUSH }}" --source https://api.nuget.org/v3/index.json
