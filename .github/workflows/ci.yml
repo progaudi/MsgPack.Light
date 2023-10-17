@@ -15,27 +15,32 @@ jobs:
   build_test_and_pack:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # Fetches entire history, so we can analyze commits since last tag
-      - name: Setup .net core
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: |
-            3.1.x
-            6.0.x
-      - name: Restore dependencies
-        run: dotnet restore
-      - name: Build
-        run: dotnet build -c Release --no-restore
-      - name: Tests
-        run: dotnet test -c Release --no-build --verbosity normal
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 # Fetches entire history, so we can analyze commits since last tag
+    - name: Setup .net core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: |
+          3.1.x
+          6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build -c Release --no-restore
+    - name: Tests
+      run: dotnet test -c Release --no-build --verbosity normal
 
-      - name: Pack nuget
-        if: ${{ success() }}
-        run: |
-          $NugetVersion = git describe --tags --abbrev=1 | sed 's/-/./'
-          dotnet pack -c Release --no-build -v minimal -o ${{ env.NuGetDirectory }} -p:PackageVersion=$NugetVersion
-      - name: Publish NuGet package
-        if: ${{ success() }}
-        run: dotnet nuget push "${{ env.NuGetDirectory }}\*.nupkg" --api-key "${{ secrets.NUGET_PUSH }}" --source https://api.nuget.org/v3/index.json
+    - name: Pack nuget
+      if: ${{ success() }}
+      run: |
+        $NugetVersion = git describe --tags --abbrev=1 | sed 's/-/./'
+        dotnet pack -c Release --no-build -v minimal -o ${{ env.NuGetDirectory }} -p:PackageVersion=$NugetVersion
+    - name: Publish NuGet package
+      if: ${{ success() }}
+      run: dotnet nuget push "${{ env.NuGetDirectory }}\*.nupkg" --api-key "${{ secrets.NUGET_PUSH }}" --source https://api.nuget.org/v3/index.json
+    - name: Upload files to a GitHub release
+      if: ${{ success() && github.ref_type == 'tag' }}
+      uses: svenstaro/upload-release-action@2.7.0
+      with:
+        file: "${{ env.NuGetDirectory }}\*.nupkg"
