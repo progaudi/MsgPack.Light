@@ -41,7 +41,7 @@ namespace ProGaudi.MsgPack.Light.Benchmark
                 writer.Flush();
             }
         }
-        
+
         [Benchmark(Baseline = true)]
         public void MPCli_Stream()
         {
@@ -65,18 +65,6 @@ namespace ProGaudi.MsgPack.Light.Benchmark
         public void MPSharp_Array()
         {
             MessagePackSerializer.Serialize(_testBeer);
-        }
-
-        [Benchmark]
-        public void MPSharp_Array_Unsafe()
-        {
-            MessagePackSerializer.SerializeUnsafe(_testBeer);
-        }
-
-        [Benchmark]
-        public void MPCli_Array()
-        {
-            var bytes = Serializers.MsgPack.GetSerializer<Beer>().PackSingleObject(_testBeer);
         }
 
         [Benchmark]

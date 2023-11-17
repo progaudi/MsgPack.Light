@@ -8,12 +8,12 @@
       <PackageVersion Include="System.Reflection.Emit" Version="4.3.0" />
       <PackageVersion Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
       <PackageVersion Include="System.ValueTuple" Version="4.4.0" />
-      
+
       <!-- benchmark -->
       <PackageVersion Include="BenchmarkDotNet" Version="0.10.9" />
-      <PackageVersion Include="MessagePack" Version="1.6.0.1" />
+      <PackageVersion Include="MessagePack" Version="2.5.129" />
       <PackageVersion Include="MsgPack.Cli" Version="0.9.0" />
-      <PackageVersion Include="Newtonsoft.Json" Version="10.0.3" />
+      <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
 
 
       <!-- tests -->
