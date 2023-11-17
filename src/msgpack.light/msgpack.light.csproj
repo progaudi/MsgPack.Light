@@ -20,12 +20,20 @@
     <Version>1.4.0</Version>
     <Authors>roman-kozachenko;aensidhe</Authors>
     <Company>progaudi</Company>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" />
     <PackageReference Include="System.Collections.Immutable" />
     <PackageReference Include="System.Reflection.Emit" />
     <PackageReference Include="System.Runtime.Serialization.Primitives" />
     <PackageReference Include="System.ValueTuple" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\"/>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 </Project>
