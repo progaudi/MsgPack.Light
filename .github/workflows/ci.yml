@@ -38,10 +38,12 @@ jobs:
         dotnet pack -c Release --no-build -v minimal -o ${{ env.NuGetDirectory }} -p:PackageVersion=$NugetVersion
     - name: Publish NuGet package
       if: success() && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
-      run: dotnet nuget push "${{ env.NuGetDirectory }}\*.nupkg" --api-key "${{ secrets.NUGET_PUSH }}" --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push "${{ env.NuGetDirectory }}\*.nupkg" --api-key "${{ secrets.NUGET_PUSH }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
     - name: Upload files to a GitHub release
-      if: success() && github.ref_type == 'tag'&& (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
-      uses: svenstaro/upload-release-action@2.7.0
+      if: success() && github.ref_type == 'tag' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
+      uses: xresloader/upload-to-github-release@v1.4.2
       with:
-        file: ${{ env.NuGetDirectory }}\*.nupkg
-        file_glob: true
+        file: ${{ env.NuGetDirectory }}\\*.nupkg
+        tags: true
+        overwrite: true
+        tag_name: ${{ github.ref_name }}
